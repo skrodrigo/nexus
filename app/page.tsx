@@ -1,3 +1,11 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 export default function Home() {
-	return <div>oi</div>;
+	const router = useRouter();
+
+	router.push("/lp");
+
+	return null;
 }
