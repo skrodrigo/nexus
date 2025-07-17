@@ -16,8 +16,7 @@ export default function HeroSection() {
 				width={1920}
 				height={1080}
 				quality={100}
-				priority
-				className="w-full h-full"
+				className="w-[1920px] h-[760px]"
 			/>
 		</div>
 	);
