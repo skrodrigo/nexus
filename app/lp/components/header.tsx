@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
@@ -25,8 +26,12 @@ export default function Header() {
 				</ul>
 			</div>
 			<div className="flex gap-2 items-center justify-center">
-				<Button variant="outline">Registrar</Button>
-				<Button>Login</Button>
+				<Link href="/register">
+					<Button variant="outline">Registrar</Button>
+				</Link>
+				<Link href="/login">
+					<Button>Login</Button>
+				</Link>
 			</div>
 		</div>
 	);
