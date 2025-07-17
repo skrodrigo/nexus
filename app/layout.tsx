@@ -24,7 +24,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: RootLayoutProps) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<head />
+			<head>
+				<meta name="apple-mobile-web-app-title" content="Nexus" />
+			</head>
 			<body className={cn(poppins.className, "antialiased")}>
 				<ThemeProvider
 					attribute="class"
