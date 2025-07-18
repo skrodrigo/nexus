@@ -1,4 +1,5 @@
 import {
+	RiChatAiFill,
 	RiFileCopyFill,
 	RiFileTextFill,
 	RiFilterFill,
@@ -6,7 +7,6 @@ import {
 	RiImageFill,
 	RiMailFill,
 	RiPlayFill,
-	RiRobotFill,
 	RiShoppingCartFill,
 	RiUserStarFill,
 } from "react-icons/ri";
@@ -116,7 +116,7 @@ export const apps: App[] = [
 		actions: [{ label: "Criar", href: "/dashboard/apps/email-marketing/new" }],
 	},
 	{
-		icon: <RiRobotFill className="size-5" />,
+		icon: <RiChatAiFill className="size-5" />,
 		title: "Chat com AI",
 		description:
 			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",

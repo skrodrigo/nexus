@@ -1,6 +1,7 @@
+import type { VariantProps } from "class-variance-authority";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, type buttonVariants } from "@/components/ui/button";
 
 interface AppCardProps {
 	icon: React.ReactNode;
@@ -10,7 +11,7 @@ interface AppCardProps {
 	actions: {
 		label: string;
 		href: string;
-		variant?: "default" | "outline";
+		variant?: VariantProps<typeof buttonVariants>["variant"];
 	}[];
 }
 
