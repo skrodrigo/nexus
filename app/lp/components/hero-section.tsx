@@ -11,7 +11,7 @@ export default function HeroSection() {
 				ofertas, AI e automação em um só sistema.
 			</p>
 			<Image
-				src="/dashboard.png"
+				src="/dash.svg"
 				alt="Logo"
 				width={3000}
 				height={1685}

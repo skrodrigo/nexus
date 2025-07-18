@@ -15,7 +15,13 @@ export default function Header() {
 	return (
 		<div className="flex items-center justify-between py-6">
 			<div className="flex items-center gap-8">
-				<Image src="/nexus.svg" alt="Logo" width={32} height={32} />
+				<Image
+					src="/nexus.png"
+					alt="Logo"
+					width={32}
+					height={32}
+					quality={100}
+				/>
 				<ul className="hidden gap-4 items-center justify-center md:flex">
 					<li>
 						<a href="/" className="hover:text-primary transition-colors">
