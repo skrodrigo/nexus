@@ -11,12 +11,13 @@ export default function HeroSection() {
 				ofertas, AI e automação em um só sistema.
 			</p>
 			<Image
-				src="/dashboard.svg"
+				src="/dashboard.png"
 				alt="Logo"
-				width={1920}
-				height={1080}
+				width={3000}
+				height={1685}
 				quality={100}
-				className="w-[1920px] h-[760px]"
+				priority
+				className="max-w-[1000px] max-h-[685px] w-full h-full object-contain mt-10"
 			/>
 		</div>
 	);

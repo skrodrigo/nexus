@@ -59,7 +59,7 @@ export default function BentoGrid() {
 				{bentos.map((bento) => (
 					<div
 						key={bento.title}
-						className="w-[353px]  p-4 border border-border rounded-xl flex flex-col justify-between"
+						className="w-[353px] p-4 border border-border rounded-xl flex flex-col justify-between items-center"
 					>
 						<div className="space-y-2">
 							<h3 className="text-xl font-medium text-left">{bento.title}</h3>

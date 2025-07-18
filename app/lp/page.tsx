@@ -7,7 +7,7 @@ import Plans from "./components/plans";
 
 export default function LandingPage() {
 	return (
-		<div className="flex flex-col min-h-screen container max-w-7xl mx-auto space-y-20">
+		<div className="flex flex-col min-h-screen container max-w-7xl mx-auto space-y-20 px-4">
 			<Header />
 			<HeroSection />
 			<BentoGrid />

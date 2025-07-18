@@ -43,7 +43,7 @@ export default function Plans() {
 	return (
 		<div
 			id="plans"
-			className="flex flex-col items-center justify-center container max-w-7xl mx-auto py-20"
+			className="flex flex-col items-center justify-center container max-w-7xl mx-auto pt-20"
 		>
 			<h1 className="text-4xl font-medium text-center">
 				Escolha o plano ideal para o seu momento.
@@ -62,7 +62,7 @@ export default function Plans() {
 								</span>
 							)}
 							<h2 className="text-2xl font-medium">{plan.name}</h2>
-							<p className="text-muted-foreground mt-2 h-12">
+							<p className="text-muted-foreground mt-2 h-12 text-sm">
 								{plan.description}
 							</p>
 							<div className="mt-6">
@@ -78,7 +78,7 @@ export default function Plans() {
 										<Check className="w-5 h-5 text-primary" />
 										<span>{feature.text}</span>
 										{feature.soon && (
-											<span className="text-xs bg-background border border-border text-yellow-600 rounded-full px-2 py-0.5">
+											<span className="text-xs bg-background border border-border text-yellow-600 rounded-full px-2 py-0.5 whitespace-nowrap">
 												em breve
 											</span>
 										)}
