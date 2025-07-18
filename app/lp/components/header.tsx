@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { RiMenuLine } from "react-icons/ri";
+import { RiMenuFill } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -21,6 +21,7 @@ export default function Header() {
 					width={32}
 					height={32}
 					quality={100}
+					className="w-12 h-12"
 				/>
 				<ul className="hidden gap-4 items-center justify-center md:flex">
 					<li>
@@ -51,7 +52,7 @@ export default function Header() {
 			<div className="md:hidden">
 				<Drawer>
 					<DrawerTrigger>
-						<RiMenuLine className="w-6 h-6" />
+						<RiMenuFill className="w-6 h-6" />
 					</DrawerTrigger>
 					<DrawerContent>
 						<DrawerHeader>

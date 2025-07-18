@@ -1,3 +1,3 @@
 export default function ArchivesPage() {
-	return <div>page</div>;
+	return <div>volte aqui em breve.</div>;
 }
