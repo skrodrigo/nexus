@@ -10,7 +10,7 @@ interface AppCardProps {
 	actions: {
 		label: string;
 		href: string;
-		variant?: "default" | "secondary";
+		variant?: "default" | "outline";
 	}[];
 }
 
@@ -25,12 +25,14 @@ export function AppCard({
 		<div className="flex flex-col rounded-lg border bg-card p-6 shadow-sm">
 			<div className="flex items-start justify-between">
 				<div className="flex items-center gap-x-4">
-					<div className="rounded-lg bg-primary/10 p-2 text-primary">
-						{icon}
-					</div>
+					<div className="rounded-lg p-2 text-primary">{icon}</div>
 					<h3 className="text-lg font-medium text-card-foreground">{title}</h3>
 				</div>
-				{status === "new" && <Badge variant="secondary">Novo</Badge>}
+				{status === "new" && (
+					<Badge variant="outline" className="text-primary">
+						Novo
+					</Badge>
+				)}
 				{status === "soon" && (
 					<Badge variant="outline" className="text-yellow-600">
 						Em breve
@@ -43,6 +45,7 @@ export function AppCard({
 					<Button
 						key={action.label}
 						asChild
+						className="rounded-full"
 						variant={action.variant || "default"}
 					>
 						<Link href={action.href}>{action.label}</Link>

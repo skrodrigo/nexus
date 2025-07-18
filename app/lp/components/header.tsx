@@ -18,8 +18,8 @@ export default function Header() {
 				<Image
 					src="/nexus.png"
 					alt="Logo"
-					width={32}
-					height={32}
+					width={64}
+					height={64}
 					quality={100}
 				/>
 				<ul className="hidden gap-4 items-center justify-center md:flex">

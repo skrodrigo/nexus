@@ -1,4 +1,4 @@
-import { AppCard } from "@/components/dashboard/sidebar/app-card";
+import { AppCard } from "@/components/dashboard/app-card";
 import { apps } from "@/lib/constants";
 
 export default function AppsPage() {
