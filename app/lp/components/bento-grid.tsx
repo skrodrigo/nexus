@@ -4,42 +4,42 @@ const bentos = [
 	{
 		title: "Funis de Quiz Interativos",
 		description:
-			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
+			"Crie quizzes que capturam leads, segmentam sua audiência e aumentam o engajamento de forma inteligente e automatizada.",
 		image: "/quiz.svg",
 		alt: "Quiz",
 	},
 	{
 		title: "Páginas de Vendas com AI",
 		description:
-			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
+			"Desenvolva landing pages de alta conversão em minutos com o poder da inteligência artificial, otimizadas para vender mais.",
 		image: "/pv.svg",
 		alt: "Vendas",
 	},
 	{
 		title: "+12 Ferramentas",
 		description:
-			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
+			"Explore um arsenal completo de ferramentas de marketing, criadas para impulsionar cada etapa da sua estratégia digital.",
 		image: "/ferramentas.svg",
 		alt: "Ferramentas",
 	},
 	{
 		title: "Área de Membros",
 		description:
-			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
+			"Hospede seus cursos e conteúdos em um ambiente exclusivo e profissional, projetado para a melhor experiência do aluno.",
 		image: "/area-de-membros.svg",
 		alt: "Membros",
 	},
 	{
 		title: "Gerador de Criativos",
 		description:
-			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
+			"Produza criativos de alto impacto com IA, formatos otimizados e elementos prontos para anúncios de performance.",
 		image: "/criativos.svg",
 		alt: "Criativos",
 	},
 	{
 		title: "VSL com Inteligência",
 		description:
-			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
+			"Construa VSLs que prendem a atenção e convertem, utilizando componentes e roteiros validados pelo mercado.",
 		image: "/vsl.svg",
 		alt: "VSL",
 	},
@@ -49,11 +49,11 @@ export default function BentoGrid() {
 	return (
 		<div className="flex flex-col items-center justify-center container max-w-7xl mx-auto">
 			<h1 className="text-4xl font-medium text-center">
-				A plataforma definitiva de marketing digital.
+				Tudo o que você precisa, em um só lugar.
 			</h1>
 			<p className="text-muted-foreground text-center max-w-2xl mt-2">
-				Tudo o que você precisa para criar, conectar e escalar — páginas, funis,
-				ofertas, AI e automação em um só sistema.
+				Ferramentas inteligentes, conectadas e prontas para escalar seus
+				resultados com eficiência e performance.
 			</p>
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
 				{bentos.map((bento) => (

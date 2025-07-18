@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const plansData = [
@@ -71,7 +72,9 @@ export default function Plans() {
 								</span>
 								<span className="text-muted-foreground">/mês</span>
 							</div>
-							<Button className="">Começar Agora</Button>
+							<Link href="/register">
+								<Button className="w-full">Começar Agora</Button>
+							</Link>
 							<ul className="mt-8 space-y-4 text-sm">
 								{plan.features.map((feature) => (
 									<li key={feature.text} className="flex items-center gap-3">

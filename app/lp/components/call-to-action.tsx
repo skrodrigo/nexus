@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function CallToAction() {
@@ -7,8 +8,12 @@ export default function CallToAction() {
 				Pronto para dominar o marketing digital com o Nexus?
 			</h1>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
-				<Button variant="outline">Veja os Planos</Button>
-				<Button>Começar Agora</Button>
+				<Link href="#plans">
+					<Button variant="outline">Veja os Planos</Button>
+				</Link>
+				<Link href="/register">
+					<Button>Começar Agora</Button>
+				</Link>
 			</div>
 		</div>
 	);
