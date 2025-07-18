@@ -32,6 +32,7 @@ export function Sidebar() {
 					width={32}
 					height={32}
 					quality={100}
+					className="w-8 h-8"
 				/>
 			</Link>
 			<nav className="flex flex-col items-center gap-y-4 border border-border rounded-xl">
