@@ -7,7 +7,6 @@ import {
 	RiAppsFill,
 	RiArchiveFill,
 	RiChatAiFill,
-	RiFileTextFill,
 	RiMagicFill,
 	RiMoonFill,
 	RiSettings3Fill,
@@ -33,7 +32,6 @@ export function Sidebar() {
 					width={32}
 					height={32}
 					quality={100}
-					className="w-auto h-auto"
 				/>
 			</Link>
 			<nav className="flex flex-col items-center gap-y-4 border border-border rounded-xl">

@@ -94,7 +94,9 @@ export default function SettingsPage() {
 										src={session.data?.user?.image ?? undefined}
 										alt="@shadcn"
 									/>
-									<AvatarFallback>RC</AvatarFallback>
+									<AvatarFallback className="border border-border">
+										{session.data?.user?.name?.[0]}
+									</AvatarFallback>
 								</Avatar>
 								<div className="flex gap-3">
 									<Button

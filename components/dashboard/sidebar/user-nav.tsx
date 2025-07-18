@@ -1,3 +1,5 @@
+import { useRouter } from "next/navigation";
+import { SignOutButton } from "@/components/dashboard/sidebar/sign-out-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -6,10 +8,15 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
-import { SignOutButton } from "./sign-out-button";
 
 export function UserNav() {
 	const session = authClient.useSession();
+	const router = useRouter();
+
+	if (!session) {
+		router.push("/login");
+	}
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger>
@@ -18,7 +25,7 @@ export function UserNav() {
 						src={session.data?.user?.image ?? undefined}
 						alt="@shadcn"
 					/>
-					<AvatarFallback>CN</AvatarFallback>
+					<AvatarFallback>{session.data?.user?.name?.[0]}</AvatarFallback>
 				</Avatar>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="start" alignOffset={10}>

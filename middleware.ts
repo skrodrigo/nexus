@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
 		},
 	);
 
-	if (!session) {
+	if (!session?.user) {
 		return NextResponse.redirect(new URL("/register", request.url));
 	}
 

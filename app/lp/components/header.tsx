@@ -21,7 +21,6 @@ export default function Header() {
 					width={32}
 					height={32}
 					quality={100}
-					className="w-12 h-12"
 				/>
 				<ul className="hidden gap-4 items-center justify-center md:flex">
 					<li>
