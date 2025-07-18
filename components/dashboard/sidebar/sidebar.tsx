@@ -22,6 +22,7 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { Header } from "../header";
 
 const NavContent = () => {
 	const pathname = usePathname();
@@ -102,7 +103,7 @@ export function Sidebar() {
 	return (
 		<>
 			{/* Desktop Sidebar */}
-			<div className="hidden md:flex h-full flex-col items-center justify-between gap-y-4 border-r p-4 rounded-xl bg-sidebar">
+			<div className="hidden md:flex h-full flex-col items-center justify-between gap-y-4 border-r p-4 rounded-4xl bg-sidebar">
 				<Link href="/dashboard/apps">
 					<Image
 						src="/nexus.png"
@@ -148,15 +149,18 @@ export function Sidebar() {
 
 			{/* Mobile Sidebar */}
 			<div className="md:hidden flex items-center justify-between p-2  w-full">
-				<Link href="/dashboard/apps">
-					<Image
-						src="/nexus.png"
-						alt="Logo"
-						width={48}
-						height={48}
-						quality={100}
-					/>
-				</Link>
+				<div className="flex items-center gap-x-2">
+					<Link href="/dashboard/apps">
+						<Image
+							src="/nexus.png"
+							alt="Logo"
+							width={48}
+							height={48}
+							quality={100}
+						/>
+					</Link>
+					<Header />
+				</div>
 				<Sheet>
 					<SheetTrigger asChild>
 						<Button variant="ghost" size="icon">
