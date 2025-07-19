@@ -4,7 +4,7 @@ import { apps } from "@/lib/constants";
 export default function AppsPage() {
 	return (
 		<div>
-			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+			<div className="grid grid-cols-1 p-2 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{apps.map((app) => (
 					<AppCard
 						key={app.title}
