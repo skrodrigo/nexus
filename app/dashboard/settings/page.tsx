@@ -14,35 +14,58 @@ const plansData = [
 		name: "Plano Launch",
 		description:
 			"Ideal para quem está começando no digital e precisa das ferramentas essenciais para validar e vender.",
-		price: 49,
+		price: 297,
 		popular: false,
 		features: [
-			{ text: "Criador de Criativos" },
-			{ text: "Gerador de Página de Vendas" },
+			{ text: "10.000 plays/mês no VSL" },
+			{ text: "+10 Gerações de Criativos (por semana)" },
+			{ text: "+10 Gerações de Página de Vendas (por semana)" },
 			{ text: "1 componente de VSL" },
 			{ text: "1 Funil de Quiz" },
-			{ text: "Gerador de Ofertas" },
-			{ text: "Suporte responde em até 24 horas" },
-			{ text: "Extensão + Minerador da Biblioteca", soon: true },
-			{ text: "Até 100 emails por mês", soon: true },
+			{ text: "1 Checkout Próprio + 2% de taxa", soon: true },
+			{ text: "1.000 emails por mês", soon: true },
+			{ text: "Suporte 24h via WhatsApp" },
+			{ text: "Domínio padrão" },
 		],
 	},
 	{
 		name: "Plano Scale",
 		description:
 			"Para quem já vende e quer escalar com automações, testes e páginas otimizadas com IA.",
-		price: 149,
+		price: 497,
 		popular: true,
 		features: [
-			{ text: "Tudo do plano Launch" },
-			{ text: "Clonador de Página de Vendas", soon: true },
-			{ text: "Até 5 Funis de Quiz" },
-			{ text: "Gerador de Ebooks" },
-			{ text: "Testes A/B na VSL + analytics" },
-			{ text: "Checkout Próprio", soon: true },
-			{ text: "Área de membros Própria", soon: true },
-			{ text: "Suporte responde em até 1 hora" },
+			{ text: "25.000 plays/mês no VSL" },
+			{ text: "+20 Gerações de Criativos (por semana)" },
+			{ text: "+20 Gerações de Página de Vendas (por semana)" },
 			{ text: "3 componentes de VSL" },
+			{ text: "5 Funis de Quiz" },
+			{ text: "2 Checkout Próprio + 1% de taxa", soon: true },
+			{ text: "5.000 emails por mês", soon: true },
+			{ text: "Testes A/B + Analytics" },
+			{ text: "5 Áreas de Membros", soon: true },
+			{ text: "Suporte 1h via WhatsApp + Email", soon: true },
+			{ text: "Domínio próprio", soon: true },
+		],
+	},
+	{
+		name: "Plano Infinity",
+		description:
+			"Para quem já vende e quer escalar com automações, testes e páginas otimizadas com IA.",
+		price: 597,
+		popular: false,
+		features: [
+			{ text: "50.000 plays/mês no VSL" },
+			{ text: "+40 Gerações de Criativos (por semana)" },
+			{ text: "+40 Gerações de Página de Vendas (por semana)" },
+			{ text: "5 componentes de VSL" },
+			{ text: "10 Funis de Quiz" },
+			{ text: "20 Checkout Próprio + 0,5% de taxa", soon: true },
+			{ text: "10.000 emails por mês", soon: true },
+			{ text: "Testes A/B + Analytics Avançado" },
+			{ text: "10 Áreas de Membros", soon: true },
+			{ text: "Suporte Prioritário 1h (WhatsApp + Discord)" },
+			{ text: "Domínio próprio + Integrações (ex.: Zapier)", soon: true },
 		],
 	},
 ];
@@ -124,7 +147,7 @@ export default function SettingsPage() {
 							estrutura profissional agora mesmo.
 						</p>
 					</div>
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl mx-auto">
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl mx-auto">
 						{plansData.map((plan) => (
 							<PlanCard key={plan.name} plan={plan} />
 						))}
