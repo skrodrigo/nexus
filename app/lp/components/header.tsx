@@ -1,6 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { RiMenuFill } from "react-icons/ri";
+import {
+	RiArrowRightLine,
+	RiMenuFill,
+	RiUserSettingsFill,
+} from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -10,8 +14,11 @@ import {
 	DrawerTitle,
 	DrawerTrigger,
 } from "@/components/ui/drawer";
+import { getUserSession } from "@/server/user";
 
-export default function Header() {
+export default async function Header() {
+	const session = await getUserSession();
+
 	return (
 		<div className="flex items-center justify-between py-6">
 			<div className="flex items-center gap-8">
@@ -41,12 +48,35 @@ export default function Header() {
 				</ul>
 			</div>
 			<div className="hidden items-center justify-center gap-2 md:flex">
-				<Link href="/register">
-					<Button variant="outline">Registrar</Button>
-				</Link>
-				<Link href="/login">
-					<Button>Login</Button>
-				</Link>
+				{session.success ? (
+					<>
+						<Link href="/suport" className="group">
+							<Button variant="outline">
+								<span className="group-hover:mr-1 transition-all">
+									Falar com Suporte
+								</span>
+								<RiUserSettingsFill className="size-4 ml-2" />
+							</Button>
+						</Link>
+						<Link href="/dashboard/apps" className="group">
+							<Button>
+								<span className="group-hover:mr-1 transition-all">
+									Dashboard
+								</span>
+								<RiArrowRightLine className="size-4 ml-2" />
+							</Button>
+						</Link>
+					</>
+				) : (
+					<>
+						<Link href="/register">
+							<Button variant="outline">Registrar</Button>
+						</Link>
+						<Link href="/login">
+							<Button>Login</Button>
+						</Link>
+					</>
+				)}
 			</div>
 			<div className="md:hidden">
 				<Drawer>
@@ -81,14 +111,37 @@ export default function Header() {
 							</li>
 						</ul>
 						<DrawerFooter className="flex-row gap-2 pt-4">
-							<Link href="/register" className="w-full">
-								<Button variant="outline" className="w-full">
-									Registrar
-								</Button>
-							</Link>
-							<Link href="/login" className="w-full">
-								<Button className="w-full">Login</Button>
-							</Link>
+							{session.success ? (
+								<>
+									<Link href="/suport" className="w-full group">
+										<Button variant="outline" className="w-full">
+											<span className="group-hover:mr-1 transition-all">
+												Falar com Suporte
+											</span>
+											<RiUserSettingsFill className="size-4 ml-2" />
+										</Button>
+									</Link>
+									<Link href="/dashboard/apps" className="w-full group">
+										<Button className="w-full">
+											<span className="group-hover:mr-1 transition-all">
+												Dashboard
+											</span>
+											<RiArrowRightLine className="size-4 ml-2" />
+										</Button>
+									</Link>
+								</>
+							) : (
+								<>
+									<Link href="/register" className="w-full">
+										<Button variant="outline" className="w-full">
+											Registrar
+										</Button>
+									</Link>
+									<Link href="/login" className="w-full">
+										<Button className="w-full">Login</Button>
+									</Link>
+								</>
+							)}
 						</DrawerFooter>
 					</DrawerContent>
 				</Drawer>
