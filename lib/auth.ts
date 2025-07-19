@@ -1,12 +1,51 @@
+import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { PrismaClient } from "@/generated/prisma";
+import { organization } from "better-auth/plugins";
+import Stripe from "stripe";
+import prisma from "@/lib/prisma";
 
-export const prisma = new PrismaClient();
+const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+	apiVersion: "2025-03-31.basil",
+});
 
 export const auth = betterAuth({
-	plugins: [nextCookies()],
+	plugins: [
+		nextCookies(),
+		organization(),
+		stripe({
+			stripeClient,
+			stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET as string,
+			createCustomerOnSignUp: true,
+			subscription: {
+				enabled: true,
+				plans: [
+					{
+						id: "launch",
+						name: "Launch",
+						price: 49,
+						priceId: "",
+						interval: "month",
+					},
+					{
+						id: "scale",
+						name: "Scale",
+						price: 149,
+						priceId: "",
+						interval: "month",
+					},
+				],
+				getCheckoutSessionParams: () => {
+					return {
+						params: {
+							allow_promotion_codes: true,
+						},
+					};
+				},
+			},
+		}),
+	],
 
 	emailAndPassword: {
 		enabled: true,
