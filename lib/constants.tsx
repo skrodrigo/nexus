@@ -51,14 +51,6 @@ export const apps: App[] = [
 		],
 	},
 	{
-		icon: <RiFileTextFill className="size-5" />,
-		title: "Páginas de Vendas",
-		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
-		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/chat" }],
-	},
-	{
 		icon: <RiUserStarFill className="size-5" />,
 		title: "Área de Membros",
 		description:

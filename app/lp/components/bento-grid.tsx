@@ -16,7 +16,7 @@ const bentos = [
 		alt: "Vendas",
 	},
 	{
-		title: "+12 Ferramentas",
+		title: "+9 Ferramentas",
 		description:
 			"Explore um arsenal completo de ferramentas de marketing, criadas para impulsionar cada etapa da sua estratégia digital.",
 		image: "/ferramentas.svg",
