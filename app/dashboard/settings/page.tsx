@@ -51,12 +51,6 @@ export default function SettingsPage() {
 	const session = authClient.useSession();
 	return (
 		<div className="space-y-8">
-			<div>
-				<h1 className="text-xl font-medium text-primary">Configurações</h1>
-				<p className="text-muted-foreground text-sm">
-					Customize seu perfil, preferências e planos.
-				</p>
-			</div>
 			<Tabs defaultValue="account" className="w-full">
 				<TabsList className="grid w-full grid-cols-2 max-w-sm bg-muted p-1 rounded-full h-auto">
 					<TabsTrigger

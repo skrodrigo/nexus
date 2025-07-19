@@ -12,7 +12,7 @@ import {
 	RiMoonFill,
 	RiSettings3Fill,
 } from "react-icons/ri";
-import { UserNav } from "@/components/dashboard/sidebar/user-nav";
+import { LogoutButton } from "@/components/dashboard/sidebar/logout-button";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -103,7 +103,7 @@ export function Sidebar() {
 	return (
 		<>
 			{/* Desktop Sidebar */}
-			<div className="hidden md:flex h-full flex-col items-center justify-between gap-y-4 border-r p-4 rounded-4xl bg-sidebar">
+			<div className="hidden md:flex h-full flex-col items-center justify-between gap-y-4 border-r p-4 rounded-r-4xl bg-sidebar">
 				<Link href="/dashboard/apps">
 					<Image
 						src="/nexus.png"
@@ -143,7 +143,7 @@ export function Sidebar() {
 							</TooltipContent>
 						</Tooltip>
 					</TooltipProvider>
-					<UserNav />
+					<LogoutButton />
 				</div>
 			</div>
 
@@ -186,7 +186,7 @@ export function Sidebar() {
 									<span>Mudar Tema</span>
 								</Button>
 
-								<UserNav />
+								<LogoutButton />
 							</div>
 						</div>
 					</SheetContent>

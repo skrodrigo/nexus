@@ -67,7 +67,7 @@ export default function Plans() {
 								{plan.description}
 							</p>
 							<div className="mt-6">
-								<span className="text-4xl font-bold text-primary">
+								<span className="text-4xl font-medium text-primary">
 									R${plan.price}
 								</span>
 								<span className="text-muted-foreground">/mês</span>

@@ -28,11 +28,15 @@ export function PlanCard({ plan, current = false }: PlanCardProps) {
 				{plan.description}
 			</p>
 			<div className="mt-6">
-				<span className="text-4xl font-bold text-primary">R${plan.price}</span>
+				<span className="text-4xl font-medium text-primary">
+					R${plan.price}
+				</span>
 				<span className="text-muted-foreground">/mês</span>
 			</div>
 			<Link href="/register">
-				<Button className="w-full mt-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full">Começar Agora</Button>
+				<Button className="w-full mt-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full">
+					Começar Agora
+				</Button>
 			</Link>
 			<ul className="mt-8 space-y-4 text-sm">
 				{plan.features.map((feature) => (

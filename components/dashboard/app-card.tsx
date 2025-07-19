@@ -2,6 +2,7 @@ import type { VariantProps } from "class-variance-authority";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button, type buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface AppCardProps {
 	icon: React.ReactNode;
@@ -46,10 +47,15 @@ export function AppCard({
 					<Button
 						key={action.label}
 						asChild
-						className="rounded-full"
+						disabled={status === "soon"}
+						className={cn("rounded-full", {
+							"opacity-50 cursor-not-allowed": status === "soon",
+						})}
 						variant={action.variant || "default"}
 					>
-						<Link href={action.href}>{action.label}</Link>
+						<Link href={status === "soon" ? "#" : action.href}>
+							{action.label}
+						</Link>
 					</Button>
 				))}
 			</div>

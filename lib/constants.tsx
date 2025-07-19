@@ -3,7 +3,6 @@ import {
 	RiFileCopyFill,
 	RiFileTextFill,
 	RiFilterFill,
-	RiGiftFill,
 	RiImageFill,
 	RiMailFill,
 	RiPlayFill,
@@ -33,7 +32,7 @@ export const apps: App[] = [
 				href: "/dashboard/apps/vsl-player",
 				variant: "secondary",
 			},
-			{ label: "Criar", href: "/dashboard/apps/vsl-player/new" },
+			{ label: "Criar", href: "/dashboard/apps/vsl-player" },
 		],
 	},
 	{
@@ -45,10 +44,10 @@ export const apps: App[] = [
 		actions: [
 			{
 				label: "Acessar Funis",
-				href: "/dashboard/apps/quiz-funnels",
+				href: "/dashboard/apps/funnels",
 				variant: "secondary",
 			},
-			{ label: "Criar", href: "/dashboard/apps/quiz-funnels/new" },
+			{ label: "Criar", href: "/dashboard/apps/funnels" },
 		],
 	},
 	{
@@ -57,7 +56,7 @@ export const apps: App[] = [
 		description:
 			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
 		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/apps/sales-pages/new" }],
+		actions: [{ label: "Criar", href: "/dashboard/chat" }],
 	},
 	{
 		icon: <RiUserStarFill className="size-5" />,
@@ -65,55 +64,7 @@ export const apps: App[] = [
 		description:
 			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
 		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/apps/membership-area/new" }],
-	},
-	{
-		icon: <RiShoppingCartFill className="size-5" />,
-		title: "Checkout Próprio",
-		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
-		status: "soon",
-		actions: [{ label: "Criar", href: "/dashboard/apps/checkout/new" }],
-	},
-	{
-		icon: <RiGiftFill className="size-5" />,
-		title: "Gerador de Ofertas",
-		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
-		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/apps/offer-generator/new" }],
-	},
-	{
-		icon: <RiFileTextFill className="size-5" />,
-		title: "Gerador de Ebooks",
-		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
-		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/apps/ebook-generator/new" }],
-	},
-	{
-		icon: <RiFileCopyFill className="size-5" />,
-		title: "Clonador de Página",
-		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
-		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/apps/page-cloner/new" }],
-	},
-	{
-		icon: <RiFilterFill className="size-5" />,
-		title: "Minerador de Ofertas",
-		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
-		status: "soon",
-		actions: [{ label: "Criar", href: "/dashboard/apps/offer-miner/new" }],
-	},
-	{
-		icon: <RiMailFill className="size-5" />,
-		title: "Email Marketing",
-		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
-		status: "soon",
-		actions: [{ label: "Criar", href: "/dashboard/apps/email-marketing/new" }],
+		actions: [{ label: "Criar", href: "/dashboard/apps/members-area" }],
 	},
 	{
 		icon: <RiChatAiFill className="size-5" />,
@@ -121,6 +72,39 @@ export const apps: App[] = [
 		description:
 			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
 		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/apps/ai-chat/new" }],
+		actions: [{ label: "Criar", href: "/dashboard/chat" }],
+	},
+	{
+		icon: <RiFileCopyFill className="size-5" />,
+		title: "Clonador de Página",
+		description:
+			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+		status: "soon",
+		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
+	},
+	{
+		icon: <RiFilterFill className="size-5" />,
+		title: "Minerador de Ofertas",
+		description:
+			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+		status: "soon",
+		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
+	},
+	{
+		icon: <RiMailFill className="size-5" />,
+		title: "Email Marketing",
+		description:
+			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+		status: "soon",
+		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
+	},
+
+	{
+		icon: <RiShoppingCartFill className="size-5" />,
+		title: "Checkout Próprio",
+		description:
+			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+		status: "soon",
+		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
 	},
 ];
