@@ -182,17 +182,19 @@ function CreativeGeneratorPage() {
 					{history.map((item, index) => (
 						<div key={item}>
 							<Button
-								className={`w-full flex items-center bg-background hover:bg-accent/20 text-foreground justify-between ${
-									isAsideOpen
-										? "whitespace-normal h-auto text-left"
-										: "truncate"
+								className={`w-full px-2 flex items-center bg-background hover:bg-accent/20 text-foreground justify-between ${
+									isAsideOpen ? "whitespace-normal h-8 text-left" : "truncate"
 								}`}
 							>
 								<span className="truncate">{isAsideOpen ? item : ""}</span>
 								{isAsideOpen && (
 									<DropdownMenu>
 										<DropdownMenuTrigger asChild>
-											<Button variant="ghost" size="icon" className="shrink-0">
+											<Button
+												variant="ghost"
+												size="icon"
+												className="shrink-0 h-6 w-6 rounded-full"
+											>
 												<RiMore2Fill />
 											</Button>
 										</DropdownMenuTrigger>
@@ -307,9 +309,6 @@ function CreativeGeneratorPage() {
 					) : (
 						<div className="flex flex-col gap-4 justify-center items-center w-full">
 							<Card className="w-full max-w-xl">
-								<CardHeader>
-									<CardTitle>Gerador de Gerars</CardTitle>
-								</CardHeader>
 								<CardContent>
 									<Tabs
 										defaultValue="creative"
