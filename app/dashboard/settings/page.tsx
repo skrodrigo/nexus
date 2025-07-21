@@ -14,15 +14,14 @@ const plansData = [
 		name: "Plano Launch",
 		description:
 			"Ideal para quem está começando no digital e precisa das ferramentas essenciais para validar e vender.",
-		price: 297,
+		price: 197,
 		popular: false,
 		features: [
-			{ text: "10.000 plays/mês no VSL" },
+			{ text: "15.000 plays/mês no VSL + R$ 0,02 por play extra" },
 			{ text: "+10 Gerações de Criativos (por semana)" },
-			{ text: "+10 Gerações de Página de Vendas (por semana)" },
-			{ text: "1 componente de VSL" },
-			{ text: "1 Funil de Quiz" },
-			{ text: "1 Checkout Próprio + 2% de taxa", soon: true },
+			{ text: "2 componente de VSL" },
+			{ text: "3 Funil de Quiz + 6 mil leads" },
+			{ text: "Checkout Próprio + 2% de taxa", soon: true },
 			{ text: "1.000 emails por mês", soon: true },
 			{ text: "Suporte 24h via WhatsApp" },
 			{ text: "Domínio padrão" },
@@ -32,40 +31,42 @@ const plansData = [
 		name: "Plano Scale",
 		description:
 			"Para quem já vende e quer escalar com automações, testes e páginas otimizadas com IA.",
-		price: 497,
+		price: 297,
 		popular: true,
 		features: [
-			{ text: "25.000 plays/mês no VSL" },
+			{ text: "30.000 plays/mês no VSL + R$ 0,02 por play extra" },
 			{ text: "+20 Gerações de Criativos (por semana)" },
-			{ text: "+20 Gerações de Página de Vendas (por semana)" },
-			{ text: "3 componentes de VSL" },
-			{ text: "5 Funis de Quiz" },
-			{ text: "2 Checkout Próprio + 1% de taxa", soon: true },
+			{ text: "4 componentes de VSL" },
+			{ text: "6 Funis de Quiz + 12 mil leads" },
+			{ text: "Chat com IA" },
+			{ text: "Checkout Próprio + 1% de taxa", soon: true },
 			{ text: "5.000 emails por mês", soon: true },
 			{ text: "Testes A/B + Analytics" },
 			{ text: "5 Áreas de Membros", soon: true },
 			{ text: "Suporte 1h via WhatsApp + Email", soon: true },
 			{ text: "Domínio próprio", soon: true },
+			{ text: "Organização de equipes" },
 		],
 	},
 	{
 		name: "Plano Infinity",
 		description:
 			"Para quem já vende e quer escalar com automações, testes e páginas otimizadas com IA.",
-		price: 597,
+		price: 397,
 		popular: false,
 		features: [
-			{ text: "50.000 plays/mês no VSL" },
+			{ text: "60.000 plays/mês no VSL + R$ 0,02 por play extra" },
 			{ text: "+40 Gerações de Criativos (por semana)" },
-			{ text: "+40 Gerações de Página de Vendas (por semana)" },
-			{ text: "5 componentes de VSL" },
-			{ text: "10 Funis de Quiz" },
-			{ text: "20 Checkout Próprio + 0,5% de taxa", soon: true },
+			{ text: "6 componentes de VSL" },
+			{ text: "9 Funis de Quiz + 18 mil leads" },
+			{ text: "Chat com IA" },
+			{ text: "Checkout Próprio + 0,5% de taxa", soon: true },
 			{ text: "10.000 emails por mês", soon: true },
 			{ text: "Testes A/B + Analytics Avançado" },
 			{ text: "10 Áreas de Membros", soon: true },
 			{ text: "Suporte Prioritário 1h (WhatsApp + Discord)" },
-			{ text: "Domínio próprio + Integrações (ex.: Zapier)", soon: true },
+			{ text: "Domínio próprio + Integrações", soon: true },
+			{ text: "Organização de equipes" },
 		],
 	},
 ];
@@ -73,7 +74,7 @@ const plansData = [
 export default function SettingsPage() {
 	const session = authClient.useSession();
 	return (
-		<div className="space-y-8">
+		<div className="space-y-8 p-2">
 			<Tabs defaultValue="account" className="w-full">
 				<TabsList className="grid w-full grid-cols-2 max-w-sm bg-muted p-1 rounded-full h-auto">
 					<TabsTrigger

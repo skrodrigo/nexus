@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import {
 	RiBarChart2Fill,
+	RiCodeSSlashFill,
+	RiDeleteBinFill,
+	RiDownload2Fill,
+	RiEdit2Fill,
 	RiFolderAddFill,
 	RiFolderVideoFill,
 	RiLock2Fill,
+	RiMoreFill,
+	RiSearchFill,
 	RiSideBarFill,
 	RiSideBarLine,
 	RiTestTubeFill,
@@ -21,12 +28,29 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
+import { VideoUpload } from "./_components/video-upload";
 
 type Vsl = {
 	id: string;
 	title: string;
+	createdAt: string;
+	thumbnailUrl: string;
 };
 
 const navItems = [
@@ -36,10 +60,33 @@ const navItems = [
 	{ id: "domains", label: "Domínios permitidos", icon: RiLock2Fill },
 ];
 
+const vsls: Vsl[] = [
+	{
+		id: "1",
+		title: "Meu Primeiro VSL",
+		createdAt: new Date().toLocaleDateString(),
+		thumbnailUrl: "https://picsum.photos/seed/1/120/70",
+	},
+	{
+		id: "2",
+		title: "VSL de Lançamento",
+		createdAt: new Date().toLocaleDateString(),
+		thumbnailUrl: "https://picsum.photos/seed/2/120/70",
+	},
+];
+
 function VslPlayerPage() {
-	const vsls: Vsl[] = [];
 	const [isAsideOpen, setIsAsideOpen] = useState(true);
 	const [activeView, setActiveView] = useState("video");
+	const [searchTerm, setSearchTerm] = useState("");
+	const [filteredVsls, setFilteredVsls] = useState<Vsl[]>(vsls);
+
+	useEffect(() => {
+		const results = vsls.filter((vsl) =>
+			vsl.title.toLowerCase().includes(searchTerm.toLowerCase()),
+		);
+		setFilteredVsls(results);
+	}, [searchTerm]);
 
 	const renderEmptyState = () => (
 		<div className="flex flex-col items-center justify-center h-full gap-y-8 text-center">
@@ -62,11 +109,16 @@ function VslPlayerPage() {
 							<DialogTitle>Fazer Upload de VSL</DialogTitle>
 						</DialogHeader>
 						<div className="grid gap-4 py-4">
-							<div className="grid grid-cols-4 items-center gap-4">
-								<Label htmlFor="vsl-file" className="text-right">
-									Arquivo
-								</Label>
-								<Input id="vsl-file" type="file" className="col-span-3" />
+							<div className="grid w-full items-center gap-1.5">
+								<Label htmlFor="title-empty">Título</Label>
+								<Input
+									id="title-empty"
+									placeholder="Digite o título do seu vídeo"
+								/>
+							</div>
+							<div className="grid w-full items-center gap-1.5">
+								<Label>Vídeo</Label>
+								<VideoUpload />
 							</div>
 						</div>
 						<DialogFooter>
@@ -82,6 +134,119 @@ function VslPlayerPage() {
 		</div>
 	);
 
+	const renderVideos = () => (
+		<Card>
+			<CardHeader>
+				<div className="flex items-center justify-between gap-4">
+					<CardTitle>Meus Vídeos</CardTitle>
+					<div className="relative w-full max-w-md">
+						<RiSearchFill className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+						<Input
+							placeholder="Pesquisar por nome..."
+							className="pl-10"
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
+						/>
+					</div>
+					<div className="flex gap-x-2">
+						<Button variant="outline">
+							<RiFolderAddFill className="mr-2 size-5" />
+							Nova pasta
+						</Button>
+						<Dialog>
+							<DialogTrigger asChild>
+								<Button>
+									<RiUploadCloud2Fill className="mr-2 size-5" />
+									Fazer Upload
+								</Button>
+							</DialogTrigger>
+							<DialogContent className="sm:max-w-[425px]">
+								<DialogHeader>
+									<DialogTitle>Fazer Upload de VSL</DialogTitle>
+								</DialogHeader>
+								<div className="grid gap-4 py-4">
+									<div className="grid w-full items-center gap-1.5">
+										<Label htmlFor="title">Título</Label>
+										<Input
+											id="title"
+											placeholder="Digite o título do seu vídeo"
+										/>
+									</div>
+									<div className="grid w-full items-center gap-1.5">
+										<Label>Vídeo</Label>
+										<VideoUpload />
+									</div>
+								</div>
+								<DialogFooter>
+									<Button type="submit">Enviar</Button>
+								</DialogFooter>
+							</DialogContent>
+						</Dialog>
+					</div>
+				</div>
+			</CardHeader>
+			<CardContent>
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead className="w-[80px]"></TableHead>
+							<TableHead>Título</TableHead>
+							<TableHead>Data de Criação</TableHead>
+							<TableHead className="text-right">Ações</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						{filteredVsls.map((vsl) => (
+							<TableRow key={vsl.id}>
+								<TableCell>
+									<Image
+										src={vsl.thumbnailUrl}
+										alt={vsl.title}
+										width={120}
+										height={70}
+										className="rounded-md object-cover"
+									/>
+								</TableCell>
+								<TableCell className="font-medium">{vsl.title}</TableCell>
+								<TableCell>{vsl.createdAt}</TableCell>
+								<TableCell className="text-right">
+									<Button variant="ghost" size="icon">
+										<RiCodeSSlashFill className="size-5 text-primary" />
+									</Button>
+									<DropdownMenu>
+										<DropdownMenuTrigger asChild>
+											<Button variant="ghost" size="icon">
+												<RiMoreFill className="size-5" />
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent align="end">
+											<DropdownMenuItem>
+												<RiEdit2Fill className="mr-2 size-4" />
+												Editar
+											</DropdownMenuItem>
+											<DropdownMenuItem>
+												<RiBarChart2Fill className="mr-2 size-4" />
+												Analytics
+											</DropdownMenuItem>
+											<DropdownMenuItem>
+												<RiDownload2Fill className="mr-2 size-4" />
+												Download
+											</DropdownMenuItem>
+											<DropdownMenuItem>
+												<RiDeleteBinFill className="mr-2 size-4" />
+												Remover
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</CardContent>
+		</Card>
+	);
+
 	const renderMainContent = () => {
 		if (activeView === "video" && vsls.length === 0) {
 			return renderEmptyState();
@@ -89,17 +254,7 @@ function VslPlayerPage() {
 
 		switch (activeView) {
 			case "video":
-				return (
-					<Card>
-						<CardHeader>
-							<CardTitle>Configurações de Vídeo</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p>Ajustes de vídeo aqui.</p>
-						</CardContent>
-					</Card>
-				);
-			
+				return renderVideos();
 			case "ab":
 				return (
 					<Card>
@@ -133,7 +288,7 @@ function VslPlayerPage() {
 						</CardContent>
 					</Card>
 				);
-			
+
 			default:
 				return null;
 		}
@@ -181,7 +336,7 @@ function VslPlayerPage() {
 					})}
 				</nav>
 			</aside>
-			<main className="flex-1 flex flex-col max-h-full items-center justify-center p-4">
+			<main className="flex-1 flex flex-col max-h-full pt-12 px-4">
 				{renderMainContent()}
 			</main>
 		</div>

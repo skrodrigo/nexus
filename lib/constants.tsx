@@ -1,7 +1,6 @@
 import {
 	RiChatAiFill,
 	RiFileCopyFill,
-	RiFileTextFill,
 	RiFilterFill,
 	RiImageFill,
 	RiMailFill,
@@ -54,7 +53,7 @@ export const apps: App[] = [
 		icon: <RiUserStarFill className="size-5" />,
 		title: "Área de Membros",
 		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+			"Crie e gerencie cursos online, ofereça uma experiência de aprendizado exclusiva e controle o acesso dos seus alunos em um ambiente seguro e profissional.",
 		status: "new",
 		actions: [{ label: "Criar", href: "/dashboard/apps/members-area" }],
 	},
@@ -62,7 +61,7 @@ export const apps: App[] = [
 		icon: <RiChatAiFill className="size-5" />,
 		title: "Chat com AI",
 		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+			"Utilize um assistente de IA para brainstorming, criação de copys, planejamento de funis e otimização de suas estratégias de marketing.",
 		status: "new",
 		actions: [{ label: "Criar", href: "/dashboard/chat" }],
 	},
@@ -70,7 +69,7 @@ export const apps: App[] = [
 		icon: <RiFileCopyFill className="size-5" />,
 		title: "Clonador de Página",
 		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+			"Replique qualquer página da web em segundos. Capture a estrutura e o design para adaptar e lançar suas próprias versões rapidamente.",
 		status: "soon",
 		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
 	},
@@ -78,7 +77,7 @@ export const apps: App[] = [
 		icon: <RiFilterFill className="size-5" />,
 		title: "Minerador de Ofertas",
 		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+			"Descubra ofertas e produtos validados no mercado. Analise tendências e encontre oportunidades de alta conversão para se inspirar.",
 		status: "soon",
 		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
 	},
@@ -86,7 +85,7 @@ export const apps: App[] = [
 		icon: <RiMailFill className="size-5" />,
 		title: "Email Marketing",
 		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+			"Crie, automatize e gerencie campanhas de e-mail marketing para nutrir leads e aumentar o engajamento com sua audiência.",
 		status: "soon",
 		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
 	},
@@ -95,7 +94,7 @@ export const apps: App[] = [
 		icon: <RiShoppingCartFill className="size-5" />,
 		title: "Checkout Próprio",
 		description:
-			"Crie páginas de vendas profissionais com estrutura validada que aplica automaticamente estratégias de mercado comprovadas e de alta conversão.",
+			"Tenha um checkout de alta conversão, personalizável e seguro, integrado diretamente às suas ofertas e funis de venda.",
 		status: "soon",
 		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
 	},
