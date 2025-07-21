@@ -10,8 +10,9 @@ import {
 	RiTestTubeFill,
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { AllowedDomains } from "./_components/allowed-domains";
+import { AnalyticsPage } from "./_components/analytics-page";
 import { EmptyState } from "./_components/empty-state";
 import { VslEditor } from "./_components/vsl-editor";
 import { VslList } from "./_components/vsl-list";
@@ -127,16 +128,7 @@ function VslPlayerPage() {
 					</Card>
 				);
 			case "analytics":
-				return (
-					<Card>
-						<CardHeader>
-							<CardTitle>Analytics</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p>Veja os resultados dos testes A/B aqui.</p>
-						</CardContent>
-					</Card>
-				);
+				return <AnalyticsPage />;
 			case "domains":
 				return <AllowedDomains />;
 
