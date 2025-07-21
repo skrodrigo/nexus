@@ -12,7 +12,7 @@ Este documento detalha os requisitos funcionais e não funcionais do projeto Nex
 ### 2. Gerenciador de VSL (Video Sales Letter)
 - **Gerenciamento de Mídia:**
   - Upload de novos vídeos.
-  - Editar configurações de vídeo (título e descrição).
+  - Editar configurações de vídeo (título).
   - Organizar vídeos em pastas.
   - Excluir VSLs.
 - **Incorporação e Segurança:**
