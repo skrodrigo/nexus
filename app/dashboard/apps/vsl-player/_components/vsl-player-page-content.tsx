@@ -28,20 +28,20 @@ const allVsls = [
 		id: "1",
 		title: "VSL Lançamento Produto X",
 		createdAt: "2023-02-10",
-		thumbnailUrl: "/placeholder.svg",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
 		folderId: "2",
 	},
 	{
 		id: "2",
 		title: "VSL Evergreen",
 		createdAt: "2023-01-20",
-		thumbnailUrl: "/placeholder.svg",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
 	},
 	{
 		id: "3",
 		title: "VSL Campanha Páscoa",
 		createdAt: "2023-03-05",
-		thumbnailUrl: "/placeholder.svg",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
 		folderId: "1",
 	},
 ];
@@ -90,14 +90,12 @@ export default function VslPlayerPageContent() {
 	};
 
 	const handleFolderCreate = (name: string) => {
-		// Mock folder creation
 		const newFolder = {
 			id: Date.now().toString(),
 			name,
 			createdAt: new Date().toLocaleDateString(),
 		};
 		allFolders.push(newFolder);
-		// In a real app, you would likely refetch or update state from a server response
 	};
 
 	const currentFolder = allFolders.find((f) => f.id === currentFolderId);

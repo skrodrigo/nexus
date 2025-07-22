@@ -23,7 +23,7 @@ interface FolderItemProps {
 }
 
 export function FolderItem({ name, createdAt, onClick }: FolderItemProps) {
-	const searchParams = useSearchParams();
+	useSearchParams();
 	const handleActionClick = (e: React.MouseEvent) => {
 		e.stopPropagation();
 	};

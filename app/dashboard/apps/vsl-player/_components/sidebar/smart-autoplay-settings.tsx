@@ -1,4 +1,6 @@
+import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 export const SmartAutoplaySettings = () => {
 	return (
@@ -9,16 +11,57 @@ export const SmartAutoplaySettings = () => {
 			</div>
 			<div>
 				<label
-					htmlFor="autoplay-message"
+					htmlFor="buttonColor"
 					className="block text-sm font-medium text-muted-foreground"
 				>
-					Mensagem na tela
+					Cor do Texto
 				</label>
 				<input
-					id="autoplay-message"
-					type="text"
+					id="buttonColor"
+					type="color"
+					className="mt-1 w-10 h-10"
+					defaultValue="#2CFBCD"
+				/>
+			</div>
+			<div>
+				<label
+					htmlFor="buttonColor"
+					className="block text-sm font-medium text-muted-foreground"
+				>
+					Cor do Background
+				</label>
+				<input
+					id="buttonColor"
+					type="color"
+					className="mt-1 w-10 h-10"
+					defaultValue="#2CFBCD"
+				/>
+			</div>
+			<Button className="w-full">Alterar Smart Autoplay</Button>
+			<div>
+				<label
+					htmlFor="buttonColor"
+					className="block text-sm font-medium text-muted-foreground"
+				>
+					Texto Superior
+				</label>
+				<Textarea
+					id="buttonColor"
 					className="mt-1 w-full p-2 border rounded-md bg-transparent"
-					placeholder="Ex: O vídeo iniciará em instantes..."
+					defaultValue="Seu vídeo já começou!"
+				/>
+			</div>
+			<div>
+				<label
+					htmlFor="buttonColor"
+					className="block text-sm font-medium text-muted-foreground"
+				>
+					Texto Inferior
+				</label>
+				<Textarea
+					id="buttonColor"
+					className="mt-1 w-full p-2 border rounded-md bg-transparent"
+					defaultValue="Clique para ouvir"
 				/>
 			</div>
 		</div>

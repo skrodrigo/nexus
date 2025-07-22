@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from "react";
 import {
 	RiAnchorLine,
 	RiArrowLeftSLine,
-	RiBarChart2Line,
 	RiFocus3Line,
 	RiPaintBrushLine,
 	RiPlayCircleLine,
@@ -17,7 +16,6 @@ import {
 import { Button } from "@/components/ui/button";
 import {
 	ActionButtonsSettings,
-	HookSettings,
 	SmartAutoplaySettings,
 	SmartProgressSettings,
 	StyleSettings,
@@ -28,8 +26,6 @@ const editorNavItems = [
 	{ id: "style", label: "Player", icon: RiPaintBrushLine },
 	{ id: "thumb-sniper", label: "Thumbnail de Recuperação", icon: RiFocus3Line },
 	{ id: "smart-autoplay", label: "Smart Autoplay", icon: RiPlayCircleLine },
-	{ id: "analytics", label: "Analytics", icon: RiBarChart2Line },
-	{ id: "hook", label: "Gancho", icon: RiAnchorLine },
 	{
 		id: "smart-progress",
 		label: "Progresso Inteligente",
@@ -44,7 +40,6 @@ const settingsComponents: Record<string, ComponentType> = {
 	"smart-autoplay": SmartAutoplaySettings,
 	"action-buttons": ActionButtonsSettings,
 	"smart-progress": SmartProgressSettings,
-	hook: HookSettings,
 };
 
 function SettingsSection({
