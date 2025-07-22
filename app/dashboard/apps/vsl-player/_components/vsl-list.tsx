@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import {
 	RiArrowLeftLine,
 	RiCodeSSlashFill,
@@ -69,6 +72,7 @@ export function VslList({
 	onBackClick,
 	onFolderCreate,
 }: VslListProps) {
+	const searchParams = useSearchParams();
 	return (
 		<Card>
 			<CardHeader>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { RiCloseFill } from "react-icons/ri";
 
@@ -8,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 export function AllowedDomains() {
+	const searchParams = useSearchParams();
 	const [domains, setDomains] = useState<string[]>([
 		"example.com",
 		"mydomain.com",

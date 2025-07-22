@@ -1,8 +1,12 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import { RiFolderAddFill, RiUploadCloud2Fill } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { UploadVslDialog } from "./upload-vsl-dialog";
 
 export function EmptyState() {
+	const searchParams = useSearchParams();
 	return (
 		<div className="flex flex-col items-center justify-center h-full gap-y-8 text-center">
 			<div>

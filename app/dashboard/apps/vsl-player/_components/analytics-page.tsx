@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import {
 	Bar,
 	BarChart,
@@ -94,6 +95,7 @@ const deviceData = [
 ];
 
 export function AnalyticsPage() {
+	const searchParams = useSearchParams();
 	return (
 		<ScrollArea className="h-full">
 			<div className="space-y-4 pr-6">

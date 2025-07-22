@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import {
 	RiBarChart2Fill,
 	RiFolderVideoFill,
@@ -69,12 +70,46 @@ const vsls: Vsl[] = [
 ];
 
 function VslPlayerPage() {
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 	const [isAsideOpen, setIsAsideOpen] = useState(true);
-	const [activeView, setActiveView] = useState("video");
+	const [activeView, setActiveView] = useState(
+		searchParams.get("view") || "video",
+	);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [editingVsl, setEditingVsl] = useState<Vsl | null>(null);
 	const [folders, setFolders] = useState<Folder[]>(initialFolders);
-	const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+	const [currentFolderId, setCurrentFolderId] = useState<string | null>(
+		searchParams.get("folder"),
+	);
+
+	useEffect(() => {
+		setActiveView(searchParams.get("view") || "video");
+		setCurrentFolderId(searchParams.get("folder"));
+	}, [searchParams]);
+
+	const handleViewChange = useCallback(
+		(view: string) => {
+			const params = new URLSearchParams(searchParams.toString());
+			params.set("view", view);
+			router.push(`${pathname}?${params.toString()}`);
+		},
+		[pathname, router, searchParams],
+	);
+
+	const handleFolderClick = useCallback(
+		(folderId: string | null) => {
+			const params = new URLSearchParams(searchParams.toString());
+			if (folderId) {
+				params.set("folder", folderId);
+			} else {
+				params.delete("folder");
+			}
+			router.push(`${pathname}?${params.toString()}`);
+		},
+		[pathname, router, searchParams],
+	);
 
 	const handleCreateFolder = (name: string) => {
 		const newFolder: Folder = {
@@ -113,9 +148,9 @@ function VslPlayerPage() {
 						searchTerm={searchTerm}
 						onSearchTermChange={setSearchTerm}
 						onEdit={setEditingVsl}
-						onFolderClick={setCurrentFolderId}
+						onFolderClick={handleFolderClick}
 						currentFolder={currentFolder}
-						onBackClick={() => setCurrentFolderId(null)}
+						onBackClick={() => handleFolderClick(null)}
 						onFolderCreate={handleCreateFolder}
 					/>
 				);
@@ -167,7 +202,7 @@ function VslPlayerPage() {
 									isAsideOpen && activeView === item.id ? "secondary" : "ghost"
 								}
 								className={`w-full ${isAsideOpen ? "justify-start" : "justify-center items-center"} ${!isAsideOpen ? "bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent" : ""}`}
-								onClick={() => setActiveView(item.id)}
+								onClick={() => handleViewChange(item.id)}
 								size={isAsideOpen ? "default" : "icon"}
 							>
 								<span

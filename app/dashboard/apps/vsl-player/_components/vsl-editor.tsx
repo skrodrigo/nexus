@@ -1,39 +1,85 @@
 "use client";
 
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import type { ComponentType } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	RiAnchorLine,
 	RiArrowLeftSLine,
-	RiBarChart2Fill,
-	RiFileTextLine,
+	RiBarChart2Line,
 	RiFocus3Line,
 	RiPaintBrushLine,
-	RiPhoneLine,
 	RiPlayCircleLine,
 	RiRecordCircleLine,
+	RiSpeedUpLine,
 } from "react-icons/ri";
-import { Button } from "@/components/ui/button";
 
-type Vsl = {
-	id: string;
-	title: string;
-	thumbnailUrl: string;
-};
+import { Button } from "@/components/ui/button";
+import {
+	ActionButtonsSettings,
+	HookSettings,
+	SmartAutoplaySettings,
+	SmartProgressSettings,
+	StyleSettings,
+	ThumbSniperSettings,
+} from "./sidebar";
 
 const editorNavItems = [
-	{ id: "style", label: "Estilo", icon: RiPaintBrushLine },
-	{ id: "thumb-sniper", label: "ThumbSniper", icon: RiFocus3Line },
+	{ id: "style", label: "Player", icon: RiPaintBrushLine },
+	{ id: "thumb-sniper", label: "Thumbnail de Recuperação", icon: RiFocus3Line },
 	{ id: "smart-autoplay", label: "Smart Autoplay", icon: RiPlayCircleLine },
+	{ id: "analytics", label: "Analytics", icon: RiBarChart2Line },
 	{ id: "hook", label: "Gancho", icon: RiAnchorLine },
-	{ id: "mini-hooks", label: "Mini-Ganchos", icon: RiPhoneLine },
 	{
 		id: "smart-progress",
 		label: "Progresso Inteligente",
-		icon: RiFileTextLine,
+		icon: RiSpeedUpLine,
 	},
 	{ id: "action-buttons", label: "Botões de Ação", icon: RiRecordCircleLine },
-	{ id: "analytics", label: "Analytics", icon: RiBarChart2Fill },
 ];
+
+const settingsComponents: Record<string, ComponentType> = {
+	style: StyleSettings,
+	"thumb-sniper": ThumbSniperSettings,
+	"smart-autoplay": SmartAutoplaySettings,
+	"action-buttons": ActionButtonsSettings,
+	"smart-progress": SmartProgressSettings,
+	hook: HookSettings,
+};
+
+function SettingsSection({
+	onBack,
+	children,
+	title,
+}: {
+	title: string;
+	onBack: () => void;
+	children: React.ReactNode;
+}) {
+	return (
+		<div className="flex flex-col h-full">
+			<div className="p-2 flex flex-col gap-y-4">
+				<Button
+					variant="ghost"
+					className="justify-start gap-2 hover:text-foreground/80 hover:bg-transparent dark:hover:bg-transparent"
+					onClick={onBack}
+				>
+					<RiArrowLeftSLine className="size-5" />
+					<span className="uppercase">{title}</span>
+				</Button>
+			</div>
+			<div className="p-4 flex-1 overflow-y-auto -mt-8">{children}</div>
+		</div>
+	);
+}
+
+interface Vsl {
+	id: string;
+	title: string;
+	createdAt: string;
+	thumbnailUrl: string;
+	folderId?: string;
+}
 
 interface VslEditorProps {
 	vsl: Vsl;
@@ -41,11 +87,50 @@ interface VslEditorProps {
 }
 
 export function VslEditor({ vsl, onBack }: VslEditorProps) {
-	const [activeSection, setActiveSection] = useState("style");
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
+	const [activeSection, setActiveSection] = useState<string | null>(
+		searchParams.get("section"),
+	);
 
-	return (
-		<div className="flex h-full bg-background w-full max-h-screen ">
-			<aside className="w-72 sticky max-h-screen overflow-y-auto border-r border-border flex flex-col gap-y-4 p-4">
+	useEffect(() => {
+		setActiveSection(searchParams.get("section"));
+	}, [searchParams]);
+
+	const handleSectionChange = useCallback(
+		(sectionId: string | null) => {
+			const params = new URLSearchParams(searchParams.toString());
+			if (sectionId) {
+				params.set("section", sectionId);
+			} else {
+				params.delete("section");
+			}
+			router.push(`${pathname}?${params.toString()}`);
+		},
+		[pathname, router, searchParams],
+	);
+
+	const renderSidebarContent = () => {
+		const selectedItem = editorNavItems.find(
+			(item) => item.id === activeSection,
+		);
+
+		if (selectedItem) {
+			const SettingsComponent = settingsComponents[selectedItem.id];
+
+			return (
+				<SettingsSection
+					title={selectedItem.label}
+					onBack={() => handleSectionChange(null)}
+				>
+					{SettingsComponent ? <SettingsComponent /> : null}
+				</SettingsSection>
+			);
+		}
+
+		return (
+			<div className="p-2 flex flex-col gap-y-4">
 				<Button
 					variant="ghost"
 					className="justify-start gap-2 hover:text-foreground/80 hover:bg-transparent dark:hover:bg-transparent"
@@ -60,18 +145,24 @@ export function VslEditor({ vsl, onBack }: VslEditorProps) {
 						return (
 							<Button
 								key={item.id}
-								variant={activeSection === item.id ? "secondary" : "ghost"}
-								className="w-full justify-start h-12"
-								onClick={() => setActiveSection(item.id)}
+								variant="ghost"
+								className="w-full justify-start h-10 "
+								onClick={() => handleSectionChange(item.id)}
 							>
-								<Icon
-									className={`mr-3 size-5 ${activeSection === item.id ? "text-primary" : ""}`}
-								/>
+								<Icon className="mr-3 size-5 text-primary" />
 								{item.label}
 							</Button>
 						);
 					})}
 				</nav>
+			</div>
+		);
+	};
+
+	return (
+		<div className="flex h-full bg-background w-full max-h-screen ">
+			<aside className="w-72 sticky max-h-screen border-r border-border flex flex-col">
+				{renderSidebarContent()}
 			</aside>
 			<main className="flex-1 p-8">
 				<div className="w-full aspect-video bg-muted rounded-lg flex items-center justify-center max-h-screen overflow-y-auto">
