@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
 	RiArrowRightLine,
 	RiMenuFill,
@@ -16,8 +19,14 @@ import {
 } from "@/components/ui/drawer";
 import { getUserSession } from "@/server/user";
 
-export default async function Header() {
-	const session = await getUserSession();
+type Session = Awaited<ReturnType<typeof getUserSession>>;
+
+export default function Header() {
+	const [session, setSession] = useState<Session | null>(null);
+
+	useEffect(() => {
+		getUserSession().then(setSession);
+	}, []);
 
 	return (
 		<div className="flex items-center justify-between py-6">
@@ -48,7 +57,7 @@ export default async function Header() {
 				</ul>
 			</div>
 			<div className="hidden items-center justify-center gap-2 md:flex">
-				{session.success ? (
+				{session?.success ? (
 					<>
 						<Link href="/suport" className="group">
 							<Button variant="outline">
@@ -110,19 +119,19 @@ export default async function Header() {
 								</a>
 							</li>
 						</ul>
-						<DrawerFooter className="flex-row gap-2 pt-4">
-							{session.success ? (
+						<DrawerFooter className="flex-row gap-2">
+							{session?.success ? (
 								<>
-									<Link href="/suport" className="w-full group">
-										<Button variant="outline" className="w-full">
+									<Link href="/suport" className="group">
+										<Button variant="outline">
 											<span className="group-hover:mr-1 transition-all">
 												Falar com Suporte
 											</span>
 											<RiUserSettingsFill className="size-4 ml-2" />
 										</Button>
 									</Link>
-									<Link href="/dashboard/apps" className="w-full group">
-										<Button className="w-full">
+									<Link href="/dashboard/apps" className="group">
+										<Button>
 											<span className="group-hover:mr-1 transition-all">
 												Dashboard
 											</span>
@@ -132,13 +141,11 @@ export default async function Header() {
 								</>
 							) : (
 								<>
-									<Link href="/register" className="w-full">
-										<Button variant="outline" className="w-full">
-											Registrar
-										</Button>
+									<Link href="/register">
+										<Button variant="outline">Registrar</Button>
 									</Link>
-									<Link href="/login" className="w-full">
-										<Button className="w-full">Login</Button>
+									<Link href="/login">
+										<Button>Login</Button>
 									</Link>
 								</>
 							)}

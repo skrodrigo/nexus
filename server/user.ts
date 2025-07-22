@@ -57,7 +57,7 @@ export const getUserSession = async () => {
 		});
 
 		if (!session?.user?.id) {
-			redirect("/login");
+			return { success: false, error: "User not authenticated." };
 		}
 
 		const currentUser = await prisma.user.findFirst({
@@ -67,7 +67,7 @@ export const getUserSession = async () => {
 		});
 
 		if (!currentUser) {
-			redirect("/login");
+			return { success: false, error: "User not found." };
 		}
 
 		return {
@@ -76,12 +76,12 @@ export const getUserSession = async () => {
 				...session,
 				user: currentUser,
 			},
-			message: "Sessão do usuário obtida com sucesso.",
+			message: "User session retrieved successfully.",
 		};
 	} catch (_error) {
 		return {
 			success: false,
-			error: "Ocorreu um erro ao obter a sessão do usuário.",
+			error: "An error occurred while retrieving the user session.",
 		};
 	}
 };

@@ -69,7 +69,7 @@ function CodeBox({
 }
 
 export function CodeDialog({ vslId, children }: CodeDialogProps) {
-	const searchParams = useSearchParams();
+	useSearchParams();
 	const [isCopied, setIsCopied] = useState(false);
 	const [copySource, setCopySource] = useState<CopySource | null>(null);
 	const [activeTab, setActiveTab] = useState<string | null>(null);

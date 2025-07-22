@@ -95,7 +95,7 @@ const deviceData = [
 ];
 
 export function AnalyticsPage() {
-	const searchParams = useSearchParams();
+	useSearchParams();
 	return (
 		<ScrollArea className="h-full">
 			<div className="space-y-4 pr-6">

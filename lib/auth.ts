@@ -7,7 +7,7 @@ import Stripe from "stripe";
 import prisma from "@/lib/prisma";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-	apiVersion: "2025-03-31.basil",
+	apiVersion: "2025-06-30.basil",
 });
 
 export const auth = betterAuth({

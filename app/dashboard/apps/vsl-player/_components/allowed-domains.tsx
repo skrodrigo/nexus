@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 export function AllowedDomains() {
-	const searchParams = useSearchParams();
+	useSearchParams();
 	const [domains, setDomains] = useState<string[]>([
 		"example.com",
 		"mydomain.com",

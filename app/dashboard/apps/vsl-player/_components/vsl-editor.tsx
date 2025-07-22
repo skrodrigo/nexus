@@ -83,10 +83,9 @@ interface Vsl {
 
 interface VslEditorProps {
 	vsl: Vsl;
-	onBack: () => void;
 }
 
-export function VslEditor({ vsl, onBack }: VslEditorProps) {
+export function VslEditor({ vsl }: VslEditorProps) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -134,10 +133,10 @@ export function VslEditor({ vsl, onBack }: VslEditorProps) {
 				<Button
 					variant="ghost"
 					className="justify-start gap-2 hover:text-foreground/80 hover:bg-transparent dark:hover:bg-transparent"
-					onClick={onBack}
+					onClick={() => router.push(pathname)}
 				>
 					<RiArrowLeftSLine className="size-5" />
-					VOLTAR PARA OS VÍDEOS
+					{vsl.title}
 				</Button>
 				<nav className="flex flex-col gap-y-1">
 					{editorNavItems.map((item) => {

@@ -72,7 +72,7 @@ export function VslList({
 	onBackClick,
 	onFolderCreate,
 }: VslListProps) {
-	const searchParams = useSearchParams();
+	useSearchParams();
 	return (
 		<Card>
 			<CardHeader>
