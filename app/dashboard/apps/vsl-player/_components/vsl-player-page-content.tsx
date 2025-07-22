@@ -5,19 +5,18 @@ import { useCallback, useEffect, useState } from "react";
 import {
 	RiBarChart2Fill,
 	RiFolderVideoFill,
+	RiLockUnlockFill,
 	RiSideBarFill,
 	RiSideBarLine,
 	RiTestTubeFill,
 } from "react-icons/ri";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { AllowedDomains } from "./allowed-domains";
 import { AnalyticsPage } from "./analytics-page";
 import { VslEditor } from "./vsl-editor";
 import { VslList } from "./vsl-list";
 
-// Mock data - replace with actual data fetching
 const allFolders = [
 	{ id: "1", name: "Campanhas Antigas", createdAt: "2023-01-15" },
 	{ id: "2", name: "Novos Lançamentos", createdAt: "2023-03-20" },
@@ -52,7 +51,7 @@ const navigationItems = [
 	{ id: "video", label: "Vídeos", icon: RiFolderVideoFill },
 	{ id: "ab-tests", label: "Testes A/B", icon: RiTestTubeFill },
 	{ id: "analytics", label: "Analytics", icon: RiBarChart2Fill },
-	{ id: "domains", label: "Domínios permitidos", icon: RiTestTubeFill },
+	{ id: "domains", label: "Domínios permitidos", icon: RiLockUnlockFill },
 ];
 
 export default function VslPlayerPageContent() {
@@ -149,37 +148,45 @@ export default function VslPlayerPageContent() {
 	return (
 		<div className="flex h-full bg-background w-full">
 			<aside
-				className={`relative h-full border-r border-border flex flex-col gap-y-4 transition-all duration-200 ${isAsideOpen ? "w-72 p-4" : "w-20 p-2"}`}
+				className={`relative h-full border-r border-border flex flex-col gap-y-4 transition-all duration-200 ${
+					isAsideOpen ? "w-72 p-2" : "w-14 p-2 items-center"
+				}`}
 			>
-				<Button
-					variant="ghost"
-					size="icon"
-					className="absolute -right-3 top-8 z-10 rounded-full border border-border bg-background text-muted-foreground"
-					onClick={() => setIsAsideOpen(!isAsideOpen)}
+				<div
+					className={`flex items-center justify-end absolute transition-all duration-200 ${
+						isAsideOpen ? "top-[5px] left-[292px]" : " top-[5px] left-[62px]"
+					} `}
 				>
-					{isAsideOpen ? <RiSideBarLine /> : <RiSideBarFill />}
-				</Button>
-				<div className={`font-bold text-lg ${!isAsideOpen && "hidden"}`}>
-					VSL Player
+					<Button variant="ghost" onClick={() => setIsAsideOpen(!isAsideOpen)}>
+						{isAsideOpen ? <RiSideBarLine /> : <RiSideBarFill />}
+					</Button>
 				</div>
+
 				<nav className="flex flex-col gap-y-1">
 					{navigationItems.map((item) => (
 						<Button
 							key={item.id}
-							variant={activeView === item.id ? "secondary" : "ghost"}
-							className={`flex items-center gap-x-4 ${isAsideOpen ? "justify-start" : "justify-center"}`}
-							onClick={() => handleViewChange(item.id)}
+							variant={
+								isAsideOpen && activeView === item.id ? "secondary" : "ghost"
+							}
+							className={`w-full ${isAsideOpen ? "justify-start" : "justify-center items-center"} ${!isAsideOpen ? "bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent" : ""}`}
+							onClick={() => setActiveView(item.id)}
+							size={isAsideOpen ? "default" : "icon"}
 						>
-							<item.icon className="size-5" />
-							<span className={`${!isAsideOpen && "hidden"}`}>
-								{item.label}
+							<span
+								className={`p-1 rounded-xl  ${activeView === item.id ? "text-primary" : "text-muted-foreground"}`}
+							>
+								<item.icon className="size-6" />
+							</span>
+							<span className={isAsideOpen ? "ml-4" : ""}>
+								{isAsideOpen && item.label}
 							</span>
 						</Button>
 					))}
 				</nav>
 			</aside>
 			<main className="flex-1 p-6">
-				<Card className="h-full w-full">{renderContent()}</Card>
+				<div className="h-full w-full mt-6">{renderContent()}</div>
 			</main>
 		</div>
 	);
