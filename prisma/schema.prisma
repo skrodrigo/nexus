@@ -96,10 +96,16 @@ model Member {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   userId         String
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role           String
+  role           Role
   createdAt      DateTime
 
   @@map("member")
+}
+
+enum Role {
+  owner
+  admin
+  member
 }
 
 model Invitation {
@@ -107,7 +113,7 @@ model Invitation {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   email          String
-  role           String?
+  role           Role?
   status         String
   expiresAt      DateTime
   inviterId      String

@@ -4,7 +4,9 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
 import Stripe from "stripe";
+import { ac, admin, member, owner } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
+import { getActiveOrganization } from "@/server/organizations";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 	apiVersion: "2025-06-30.basil",
@@ -13,7 +15,14 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 export const auth = betterAuth({
 	plugins: [
 		nextCookies(),
-		organization(),
+		organization({
+			ac,
+			roles: {
+				owner,
+				admin,
+				member,
+			},
+		}),
 		stripe({
 			stripeClient,
 			stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET as string,
@@ -55,6 +64,22 @@ export const auth = betterAuth({
 		google: {
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+		},
+	},
+
+	databaseHooks: {
+		session: {
+			create: {
+				before: async (session) => {
+					const organization = await getActiveOrganization(session.userId);
+					return {
+						data: {
+							...session,
+							activeOrganizationId: organization?.id,
+						},
+					};
+				},
+			},
 		},
 	},
 

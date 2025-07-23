@@ -8,7 +8,7 @@ import { auth } from "@/lib/auth";
 
 import prisma from "@/lib/prisma";
 
-import type { userSchema } from "@/server/user-schema";
+import type { userSchema } from "@/server/schemas/user-schema";
 
 export const getUserById = async (id: string) => {
 	try {
@@ -28,6 +28,31 @@ export const getUserById = async (id: string) => {
 	} catch (_error) {
 		return { success: false, error: "Ocorreu um erro ao buscar o usuário." };
 	}
+};
+
+export const getCurrentUser = async () => {
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (!session) {
+		redirect("/login");
+	}
+
+	const currentUser = await prisma.user.findFirst({
+		where: {
+			id: session.user.id,
+		},
+	});
+
+	if (!currentUser) {
+		redirect("/login");
+	}
+
+	return {
+		...session,
+		currentUser,
+	};
 };
 
 export const getUserByEmail = async (email: string) => {
