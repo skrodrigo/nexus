@@ -4,7 +4,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ComponentType } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
-	RiAnchorLine,
 	RiArrowLeftSLine,
 	RiFocus3Line,
 	RiPaintBrushLine,

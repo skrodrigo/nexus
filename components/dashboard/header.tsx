@@ -5,7 +5,6 @@ import TeamSwitcher from "@/components/dashboard/team-switcher";
 
 const titleMap: { [key: string]: string } = {
 	"/dashboard/apps": "Apps",
-	"/dashboard/files": "Arquivos",
 	"/dashboard/chat": "Chat",
 	"/dashboard/settings": "Configurações",
 	"/dashboard/apps/creative-generator": "Gerador de Criativos",

@@ -34,27 +34,27 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+// import {
+// 	Select,
+// 	SelectContent,
+// 	SelectItem,
+// 	SelectTrigger,
+// 	SelectValue,
+// } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 const groups = [
 	{
-		label: "Personal Account",
+		label: "Contas",
 		teams: [
 			{
 				label: "Rodrigo",
-				value: "personal",
+				value: "pessoal",
 			},
 		],
 	},
 	{
-		label: "Teams",
+		label: "Times",
 		teams: [
 			{
 				label: "Nexus",
@@ -108,8 +108,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 				<PopoverContent className="w-[200px] p-0">
 					<Command>
 						<CommandList>
-							<CommandInput placeholder="Search team..." />
-							<CommandEmpty>No team found.</CommandEmpty>
+							<CommandInput placeholder="Procurar time..." />
+							<CommandEmpty>Nenhum time encontrado.</CommandEmpty>
 							{groups.map((group) => (
 								<CommandGroup key={group.label} heading={group.label}>
 									{group.teams.map((team) => (
@@ -154,7 +154,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 										}}
 									>
 										<RiAddCircleFill className="mr-2 h-5 w-5" />
-										Create Team
+										Novo time
 									</CommandItem>
 								</DialogTrigger>
 							</CommandGroup>
@@ -164,18 +164,18 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 			</Popover>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Create team</DialogTitle>
+					<DialogTitle>Novo time</DialogTitle>
 					<DialogDescription>
-						Add a new team to manage products and customers.
+						Adicione um novo time para gerenciar produtos e clientes.
 					</DialogDescription>
 				</DialogHeader>
 				<div>
 					<div className="space-y-4 py-2 pb-4">
 						<div className="space-y-2">
-							<Label htmlFor="name">Team name</Label>
+							<Label htmlFor="name">Nome do time</Label>
 							<Input id="name" placeholder="Acme Inc." />
 						</div>
-						<div className="space-y-2">
+						{/* <div className="space-y-2">
 							<Label htmlFor="plan">Subscription plan</Label>
 							<Select>
 								<SelectTrigger>
@@ -196,14 +196,14 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 									</SelectItem>
 								</SelectContent>
 							</Select>
-						</div>
+						</div> */}
 					</div>
 				</div>
 				<DialogFooter>
 					<Button variant="outline" onClick={() => setShowNewTeamDialog(false)}>
-						Cancel
+						Cancelar
 					</Button>
-					<Button type="submit">Continue</Button>
+					<Button type="submit">Continuar</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

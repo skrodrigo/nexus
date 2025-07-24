@@ -124,7 +124,7 @@ export default function ChatPage() {
 							<Button
 								size="icon"
 								variant="outline"
-								className="bg-primary/20 text-primary hover:bg-primary/30 rounded-full"
+								className="bg-primary/20 text-primary hover:text-primary hover:bg-primary/90 rounded-full"
 							>
 								<RiSendPlaneFill className="size-5" />
 							</Button>

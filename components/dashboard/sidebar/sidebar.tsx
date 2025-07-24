@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
 	RiAppsFill,
-	RiArchiveFill,
 	RiChatAiFill,
 	RiMagicFill,
 	RiMenuLine,
@@ -29,7 +28,6 @@ const NavContent = () => {
 	const routes = [
 		{ href: "/dashboard/apps", label: "Apps", icon: RiAppsFill },
 		{ href: "/dashboard/chat", label: "Chat com IA", icon: RiChatAiFill },
-		{ href: "/dashboard/archive", label: "Arquivos", icon: RiArchiveFill },
 		{
 			href: "/dashboard/settings",
 			label: "Configurações",
@@ -70,7 +68,6 @@ const MobileNavContent = () => {
 	const routes = [
 		{ href: "/dashboard/apps", label: "Apps", icon: RiAppsFill },
 		{ href: "/dashboard/chat", label: "Chat com IA", icon: RiChatAiFill },
-		{ href: "/dashboard/archive", label: "Arquivos", icon: RiArchiveFill },
 		{
 			href: "/dashboard/settings",
 			label: "Configurações",

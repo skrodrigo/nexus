@@ -17,14 +17,7 @@ export const apps: App[] = [
 		description:
 			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
 		status: "new",
-		actions: [
-			{
-				label: "Arquivos",
-				href: "/dashboard/archive",
-				variant: "secondary",
-			},
-			{ label: "Acessar", href: "/dashboard/apps/creative-generator" },
-		],
+		actions: [{ label: "Acessar", href: "/dashboard/apps/creative-generator" }],
 	},
 	{
 		icon: <RiPlayFill className="size-5" />,
@@ -59,6 +52,14 @@ export const apps: App[] = [
 		actions: [{ label: "Acessar", href: "/dashboard/chat" }],
 	},
 	{
+		icon: <RiShoppingCartFill className="size-5" />,
+		title: "Checkout Próprio",
+		description:
+			"Tenha um checkout de alta conversão, personalizável e seguro, integrado diretamente às suas ofertas e funis de venda.",
+		status: "new",
+		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
+	},
+	{
 		icon: <RiFileCopyFill className="size-5" />,
 		title: "Clonador de Página",
 		description:
@@ -79,15 +80,6 @@ export const apps: App[] = [
 		title: "Email Marketing",
 		description:
 			"Crie, automatize e gerencie campanhas de e-mail marketing para nutrir leads e aumentar o engajamento com sua audiência.",
-		status: "soon",
-		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
-	},
-
-	{
-		icon: <RiShoppingCartFill className="size-5" />,
-		title: "Checkout Próprio",
-		description:
-			"Tenha um checkout de alta conversão, personalizável e seguro, integrado diretamente às suas ofertas e funis de venda.",
 		status: "soon",
 		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
 	},
