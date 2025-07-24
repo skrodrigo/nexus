@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import {
 	RiDeleteBinFill,
 	RiEdit2Fill,
@@ -23,7 +22,6 @@ interface FolderItemProps {
 }
 
 export function FolderItem({ name, createdAt, onClick }: FolderItemProps) {
-	useSearchParams();
 	const handleActionClick = (e: React.MouseEvent) => {
 		e.stopPropagation();
 	};

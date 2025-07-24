@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import {
 	RiCheckFill,
@@ -69,7 +68,6 @@ function CodeBox({
 }
 
 export function CodeDialog({ vslId, children }: CodeDialogProps) {
-	useSearchParams();
 	const [isCopied, setIsCopied] = useState(false);
 	const [copySource, setCopySource] = useState<CopySource | null>(null);
 	const [activeTab, setActiveTab] = useState<string | null>(null);

@@ -2,7 +2,7 @@
 
 import { Command as CommandPrimitive } from "cmdk";
 import type * as React from "react";
-import { RiSearchFill } from "react-icons/ri";
+import { RiSearchLine } from "react-icons/ri";
 import {
 	Dialog,
 	DialogContent,
@@ -68,7 +68,7 @@ function CommandInput({
 			data-slot="command-input-wrapper"
 			className="flex h-9 items-center gap-2 border-b px-3"
 		>
-			<RiSearchFill className="size-4 shrink-0 opacity-50" />
+			<RiSearchLine className="size-4 shrink-0 opacity-50" />
 			<CommandPrimitive.Input
 				data-slot="command-input"
 				className={cn(

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Poppins } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 
@@ -28,13 +29,15 @@ export default function RootLayout({ children }: RootLayoutProps) {
 				<meta name="apple-mobile-web-app-title" content="Nexus" />
 			</head>
 			<body className={cn(poppins.className, "antialiased")}>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="dark"
-					disableTransitionOnChange
-				>
-					{children}
-				</ThemeProvider>
+				<NuqsAdapter>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="dark"
+						disableTransitionOnChange
+					>
+						{children}
+					</ThemeProvider>
+				</NuqsAdapter>
 			</body>
 		</html>
 	);

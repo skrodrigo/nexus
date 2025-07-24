@@ -1,14 +1,13 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { parseAsString, useQueryState } from "nuqs";
+import { useCallback, useState } from "react";
 import {
 	RiBarChart2Fill,
 	RiFolderVideoFill,
 	RiLockUnlockFill,
 	RiSideBarFill,
 	RiSideBarLine,
-	RiTestTubeFill,
 } from "react-icons/ri";
 
 import { Button } from "@/components/ui/button";
@@ -49,44 +48,44 @@ type Vsl = (typeof allVsls)[0];
 
 const navigationItems = [
 	{ id: "video", label: "Vídeos", icon: RiFolderVideoFill },
-	{ id: "ab-tests", label: "Testes A/B", icon: RiTestTubeFill },
 	{ id: "analytics", label: "Analytics", icon: RiBarChart2Fill },
 	{ id: "domains", label: "Domínios permitidos", icon: RiLockUnlockFill },
 ];
 
 export default function VslPlayerPageContent() {
-	const router = useRouter();
-	const pathname = usePathname();
-	const searchParams = useSearchParams();
-
 	const [isAsideOpen, setIsAsideOpen] = useState(true);
-	const [activeView, setActiveView] = useState(
-		searchParams.get("view") || "video",
+
+	const [activeView, setActiveView] = useQueryState(
+		"view",
+		parseAsString.withDefault("video"),
 	);
-	const [editingVsl, setEditingVsl] = useState<Vsl | null>(null);
+	const [vslId, setVslId] = useQueryState("vsl", parseAsString);
+	const [sectionParam, setSectionParam] = useQueryState(
+		"section",
+		parseAsString,
+	);
+	const editingVsl = allVsls.find((v) => v.id === vslId) ?? null;
 	const [searchTerm, setSearchTerm] = useState("");
 	const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
 
-	useEffect(() => {
-		const view = searchParams.get("view");
-		if (view && view !== activeView) {
-			setActiveView(view);
-		}
-	}, [searchParams, activeView]);
-
-	const handleViewChange = useCallback(
+	const updateView = useCallback(
 		(view: string) => {
-			const params = new URLSearchParams(searchParams.toString());
-			params.set("view", view);
-			router.push(`${pathname}?${params.toString()}`);
 			setActiveView(view);
 		},
-		[pathname, router, searchParams],
+		[setActiveView],
 	);
 
 	const handleFolderClick = (folderId: string | null) => {
 		setCurrentFolderId(folderId);
 	};
+
+	const handleEdit = useCallback(
+		(vsl: Vsl) => {
+			setVslId(vsl.id);
+			if (!sectionParam) setSectionParam("style");
+		},
+		[setVslId, sectionParam, setSectionParam],
+	);
 
 	const handleFolderCreate = (name: string) => {
 		const newFolder = {
@@ -123,7 +122,7 @@ export default function VslPlayerPageContent() {
 						vsls={filteredVsls}
 						searchTerm={searchTerm}
 						onSearchTermChange={setSearchTerm}
-						onEdit={setEditingVsl}
+						onEdit={handleEdit}
 						onFolderClick={handleFolderClick}
 						currentFolder={currentFolder}
 						onBackClick={() => setCurrentFolderId(null)}
@@ -170,7 +169,7 @@ export default function VslPlayerPageContent() {
 								isAsideOpen && activeView === item.id ? "secondary" : "ghost"
 							}
 							className={`w-full ${isAsideOpen ? "justify-start" : "justify-center items-center"} ${!isAsideOpen ? "bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent" : ""}`}
-							onClick={() => setActiveView(item.id)}
+							onClick={() => updateView(item.id)}
 							size={isAsideOpen ? "default" : "icon"}
 						>
 							<span

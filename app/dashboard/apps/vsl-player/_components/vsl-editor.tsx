@@ -1,8 +1,8 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { parseAsString, useQueryState } from "nuqs";
 import type { ComponentType } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import {
 	RiArrowLeftSLine,
 	RiFocus3Line,
@@ -80,28 +80,17 @@ interface VslEditorProps {
 }
 
 export function VslEditor({ vsl }: VslEditorProps) {
-	const router = useRouter();
-	const pathname = usePathname();
-	const searchParams = useSearchParams();
-	const [activeSection, setActiveSection] = useState<string | null>(
-		searchParams.get("section"),
+	const [activeSection, setActiveSection] = useQueryState(
+		"section",
+		parseAsString,
 	);
-
-	useEffect(() => {
-		setActiveSection(searchParams.get("section"));
-	}, [searchParams]);
+	const [, setVslId] = useQueryState("vsl", parseAsString);
 
 	const handleSectionChange = useCallback(
 		(sectionId: string | null) => {
-			const params = new URLSearchParams(searchParams.toString());
-			if (sectionId) {
-				params.set("section", sectionId);
-			} else {
-				params.delete("section");
-			}
-			router.push(`${pathname}?${params.toString()}`);
+			setActiveSection(sectionId ?? null);
 		},
-		[pathname, router, searchParams],
+		[setActiveSection],
 	);
 
 	const renderSidebarContent = () => {
@@ -127,7 +116,10 @@ export function VslEditor({ vsl }: VslEditorProps) {
 				<Button
 					variant="ghost"
 					className="justify-start gap-2 hover:text-foreground/80 hover:bg-transparent dark:hover:bg-transparent"
-					onClick={() => router.push(pathname)}
+					onClick={() => {
+						setActiveSection(null);
+						setVslId(null);
+					}}
 				>
 					<RiArrowLeftSLine className="size-5" />
 					{vsl.title}

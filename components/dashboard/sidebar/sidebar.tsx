@@ -27,7 +27,7 @@ const NavContent = () => {
 	const pathname = usePathname();
 	const routes = [
 		{ href: "/dashboard/apps", label: "Apps", icon: RiAppsFill },
-		{ href: "/dashboard/chat", label: "Chat com IA", icon: RiChatAiFill },
+		{ href: "/dashboard/apps/chat", label: "Chat com IA", icon: RiChatAiFill },
 		{
 			href: "/dashboard/settings",
 			label: "Configurações",

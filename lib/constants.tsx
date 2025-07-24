@@ -12,14 +12,6 @@ import type { App } from "./types";
 
 export const apps: App[] = [
 	{
-		icon: <RiImageFill className="size-5" />,
-		title: "Gerador de Criativos",
-		description:
-			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
-		status: "new",
-		actions: [{ label: "Acessar", href: "/dashboard/apps/creative-generator" }],
-	},
-	{
 		icon: <RiPlayFill className="size-5" />,
 		title: "VSL Player",
 		description:
@@ -44,20 +36,28 @@ export const apps: App[] = [
 		actions: [{ label: "Acessar", href: "/dashboard/apps/members-area" }],
 	},
 	{
-		icon: <RiChatAiFill className="size-5" />,
-		title: "Chat com AI",
-		description:
-			"Utilize um assistente de IA para brainstorming, criação de copys, planejamento de funis e otimização de suas estratégias de marketing.",
-		status: "new",
-		actions: [{ label: "Acessar", href: "/dashboard/chat" }],
-	},
-	{
 		icon: <RiShoppingCartFill className="size-5" />,
 		title: "Checkout Próprio",
 		description:
 			"Tenha um checkout de alta conversão, personalizável e seguro, integrado diretamente às suas ofertas e funis de venda.",
 		status: "new",
 		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
+	},
+	{
+		icon: <RiChatAiFill className="size-5" />,
+		title: "Chat com AI",
+		description:
+			"Utilize um assistente de IA para brainstorming, criação de copys, planejamento de funis e otimização de suas estratégias de marketing.",
+		status: "new",
+		actions: [{ label: "Acessar", href: "/dashboard/apps/chat" }],
+	},
+	{
+		icon: <RiImageFill className="size-5" />,
+		title: "Gerador de Criativos",
+		description:
+			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
+		status: "new",
+		actions: [{ label: "Acessar", href: "/dashboard/apps/creative-generator" }],
 	},
 	{
 		icon: <RiFileCopyFill className="size-5" />,

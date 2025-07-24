@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import {
 	RiArrowLeftLine,
 	RiCodeSSlashFill,
@@ -10,7 +9,7 @@ import {
 	RiEdit2Fill,
 	RiFolderAddFill,
 	RiMoreFill,
-	RiSearchFill,
+	RiSearchLine,
 	RiUploadCloud2Fill,
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
@@ -72,7 +71,6 @@ export function VslList({
 	onBackClick,
 	onFolderCreate,
 }: VslListProps) {
-	useSearchParams();
 	return (
 		<Card className="">
 			<CardHeader>
@@ -93,7 +91,7 @@ export function VslList({
 						<CardTitle>Meus Vídeos</CardTitle>
 					)}
 					<div className="relative w-full max-w-md">
-						<RiSearchFill className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+						<RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
 						<Input
 							placeholder="Pesquisar por nome..."
 							className="pl-10"
