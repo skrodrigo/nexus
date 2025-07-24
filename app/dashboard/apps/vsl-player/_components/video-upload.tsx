@@ -1,6 +1,11 @@
 "use client";
 
-import { AlertCircleIcon, FileUpIcon, VideoIcon, XIcon } from "lucide-react";
+import {
+	RiCloseFill,
+	RiErrorWarningFill,
+	RiFileUploadFill,
+	RiVideoFill,
+} from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import {
 	type FileWithPreview,
@@ -60,7 +65,7 @@ export function VideoUpload({ onFilesChange, disabled }: VideoUploadProps) {
 						className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
 						aria-hidden="true"
 					>
-						<FileUpIcon className="size-4 opacity-60" />
+						<RiFileUploadFill className="size-4 opacity-60" />
 					</div>
 					<p className="mb-1.5 text-sm font-medium">Enviar vídeo</p>
 					<p className="text-muted-foreground mb-2 text-xs">
@@ -79,7 +84,7 @@ export function VideoUpload({ onFilesChange, disabled }: VideoUploadProps) {
 					className="text-destructive flex items-center gap-1 text-xs"
 					role="alert"
 				>
-					<AlertCircleIcon className="size-3 shrink-0" />
+					<RiErrorWarningFill className="size-3 shrink-0" />
 					<span>{errors[0]}</span>
 				</div>
 			)}
@@ -93,7 +98,7 @@ export function VideoUpload({ onFilesChange, disabled }: VideoUploadProps) {
 						>
 							<div className="flex items-center gap-3 overflow-hidden">
 								<div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
-									<VideoIcon className="size-5 opacity-60" />
+									<RiVideoFill className="size-5 opacity-60" />
 								</div>
 								<div className="flex min-w-0 flex-col gap-0.5">
 									<p className="truncate text-[13px] font-medium">
@@ -118,7 +123,7 @@ export function VideoUpload({ onFilesChange, disabled }: VideoUploadProps) {
 								onClick={() => removeFile(file.id)}
 								aria-label="Remover arquivo"
 							>
-								<XIcon className="size-4" aria-hidden="true" />
+								<RiCloseFill className="size-4" aria-hidden="true" />
 							</Button>
 						</div>
 					))}

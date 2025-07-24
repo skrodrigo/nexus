@@ -1,5 +1,5 @@
-import { Check } from "lucide-react";
 import Link from "next/link";
+import { RiCheckFill } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 
 interface Plan {
@@ -41,7 +41,7 @@ export function PlanCard({ plan, current = false }: PlanCardProps) {
 			<ul className="mt-8 space-y-4 text-sm">
 				{plan.features.map((feature) => (
 					<li key={feature.text} className="flex items-center gap-3">
-						<Check className="w-5 h-5 text-primary" />
+						<RiCheckFill className="w-5 h-5 text-primary" />
 						<span>{feature.text}</span>
 						{feature.soon && (
 							<span className="text-xs bg-background border border-border text-yellow-600 rounded-full px-2 py-0.5 whitespace-nowrap">

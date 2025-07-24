@@ -1,7 +1,12 @@
 "use client";
 
-import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from "lucide-react";
 import Image from "next/image";
+import {
+	RiCloseFill,
+	RiErrorWarningFill,
+	RiImageFill,
+	RiUploadFill,
+} from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { useFileUpload } from "@/hooks/use-file-upload";
 
@@ -59,7 +64,7 @@ export default function ImageUpload() {
 								className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
 								aria-hidden="true"
 							>
-								<ImageIcon className="size-4 opacity-60" />
+								<RiImageFill className="size-4 opacity-60" />
 							</div>
 							<p className="mb-1.5 text-sm font-medium">
 								Arraste e solte sua imagem aqui
@@ -72,7 +77,7 @@ export default function ImageUpload() {
 								className="mt-4 gap-2"
 								onClick={openFileDialog}
 							>
-								<UploadIcon
+								<RiUploadFill
 									className="-ms-1 size-4 opacity-60"
 									aria-hidden="true"
 								/>
@@ -90,7 +95,7 @@ export default function ImageUpload() {
 							onClick={() => removeFile(files[0]?.id)}
 							aria-label="Remove image"
 						>
-							<XIcon className="size-4" aria-hidden="true" />
+							<RiCloseFill className="size-4" aria-hidden="true" />
 						</button>
 					</div>
 				)}
@@ -101,7 +106,7 @@ export default function ImageUpload() {
 					className="text-destructive flex items-center gap-1 text-xs"
 					role="alert"
 				>
-					<AlertCircleIcon className="size-3 shrink-0" />
+					<RiErrorWarningFill className="size-3 shrink-0" />
 					<span>{errors[0]}</span>
 				</div>
 			)}

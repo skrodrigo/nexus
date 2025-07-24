@@ -4,8 +4,8 @@ import {
 	RiDeleteBin5Fill,
 	RiEdit2Fill,
 	RiEyeLine,
-	RiFileCopy2Fill,
 	RiLayoutGridLine,
+	RiSettings3Fill,
 	RiWebhookFill,
 } from "react-icons/ri";
 
@@ -62,13 +62,10 @@ export function CourseCard({ course }: CourseCardProps) {
 						<RiEyeLine className="size-4" />
 					</button>
 					<button type="button" className="hover:text-foreground">
-						<RiFileCopy2Fill className="size-4" />
-					</button>
-					<button type="button" className="hover:text-foreground">
 						<RiWebhookFill className="size-4" />
 					</button>
 					<button type="button" className="hover:text-foreground">
-						<RiDeleteBin5Fill className="size-4" />
+						<RiSettings3Fill className="size-4" />
 					</button>
 				</div>
 			</div>

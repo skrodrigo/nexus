@@ -1,6 +1,15 @@
-import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis } from "recharts";
+import {
+	Bar,
+	BarChart,
+	CartesianGrid,
+	Cell,
+	Pie,
+	PieChart,
+	XAxis,
+} from "recharts";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	type ChartConfig,
 	ChartContainer,
@@ -9,7 +18,6 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const StatCard = ({
 	title,
@@ -58,22 +66,22 @@ const completionChartData = [
 const chartConfig = {
 	engagement: {
 		label: "Engajamento",
-		color: "hsl(var(--chart-1))",
+		color: "var(--chart-1)",
 	},
 	completion: {
 		label: "Conclusão",
 	},
 	lesson1: {
 		label: "Aula 1",
-		color: "hsl(var(--chart-1))",
+		color: "var(--chart-1)",
 	},
 	lesson2: {
 		label: "Aula 2",
-		color: "hsl(var(--chart-2))",
+		color: "var(--chart-2)",
 	},
 	lesson3: {
 		label: "Aula 3",
-		color: "hsl(var(--chart-3))",
+		color: "var(--chart-3)",
 	},
 } satisfies ChartConfig;
 
@@ -88,7 +96,7 @@ export function RelatoriosView() {
 					</p>
 				</div>
 				<div className="flex items-center gap-2">
-					<Button variant="outline">7 dias</Button>
+					<Button variant="secondary">7 dias</Button>
 					<Button variant="ghost">30 dias</Button>
 					<Button variant="ghost">90 dias</Button>
 				</div>

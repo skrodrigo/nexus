@@ -5,12 +5,10 @@ import {
 	RiBarChart2Fill,
 	RiBookOpenFill,
 	RiGroupFill,
-	RiSettings3Fill,
 	RiSideBarFill,
 	RiSideBarLine,
 } from "react-icons/ri";
 import { AlunosView } from "@/app/dashboard/apps/members-area/alunos-view";
-import { ConfiguracoesView } from "@/app/dashboard/apps/members-area/configuracoes-view";
 import { CursosView } from "@/app/dashboard/apps/members-area/cursos-view";
 import { RelatoriosView } from "@/app/dashboard/apps/members-area/relatorios-view";
 import { Button } from "@/components/ui/button";
@@ -19,7 +17,6 @@ const navItems = [
 	{ id: "cursos", label: "Cursos", icon: RiBookOpenFill },
 	{ id: "alunos", label: "Alunos", icon: RiGroupFill },
 	{ id: "relatorios", label: "Relatórios", icon: RiBarChart2Fill },
-	{ id: "configuracoes", label: "Configurações", icon: RiSettings3Fill },
 ];
 
 function MembersAreaPage() {
@@ -34,8 +31,6 @@ function MembersAreaPage() {
 				return <AlunosView />;
 			case "relatorios":
 				return <RelatoriosView />;
-			case "configuracoes":
-				return <ConfiguracoesView />;
 			default:
 				return null;
 		}
