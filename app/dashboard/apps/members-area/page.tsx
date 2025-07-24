@@ -9,23 +9,11 @@ import {
 	RiSideBarFill,
 	RiSideBarLine,
 } from "react-icons/ri";
+import { AlunosView } from "@/app/dashboard/apps/members-area/alunos-view";
+import { ConfiguracoesView } from "@/app/dashboard/apps/members-area/configuracoes-view";
+import { CursosView } from "@/app/dashboard/apps/members-area/cursos-view";
+import { RelatoriosView } from "@/app/dashboard/apps/members-area/relatorios-view";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-type MemberArea = {
-	id: string;
-	title: string;
-};
 
 const navItems = [
 	{ id: "cursos", label: "Cursos", icon: RiBookOpenFill },
@@ -35,96 +23,19 @@ const navItems = [
 ];
 
 function MembersAreaPage() {
-	const memberAreas: MemberArea[] = [];
 	const [isAsideOpen, setIsAsideOpen] = useState(true);
 	const [activeView, setActiveView] = useState("cursos");
 
-	const renderEmptyState = () => (
-		<div className="flex flex-col items-center justify-center h-full gap-y-8 text-center">
-			<div>
-				<h2 className="text-2xl font-medium">Nenhum Curso Encontrado</h2>
-				<p className="text-muted-foreground">Comece criando um novo Curso.</p>
-			</div>
-			<Dialog>
-				<DialogTrigger asChild>
-					<Button>Criar Novo Curso</Button>
-				</DialogTrigger>
-				<DialogContent className="sm:max-w-[425px]">
-					<DialogHeader>
-						<DialogTitle>Criar Novo Curso</DialogTitle>
-					</DialogHeader>
-					<div className="grid gap-4 py-4">
-						<div className="grid grid-cols-4 items-center gap-4">
-							<Label htmlFor="title" className="text-right">
-								Título
-							</Label>
-							<Input
-								id="title"
-								placeholder="Ex: Curso de Marketing"
-								className="col-span-3"
-							/>
-						</div>
-					</div>
-					<DialogFooter>
-						<Button type="submit">Criar Curso</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
-		</div>
-	);
-
 	const renderMainContent = () => {
-		if (activeView === "cursos" && memberAreas.length === 0) {
-			return renderEmptyState();
-		}
-
 		switch (activeView) {
 			case "cursos":
-				return (
-					<Card>
-						<CardHeader>
-							<CardTitle>Gerenciar Cursos</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p>Aqui você pode gerenciar seus cursos.</p>
-						</CardContent>
-					</Card>
-				);
-
+				return <CursosView />;
 			case "alunos":
-				return (
-					<Card>
-						<CardHeader>
-							<CardTitle>Gerenciar Alunos</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p>Aqui você pode gerenciar seus alunos.</p>
-						</CardContent>
-					</Card>
-				);
+				return <AlunosView />;
 			case "relatorios":
-				return (
-					<Card>
-						<CardHeader>
-							<CardTitle>Relatórios</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p>Veja os relatórios de seus cursos e alunos.</p>
-						</CardContent>
-					</Card>
-				);
+				return <RelatoriosView />;
 			case "configuracoes":
-				return (
-					<Card>
-						<CardHeader>
-							<CardTitle>Configurações da Área de Membros</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p>Gerencie as configurações da sua área de membros.</p>
-						</CardContent>
-					</Card>
-				);
-
+				return <ConfiguracoesView />;
 			default:
 				return null;
 		}
@@ -172,7 +83,7 @@ function MembersAreaPage() {
 					})}
 				</nav>
 			</aside>
-			<main className="flex-1 flex flex-col max-h-full items-center justify-center p-4">
+			<main className="flex-1 flex flex-col max-h-full items-center justify-center p-2 mt-12 border border-border rounded-lg m-6">
 				{renderMainContent()}
 			</main>
 		</div>
@@ -180,4 +91,3 @@ function MembersAreaPage() {
 }
 
 export default MembersAreaPage;
-

@@ -28,9 +28,9 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import type { FileWithPreview } from "@/hooks/use-file-upload";
+import ImageUpload from "../../../../components/image-upload";
 import { EditDialog } from "./_components/edit-dialog";
 import { ImageDialog } from "./_components/image-dialog";
-import { ImageUpload } from "./_components/image-upload";
 
 function CreativeGeneratorPage() {
 	const [prompt, setPrompt] = useState("");

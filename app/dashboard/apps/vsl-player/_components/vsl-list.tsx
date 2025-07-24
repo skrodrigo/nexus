@@ -74,7 +74,7 @@ export function VslList({
 }: VslListProps) {
 	useSearchParams();
 	return (
-		<Card>
+		<Card className="">
 			<CardHeader>
 				<div className="flex items-center justify-between gap-4">
 					{currentFolder ? (
