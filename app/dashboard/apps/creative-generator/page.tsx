@@ -369,10 +369,7 @@ function CreativeGeneratorPage() {
 												onSubmit={handleSubmitRecreate}
 												className="space-y-4"
 											>
-												<ImageUpload
-													onFilesChange={setRecreateFile}
-													disabled={isGenerating}
-												/>
+												<ImageUpload />
 												<Textarea
 													placeholder="Um esqueleto segurando um smartphone, um cérebro derretendo com gosma verde, e o texto 'BRAIN ROT.' em negrito, em um estilo neon e com falhas"
 													value={prompt}

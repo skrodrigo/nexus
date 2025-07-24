@@ -1,7 +1,6 @@
 import {
 	RiBook2Fill,
 	RiClockwise2Fill,
-	RiDeleteBin5Fill,
 	RiEdit2Fill,
 	RiEyeLine,
 	RiLayoutGridLine,

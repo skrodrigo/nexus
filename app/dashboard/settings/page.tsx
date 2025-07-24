@@ -137,9 +137,10 @@ export default function SettingsPage() {
 					</div>
 				</TabsContent>
 				<TabsContent value="plan" className="mt-8 space-y-8">
-					<div className="border border-border rounded-lg p-6 space-y-2">
+					<div className="border border-border rounded-lg p-4 space-y-2 max-w-7xl mx-auto">
 						<h3 className="font-medium">
-							Você está sem plano ativo no momento.
+							Você está <span className="text-primary">sem plano ativo</span> no
+							momento.
 						</h3>
 						<p className="text-sm text-muted-foreground">
 							Ative um plano para desbloquear as ferramentas de criação, funis,

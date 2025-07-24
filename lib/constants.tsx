@@ -17,7 +17,14 @@ export const apps: App[] = [
 		description:
 			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
 		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/apps/creative-generator" }],
+		actions: [
+			{
+				label: "Arquivos",
+				href: "/dashboard/archive",
+				variant: "secondary",
+			},
+			{ label: "Acessar", href: "/dashboard/apps/creative-generator" },
+		],
 	},
 	{
 		icon: <RiPlayFill className="size-5" />,
@@ -25,14 +32,7 @@ export const apps: App[] = [
 		description:
 			"Implemente vídeos de vendas com tecnologia de alta performance, focada em maximizar engajamento, retenção e conversão.",
 		status: "new",
-		actions: [
-			{
-				label: "Minhas VSLs",
-				href: "/dashboard/apps/vsl-player",
-				variant: "secondary",
-			},
-			{ label: "Criar", href: "/dashboard/apps/vsl-player" },
-		],
+		actions: [{ label: "Acessar", href: "/dashboard/apps/vsl-player" }],
 	},
 	{
 		icon: <RiFilterFill className="size-5" />,
@@ -40,14 +40,7 @@ export const apps: App[] = [
 		description:
 			"Construa jornadas personalizadas com quizzes dinâmicos, segmentação inteligente e captação de leads altamente qualificados.",
 		status: "new",
-		actions: [
-			{
-				label: "Acessar Funis",
-				href: "/dashboard/apps/funnels",
-				variant: "secondary",
-			},
-			{ label: "Criar", href: "/dashboard/apps/funnels" },
-		],
+		actions: [{ label: "Acessar", href: "/dashboard/apps/funnels" }],
 	},
 	{
 		icon: <RiUserStarFill className="size-5" />,
@@ -55,7 +48,7 @@ export const apps: App[] = [
 		description:
 			"Crie e gerencie cursos online, ofereça uma experiência de aprendizado exclusiva e controle o acesso dos seus alunos em um ambiente seguro e profissional.",
 		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/apps/members-area" }],
+		actions: [{ label: "Acessar", href: "/dashboard/apps/members-area" }],
 	},
 	{
 		icon: <RiChatAiFill className="size-5" />,
@@ -63,7 +56,7 @@ export const apps: App[] = [
 		description:
 			"Utilize um assistente de IA para brainstorming, criação de copys, planejamento de funis e otimização de suas estratégias de marketing.",
 		status: "new",
-		actions: [{ label: "Criar", href: "/dashboard/chat" }],
+		actions: [{ label: "Acessar", href: "/dashboard/chat" }],
 	},
 	{
 		icon: <RiFileCopyFill className="size-5" />,
@@ -71,7 +64,7 @@ export const apps: App[] = [
 		description:
 			"Replique qualquer página da web em segundos. Capture a estrutura e o design para adaptar e lançar suas próprias versões rapidamente.",
 		status: "soon",
-		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
+		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
 	},
 	{
 		icon: <RiFilterFill className="size-5" />,
@@ -79,7 +72,7 @@ export const apps: App[] = [
 		description:
 			"Descubra ofertas e produtos validados no mercado. Analise tendências e encontre oportunidades de alta conversão para se inspirar.",
 		status: "soon",
-		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
+		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
 	},
 	{
 		icon: <RiMailFill className="size-5" />,
@@ -87,7 +80,7 @@ export const apps: App[] = [
 		description:
 			"Crie, automatize e gerencie campanhas de e-mail marketing para nutrir leads e aumentar o engajamento com sua audiência.",
 		status: "soon",
-		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
+		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
 	},
 
 	{
@@ -96,6 +89,6 @@ export const apps: App[] = [
 		description:
 			"Tenha um checkout de alta conversão, personalizável e seguro, integrado diretamente às suas ofertas e funis de venda.",
 		status: "soon",
-		actions: [{ label: "Criar", href: "/dashboard/apps/" }],
+		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
 	},
 ];
