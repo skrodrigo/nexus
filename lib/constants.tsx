@@ -44,26 +44,10 @@ export const apps: App[] = [
 		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
 	},
 	{
-		icon: <RiChatAiFill className="size-5" />,
-		title: "Chat com AI",
-		description:
-			"Utilize um assistente de IA para brainstorming, criação de copys, planejamento de funis e otimização de suas estratégias de marketing.",
-		status: "new",
-		actions: [{ label: "Acessar", href: "/dashboard/apps/chat" }],
-	},
-	{
 		icon: <RiFileCopyFill className="size-5" />,
 		title: "Clonador de Página",
 		description:
 			"Replique qualquer página da web em segundos. Capture a estrutura e o design para adaptar e lançar suas próprias versões rapidamente.",
-		status: "soon",
-		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
-	},
-	{
-		icon: <RiFilterFill className="size-5" />,
-		title: "Minerador de Ofertas",
-		description:
-			"Descubra ofertas e produtos validados no mercado. Analise tendências e encontre oportunidades de alta conversão para se inspirar.",
 		status: "soon",
 		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
 	},

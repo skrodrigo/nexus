@@ -72,7 +72,7 @@ export function VslList({
 	onFolderCreate,
 }: VslListProps) {
 	return (
-		<Card className="">
+		<Card>
 			<CardHeader>
 				<div className="flex items-center justify-between gap-4">
 					{currentFolder ? (

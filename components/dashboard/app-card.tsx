@@ -24,7 +24,7 @@ export function AppCard({
 	actions,
 }: AppCardProps) {
 	return (
-		<div className="flex flex-col rounded-lg border bg-card p-6 shadow-sm">
+		<div className="flex flex-col rounded-lg border bg-card p-6 shadow-sm min-h-[200px]">
 			<div className="flex items-start justify-between">
 				<div className="flex items-center gap-x-4">
 					<div className="rounded-lg p-2 text-primary">{icon}</div>

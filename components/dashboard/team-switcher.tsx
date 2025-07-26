@@ -45,10 +45,16 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 	const [open, setOpen] = useState(false);
 	const [showNewTeamDialog, setShowNewTeamDialog] = useState(false);
 
-	const { data: organizations, isPending: isLoadingOrganizations } =
-		authClient.useListOrganizations();
-	const { data: activeOrganization, isPending: isLoadingActiveOrg } =
-		authClient.useActiveOrganization();
+	const {
+		data: organizations,
+		isPending: isLoadingOrganizations,
+		refetch: refetchOrganizations,
+	} = authClient.useListOrganizations();
+	const {
+		data: activeOrganization,
+		isPending: isLoadingActiveOrg,
+		refetch: refetchActiveOrg,
+	} = authClient.useActiveOrganization();
 
 	const isLoading = isLoadingOrganizations || isLoadingActiveOrg;
 
@@ -57,10 +63,11 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 			await authClient.organization.setActive({
 				organizationId,
 			});
-
+			refetchOrganizations();
+			refetchActiveOrg();
 			toast.success("Organização alterada com sucesso!");
 		},
-		[],
+		[refetchOrganizations, refetchActiveOrg],
 	);
 
 	useEffect(() => {
@@ -175,7 +182,14 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 			<DialogContent>
 				<form
 					action={async (formData) => {
-						await createOrganization(formData);
+						const result = await createOrganization(formData);
+						if (result.success) {
+							await refetchOrganizations();
+							await refetchActiveOrg();
+							toast.success(result.message);
+						} else {
+							toast.error(result.error);
+						}
 						setShowNewTeamDialog(false);
 					}}
 				>

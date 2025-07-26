@@ -40,7 +40,48 @@ const allVsls = [
 		title: "VSL Campanha Páscoa",
 		createdAt: "2023-03-05",
 		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
-		folderId: "1",
+	},
+	{
+		id: "4",
+		title: "VSL Campanha Páscoa",
+		createdAt: "2023-03-05",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
+	},
+	{
+		id: "5",
+		title: "VSL Campanha Páscoa",
+		createdAt: "2023-03-05",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
+	},
+	{
+		id: "6",
+		title: "VSL Campanha Páscoa",
+		createdAt: "2023-03-05",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
+	},
+	{
+		id: "7",
+		title: "VSL Campanha Páscoa",
+		createdAt: "2023-03-05",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
+	},
+	{
+		id: "8",
+		title: "VSL Campanha Páscoa",
+		createdAt: "2023-03-05",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
+	},
+	{
+		id: "9",
+		title: "VSL Campanha Páscoa",
+		createdAt: "2023-03-05",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
+	},
+	{
+		id: "10",
+		title: "VSL Campanha Páscoa",
+		createdAt: "2023-03-05",
+		thumbnailUrl: "https://placeholder.pics/svg/1920x1080",
 	},
 ];
 
@@ -145,7 +186,7 @@ export default function VslPlayerPageContent() {
 	}
 
 	return (
-		<div className="flex h-full bg-background w-full">
+		<div className="flex h-full bg-background w-full overflow-hidden">
 			<aside
 				className={`relative h-full border-r border-border flex flex-col gap-y-4 transition-all duration-200 ${
 					isAsideOpen ? "w-72 p-2" : "w-14 p-2 items-center"
@@ -184,8 +225,8 @@ export default function VslPlayerPageContent() {
 					))}
 				</nav>
 			</aside>
-			<main className="flex-1 p-6">
-				<div className="h-full w-full mt-6">{renderContent()}</div>
+			<main className="flex-1 px-14 py-6 overflow-y-auto">
+				<div className="h-full w-full">{renderContent()}</div>
 			</main>
 		</div>
 	);

@@ -12,7 +12,7 @@ datasource db {
 model User {
   id            String    @id
   name          String
-  email         String
+  email         String    @unique
   emailVerified Boolean
   image         String?
   createdAt     DateTime
@@ -20,29 +20,33 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  members     Member[]
-  invitations Invitation[]
+  members           Member[]
+  invitations       Invitation[]
+  enrollments       Enrollment[]
+  lessonProgress    LessonProgress[]
+  chats             Chat[]
+  creativeHistory   CreativeHistory[]
+  certificates      Certificate[]
+  courseComments    CourseComment[]
+  orders            Order[]
 
   stripeCustomerId String?
 
-  @@unique([email])
   @@map("user")
 }
 
 model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime
-  updatedAt DateTime
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id                   String   @id
+  expiresAt            DateTime
+  token                String   @unique
+  createdAt            DateTime
+  updatedAt            DateTime
+  ipAddress            String?
+  userAgent            String?
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeOrganizationId String?
 
-  @@unique([token])
   @@map("session")
 }
 
@@ -77,16 +81,26 @@ model Verification {
 }
 
 model Organization {
-  id          String       @id
-  name        String
-  slug        String?
-  logo        String?
-  createdAt   DateTime
-  metadata    String?
-  members     Member[]
-  invitations Invitation[]
+  id           String       @id
+  name         String
+  slug         String?      @unique
+  logo         String?
+  primaryColor String?
+  createdAt    DateTime
+  metadata     Json?
 
-  @@unique([slug])
+  members         Member[]
+  invitations     Invitation[]
+  courses         Course[]
+  vsls            Vsl[]
+  vslFolders      VslFolder[]
+  chats           Chat[]
+  creatives       Creative[]
+  courseBanners   CourseBanner[]
+  products        Product[]
+  checkouts       Checkout[]
+  gateways        Gateway[]
+
   @@map("organization")
 }
 
@@ -100,12 +114,6 @@ model Member {
   createdAt      DateTime
 
   @@map("member")
-}
-
-enum Role {
-  owner
-  admin
-  member
 }
 
 model Invitation {
@@ -135,4 +143,448 @@ model Subscription {
   seats                Int?
 
   @@map("subscription")
+}
+
+model Vsl {
+  id              String             @id
+  title           String
+  videoUrl        String
+  thumbnailUrl    String?
+  slug            String             @unique
+  organizationId  String
+  organization    Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  folderId        String?
+  folder          VslFolder?         @relation(fields: [folderId], references: [id], onDelete: NoAction)
+  playerConfig    Json?
+  ctaConfig       Json?
+  testsA          VslTest[]          @relation("VslATests")
+  testsB          VslTest[]          @relation("VslBTests")
+  events          VslEvent[]
+  allowedDomains  VslAllowedDomain[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@map("vsl")
+}
+
+model VslFolder {
+  id             String       @id
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vsls           Vsl[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("vsl_folder")
+}
+
+model VslAllowedDomain {
+  id        String   @id
+  vslId     String
+  vsl       Vsl      @relation(fields: [vslId], references: [id], onDelete: Cascade)
+  domain    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([vslId, domain])
+  @@map("vsl_allowed_domain")
+}
+
+model VslEvent {
+  id        String       @id
+  vslId     String
+  vsl       Vsl          @relation(fields: [vslId], references: [id], onDelete: Cascade)
+  type      VslEventType
+  viewerId  String
+  metadata  Json?
+  createdAt DateTime     @default(now())
+
+  @@map("vsl_event")
+}
+
+model VslTest {
+  id          String  @id
+  name        String
+  vslAId      String
+  vslBId      String
+  vslA        Vsl     @relation("VslATests", fields: [vslAId], references: [id], onDelete: Cascade)
+  vslB        Vsl     @relation("VslBTests", fields: [vslBId], references: [id], onDelete: Cascade)
+  isActive    Boolean
+  impressions Int     @default(0)
+  conversions Int     @default(0)
+
+  @@map("vsl_test")
+}
+
+model Course {
+  id             String          @id
+  title          String
+  description    String?
+  slug           String?         @unique
+  imageUrl       String?
+  purchaseUrl    String?
+  status         CourseStatus    @default(DRAFT)
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  modules        Module[]
+  enrollments    Enrollment[]
+  banners        CourseBanner[]
+  comments       CourseComment[]
+  certificates   Certificate[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@map("course")
+}
+
+model Module {
+  id          String   @id
+  title       String
+  imageUrl    String?
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+  order       Int
+  releaseDate DateTime?
+
+  @@map("module")
+}
+
+model Lesson {
+  id          String           @id
+  title       String
+  description String?
+  content     String?
+  videoUrl    String?
+  moduleId    String
+  module      Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  order       Int
+  progress    LessonProgress[]
+  comments    CourseComment[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("lesson")
+}
+
+model Enrollment {
+  id         String   @id
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId   String
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrolledAt DateTime @default(now())
+  progress   Float    @default(0)
+
+  @@unique([userId, courseId])
+  @@map("enrollment")
+}
+
+model LessonProgress {
+  id          String   @id
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now())
+
+  @@unique([userId, lessonId])
+  @@map("lesson_progress")
+}
+
+model CourseBanner {
+  id             String       @id
+  imageUrl       String
+  linkUrl        String?
+  courseId       String
+  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: NoAction)
+
+  @@map("course_banner")
+}
+
+model CourseComment {
+  id        String          @id
+  content   String
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessonId  String?
+  lesson    Lesson?         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    CourseComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction)
+  replies   CourseComment[] @relation("CommentReplies")
+  createdAt DateTime        @default(now())
+
+  @@map("course_comment")
+}
+
+model Certificate {
+  id       String   @id
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  issuedAt DateTime @default(now())
+  url      String
+
+  @@map("certificate")
+}
+
+model Chat {
+  id             String        @id
+  title          String
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages       ChatMessage[]
+  artifacts      Artifact[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("chat")
+}
+
+model ChatMessage {
+  id          String            @id
+  chatId      String
+  chat        Chat              @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  role        ChatMessageRole
+  content     String
+  attachments ChatAttachment[]
+  createdAt   DateTime          @default(now())
+
+  @@map("chat_message")
+}
+
+model ChatAttachment {
+  id        String      @id
+  messageId String
+  message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  type      String
+  url       String
+  name      String
+  createdAt DateTime    @default(now())
+
+  @@map("chat_attachment")
+}
+
+model Creative {
+  id             String            @id
+  prompt         String
+  imageUrl       String
+  sourceImageUrl String?
+  organizationId String
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  history        CreativeHistory[]
+  createdAt      DateTime          @default(now())
+
+  @@map("creative")
+}
+
+model CreativeHistory {
+  id         String   @id
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creativeId String
+  creative   Creative @relation(fields: [creativeId], references: [id], onDelete: Cascade)
+  viewedAt   DateTime @default(now())
+
+  @@map("creative_history")
+}
+
+model Artifact {
+  id        String       @id
+  title     String
+  type      ArtifactType
+  content   String
+  chatId    String
+  chat      Chat         @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+
+  @@map("artifact")
+}
+
+model Product {
+  id              String       @id
+  name            String
+  imageUrl        String?
+  price           Float
+  currency        Currency
+  redirectUrl     String?
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  checkouts       Checkout[]
+  orderItems      OrderItem[]
+  orderBumpsAs    OrderBump[]  @relation("OrderBumpProduct")
+  orderBumpsFor   OrderBump[]  @relation("MainProductForBump")
+  upsellsAs       Upsell[]     @relation("UpsellProduct")
+  upsellsFor      Upsell[]     @relation("MainProductForUpsell")
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@map("product")
+}
+
+model Checkout {
+  id             String       @id
+  name           String
+  logoUrl        String?
+  primaryColor   String?
+  promoVideoUrl  String?
+  pageConfig     Json?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product      @relation(fields: [productId], references: [id])
+  orders         Order[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("checkout")
+}
+
+model OrderBump {
+  id             String  @id
+  mainProductId  String
+  bumpProductId  String
+  mainProduct    Product @relation("MainProductForBump", fields: [mainProductId], references: [id])
+  bumpProduct    Product @relation("OrderBumpProduct", fields: [bumpProductId], references: [id])
+  orderItems     OrderItem[]
+
+  @@map("order_bump")
+}
+
+model Upsell {
+  id              String  @id
+  mainProductId   String
+  upsellProductId String
+  mainProduct     Product @relation("MainProductForUpsell", fields: [mainProductId], references: [id])
+  upsellProduct   Product @relation("UpsellProduct", fields: [upsellProductId], references: [id])
+  orderItems      OrderItem[]
+
+  @@map("upsell")
+}
+
+model Order {
+  id          String        @id
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  checkoutId  String
+  checkout    Checkout      @relation(fields: [checkoutId], references: [id])
+  total       Float
+  currency    Currency
+  status      OrderStatus
+  items       OrderItem[]
+  transaction Transaction[]
+  createdAt   DateTime      @default(now())
+
+  @@map("order")
+}
+
+model OrderItem {
+  id          String     @id
+  orderId     String
+  order       Order      @relation(fields: [orderId], references: [id])
+  productId   String
+  product     Product    @relation(fields: [productId], references: [id])
+  orderBumpId String?
+  orderBump   OrderBump? @relation(fields: [orderBumpId], references: [id])
+  upsellId    String?
+  upsell      Upsell?    @relation(fields: [upsellId], references: [id])
+  quantity    Int
+  price       Float
+
+  @@map("order_item")
+}
+
+model Gateway {
+  id             String        @id
+  provider       GatewayProvider
+  apiKey         String
+  publicKey      String?
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  transactions   Transaction[]
+
+  @@map("gateway")
+}
+
+model Transaction {
+  id                 String   @id
+  orderId            String
+  order              Order    @relation(fields: [orderId], references: [id])
+  gatewayId          String
+  gateway            Gateway  @relation(fields: [gatewayId], references: [id])
+  gatewayTransactionId String
+  amount             Float
+  status             String
+  createdAt          DateTime @default(now())
+
+  @@map("transaction")
+}
+
+enum Role {
+  owner
+  admin
+  member
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum VslEventType {
+  VIEW
+  PLAY
+  WATCH_25
+  WATCH_50
+  WATCH_75
+  WATCH_100
+  CTA_CLICK
+}
+
+enum ChatMessageRole {
+  USER
+  ASSISTANT
+}
+
+enum ArtifactType {
+  CODE
+  IMAGE
+  PDF
+  TEXT
+}
+
+enum Currency {
+  BRL
+  USD
+  EUR
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum GatewayProvider {
+  STRIPE
+  PAYPAL
+  MERCADOPAGO
+  PAGARME
+  PAGBANK
+  ASAAS
+  OPENPIX
+  PUSHINPAY
+  GHOSTSPAY
+  LUNOXPAY
+  APPMAX
 }
