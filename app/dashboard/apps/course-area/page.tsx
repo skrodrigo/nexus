@@ -8,9 +8,9 @@ import {
 	RiSideBarFill,
 	RiSideBarLine,
 } from "react-icons/ri";
-import { AlunosView } from "@/app/dashboard/apps/members-area/alunos-view";
-import { CursosView } from "@/app/dashboard/apps/members-area/cursos-view";
-import { RelatoriosView } from "@/app/dashboard/apps/members-area/relatorios-view";
+import { AlunosView } from "@/app/dashboard/apps/course-area/alunos-view";
+import { CursosView } from "@/app/dashboard/apps/course-area/cursos-view";
+import { RelatoriosView } from "@/app/dashboard/apps/course-area/relatorios-view";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
@@ -19,7 +19,7 @@ const navItems = [
 	{ id: "relatorios", label: "Relatórios", icon: RiBarChart2Fill },
 ];
 
-function MembersAreaPage() {
+export default function CourseAreaPage() {
 	const [isAsideOpen, setIsAsideOpen] = useState(true);
 	const [activeView, setActiveView] = useState("cursos");
 
@@ -84,5 +84,3 @@ function MembersAreaPage() {
 		</div>
 	);
 }
-
-export default MembersAreaPage;

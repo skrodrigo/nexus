@@ -33,7 +33,7 @@ export const apps: App[] = [
 		description:
 			"Crie e gerencie cursos online, ofereça uma experiência de aprendizado exclusiva e controle o acesso dos seus alunos em um ambiente seguro e profissional.",
 		status: "new",
-		actions: [{ label: "Acessar", href: "/dashboard/apps/members-area" }],
+		actions: [{ label: "Acessar", href: "/dashboard/apps/course-area" }],
 	},
 	{
 		icon: <RiShoppingCartFill className="size-5" />,

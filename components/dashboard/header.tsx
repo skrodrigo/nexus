@@ -9,7 +9,7 @@ const titleMap: { [key: string]: string } = {
 	"/dashboard/settings": "Configurações",
 	"/dashboard/apps/creative-generator": "Gerador de Criativos",
 	"/dashboard/apps/funnels": "Funis",
-	"/dashboard/apps/members-area": "Área de Membros",
+	"/dashboard/apps/course-area": "Área de Membros",
 	"/dashboard/apps/vsl-player": "Player VSL",
 };
 
