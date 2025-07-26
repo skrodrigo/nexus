@@ -12,7 +12,7 @@ datasource db {
 model User {
   id            String    @id
   name          String
-  email         String    @unique
+  email         String
   emailVerified Boolean
   image         String?
   createdAt     DateTime
@@ -25,20 +25,20 @@ model User {
   enrollments       Enrollment[]
   lessonProgress    LessonProgress[]
   chats             Chat[]
-  creativeHistory   CreativeHistory[]
   certificates      Certificate[]
   courseComments    CourseComment[]
   orders            Order[]
 
   stripeCustomerId String?
-
+  
+  @@unique([email])
   @@map("user")
 }
 
 model Session {
   id                   String   @id
   expiresAt            DateTime
-  token                String   @unique
+  token                String  
   createdAt            DateTime
   updatedAt            DateTime
   ipAddress            String?
@@ -47,6 +47,7 @@ model Session {
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeOrganizationId String?
 
+  @@unique([token])
   @@map("session")
 }
 
@@ -83,11 +84,13 @@ model Verification {
 model Organization {
   id           String       @id
   name         String
-  slug         String?      @unique
+  slug         String?
   logo         String?
   primaryColor String?
   createdAt    DateTime
-  metadata     Json?
+  metadata     String?
+
+  @@unique([slug])
 
   members         Member[]
   invitations     Invitation[]
@@ -95,11 +98,11 @@ model Organization {
   vsls            Vsl[]
   vslFolders      VslFolder[]
   chats           Chat[]
-  creatives       Creative[]
   courseBanners   CourseBanner[]
   products        Product[]
   checkouts       Checkout[]
   gateways        Gateway[]
+  images          Image[]
 
   @@map("organization")
 }
@@ -350,13 +353,14 @@ model Chat {
 }
 
 model ChatMessage {
-  id          String            @id
-  chatId      String
-  chat        Chat              @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  role        ChatMessageRole
-  content     String
-  attachments ChatAttachment[]
-  createdAt   DateTime          @default(now())
+  id             String           @id
+  chatId         String
+  chat           Chat             @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  role           ChatMessageRole
+  content        String
+  sourceImageUrl String?
+  attachments    ChatAttachment[]
+  createdAt      DateTime         @default(now())
 
   @@map("chat_message")
 }
@@ -373,29 +377,7 @@ model ChatAttachment {
   @@map("chat_attachment")
 }
 
-model Creative {
-  id             String            @id
-  prompt         String
-  imageUrl       String
-  sourceImageUrl String?
-  organizationId String
-  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  history        CreativeHistory[]
-  createdAt      DateTime          @default(now())
 
-  @@map("creative")
-}
-
-model CreativeHistory {
-  id         String   @id
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  creativeId String
-  creative   Creative @relation(fields: [creativeId], references: [id], onDelete: Cascade)
-  viewedAt   DateTime @default(now())
-
-  @@map("creative_history")
-}
 
 model Artifact {
   id        String       @id
@@ -404,9 +386,23 @@ model Artifact {
   content   String
   chatId    String
   chat      Chat         @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  imageId   String?
+  image     Image?       @relation(fields: [imageId], references: [id])
   createdAt DateTime     @default(now())
 
   @@map("artifact")
+}
+
+model Image {
+  id             String       @id
+  prompt         String
+  imageUrl       String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  artifacts      Artifact[]
+  createdAt      DateTime     @default(now())
+
+  @@map("image")
 }
 
 model Product {
