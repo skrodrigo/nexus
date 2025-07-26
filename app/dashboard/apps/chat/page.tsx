@@ -5,6 +5,7 @@ import {
 	RiAddLine,
 	RiAttachment2,
 	RiDeleteBinLine,
+	RiImageAiFill,
 	RiMore2Fill,
 	RiSendPlaneFill,
 	RiSideBarFill,
@@ -114,13 +115,22 @@ export default function ChatPage() {
 							className="bg-background border-none resize-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground h-28"
 						/>
 						<div className="flex justify-between items-center mt-2">
-							<Button
-								variant="outline"
-								size="icon"
-								className="text-muted-foreground hover:text-primary"
-							>
-								<RiAttachment2 className="size-5" />
-							</Button>
+							<div className="flex items-center gap-2">
+								<Button
+									variant="outline"
+									size="icon"
+									className="text-muted-foreground hover:text-primary"
+								>
+									<RiAttachment2 className="size-5" />
+								</Button>
+								<Button
+									variant="outline"
+									className="text-muted-foreground hover:text-primary dark:bg-muted gap-2"
+								>
+									<RiImageAiFill className="size-5" />
+									Image
+								</Button>
+							</div>
 							<Button
 								size="icon"
 								variant="outline"

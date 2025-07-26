@@ -11,13 +11,11 @@ const plansData = [
 		popular: false,
 		features: [
 			{ text: "15.000 plays/mês no VSL + R$ 0,02 por play extra" },
-			{ text: "+10 Gerações de Criativos (por semana)" },
 			{ text: "2 componente de VSL" },
 			{ text: "3 Funil de Quiz + 6 mil leads" },
 			{ text: "Checkout Próprio + 2% de taxa", soon: true },
 			{ text: "1.000 emails por mês", soon: true },
 			{ text: "Suporte 24h via WhatsApp" },
-			{ text: "Domínio padrão" },
 		],
 	},
 	{
@@ -28,7 +26,6 @@ const plansData = [
 		popular: true,
 		features: [
 			{ text: "30.000 plays/mês no VSL + R$ 0,02 por play extra" },
-			{ text: "+20 Gerações de Criativos (por semana)" },
 			{ text: "4 componentes de VSL" },
 			{ text: "6 Funis de Quiz + 12 mil leads" },
 			{ text: "Chat com IA" },
@@ -37,7 +34,6 @@ const plansData = [
 			{ text: "Testes A/B + Analytics" },
 			{ text: "5 Áreas de Membros", soon: true },
 			{ text: "Suporte 1h via WhatsApp + Email", soon: true },
-			{ text: "Domínio próprio", soon: true },
 			{ text: "Organização de equipes" },
 		],
 	},
@@ -49,7 +45,6 @@ const plansData = [
 		popular: false,
 		features: [
 			{ text: "60.000 plays/mês no VSL + R$ 0,02 por play extra" },
-			{ text: "+40 Gerações de Criativos (por semana)" },
 			{ text: "6 componentes de VSL" },
 			{ text: "9 Funis de Quiz + 18 mil leads" },
 			{ text: "Chat com IA" },
@@ -58,7 +53,6 @@ const plansData = [
 			{ text: "Testes A/B + Analytics Avançado" },
 			{ text: "10 Áreas de Membros", soon: true },
 			{ text: "Suporte Prioritário 1h (WhatsApp + Discord)" },
-			{ text: "Domínio próprio + Integrações", soon: true },
 			{ text: "Organização de equipes" },
 		],
 	},

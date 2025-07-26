@@ -30,13 +30,6 @@ const bentos = [
 		alt: "Membros",
 	},
 	{
-		title: "Gerador de Criativos",
-		description:
-			"Produza criativos de alto impacto com IA, formatos otimizados e elementos prontos para anúncios de performance.",
-		image: "/criativos.svg",
-		alt: "Criativos",
-	},
-	{
 		title: "VSL com Inteligência",
 		description:
 			"Construa VSLs que prendem a atenção e convertem, utilizando componentes e roteiros validados pelo mercado.",

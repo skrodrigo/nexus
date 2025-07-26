@@ -1,12 +1,12 @@
-/** biome-ignore-all lint/a11y/useSemanticElements: <explanation> */
 "use client";
 
-import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	RiAddCircleFill,
 	RiCheckFill,
 	RiExpandUpDownLine,
 } from "react-icons/ri";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,54 +34,63 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-// import {
-// 	Select,
-// 	SelectContent,
-// 	SelectItem,
-// 	SelectTrigger,
-// 	SelectValue,
-// } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { createOrganization } from "@/server/organizations";
 
-const groups = [
-	{
-		label: "Contas",
-		teams: [
-			{
-				label: "Rodrigo",
-				value: "pessoal",
-			},
-		],
-	},
-	{
-		label: "Times",
-		teams: [
-			{
-				label: "Nexus",
-				value: "nexus-team",
-			},
-			{
-				label: "Monsters Inc.",
-				value: "monsters-inc",
-			},
-		],
-	},
-];
-
-type Team = (typeof groups)[number]["teams"][number];
-
-type PopoverTriggerProps = React.ComponentPropsWithoutRef<
-	typeof PopoverTrigger
->;
-
-interface TeamSwitcherProps extends PopoverTriggerProps {}
+type TeamSwitcherProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
 
 export default function TeamSwitcher({ className }: TeamSwitcherProps) {
-	const [open, setOpen] = React.useState(false);
-	const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
-	const [selectedTeam, setSelectedTeam] = React.useState<Team>(
-		groups[0].teams[0],
+	const [open, setOpen] = useState(false);
+	const [showNewTeamDialog, setShowNewTeamDialog] = useState(false);
+
+	const { data: organizations, isPending: isLoadingOrganizations } =
+		authClient.useListOrganizations();
+	const { data: activeOrganization, isPending: isLoadingActiveOrg } =
+		authClient.useActiveOrganization();
+
+	const isLoading = isLoadingOrganizations || isLoadingActiveOrg;
+
+	const handleSetCurrentOrganization = useCallback(
+		async (organizationId: string) => {
+			await authClient.organization.setActive({
+				organizationId,
+			});
+
+			toast.success("Organização alterada com sucesso!");
+		},
+		[],
 	);
+
+	useEffect(() => {
+		if (
+			!isLoading &&
+			!activeOrganization &&
+			organizations &&
+			organizations.length > 0
+		) {
+			handleSetCurrentOrganization(organizations[0].id);
+		}
+	}, [
+		isLoading,
+		activeOrganization,
+		organizations,
+		handleSetCurrentOrganization,
+	]);
+
+	if (isLoading) {
+		return (
+			<div className="flex items-center space-x-2 rounded-lg border border-border p-2">
+				<Skeleton className="h-4 w-4 rounded-full" />
+				<Skeleton className="h-4 w-[150px]" />
+			</div>
+		);
+	}
+
+	if (!activeOrganization) {
+		return null;
+	}
 
 	return (
 		<Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
@@ -89,59 +98,60 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 				<PopoverTrigger asChild>
 					<Button
 						variant="outline"
-						role="combobox"
 						aria-expanded={open}
 						aria-label="Select a team"
-						className={cn("w-[200px] justify-between", className)}
+						className={cn("w-auto justify-between", className)}
 					>
 						<Avatar className="mr-2 h-5 w-5">
 							<AvatarImage
-								// src={`https://avatar.vercel.sh/${selectedTeam.value}.png`}
-								alt={selectedTeam.label}
+								src={activeOrganization.logo ?? ""}
+								alt={activeOrganization.name}
 							/>
-							<AvatarFallback className="bg-primary text-primary-foreground text-xs" />
+							<AvatarFallback className="bg-primary text-primary-foreground text-xs">
+								{activeOrganization.name.charAt(0).toUpperCase()}
+							</AvatarFallback>
 						</Avatar>
-						{selectedTeam.label}
-						<RiExpandUpDownLine className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+						{activeOrganization.name}
+						<RiExpandUpDownLine className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-[200px] p-0">
+				<PopoverContent className="w-auto p-0">
 					<Command>
 						<CommandList>
 							<CommandInput placeholder="Procurar time..." />
 							<CommandEmpty>Nenhum time encontrado.</CommandEmpty>
-							{groups.map((group) => (
-								<CommandGroup key={group.label} heading={group.label}>
-									{group.teams.map((team) => (
-										<CommandItem
-											key={team.value}
-											onSelect={() => {
-												setSelectedTeam(team);
-												setOpen(false);
-											}}
-											className="text-sm"
-										>
-											<Avatar className="mr-2 h-5 w-5">
-												<AvatarImage
-													src={`https://avatar.vercel.sh/${team.value}.png`}
-													alt={team.label}
-													className="grayscale"
-												/>
-												<AvatarFallback>SC</AvatarFallback>
-											</Avatar>
-											{team.label}
-											<RiCheckFill
-												className={cn(
-													"ml-auto h-4 w-4",
-													selectedTeam.value === team.value
-														? "opacity-100"
-														: "opacity-0",
-												)}
+							<CommandGroup heading="Organizações">
+								{organizations?.map((organization) => (
+									<CommandItem
+										key={organization.id}
+										onSelect={() => {
+											handleSetCurrentOrganization(organization.id);
+											setOpen(false);
+										}}
+										className="text-sm"
+									>
+										<Avatar className="mr-2 h-5 w-5">
+											<AvatarImage
+												src={organization.logo ?? ""}
+												alt={organization.name}
+												className="grayscale"
 											/>
-										</CommandItem>
-									))}
-								</CommandGroup>
-							))}
+											<AvatarFallback className="bg-primary text-primary-foreground text-xs">
+												{organization.name.charAt(0).toUpperCase()}
+											</AvatarFallback>
+										</Avatar>
+										{organization.name}
+										<RiCheckFill
+											className={cn(
+												"ml-auto h-4 w-4",
+												activeOrganization.id === organization.id
+													? "opacity-100"
+													: "opacity-0",
+											)}
+										/>
+									</CommandItem>
+								))}
+							</CommandGroup>
 						</CommandList>
 						<CommandSeparator />
 						<CommandList>
@@ -163,48 +173,37 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
 				</PopoverContent>
 			</Popover>
 			<DialogContent>
-				<DialogHeader>
-					<DialogTitle>Novo time</DialogTitle>
-					<DialogDescription>
-						Adicione um novo time para gerenciar produtos e clientes.
-					</DialogDescription>
-				</DialogHeader>
-				<div>
-					<div className="space-y-4 py-2 pb-4">
-						<div className="space-y-2">
-							<Label htmlFor="name">Nome do time</Label>
-							<Input id="name" placeholder="Acme Inc." />
+				<form
+					action={async (formData) => {
+						await createOrganization(formData);
+						setShowNewTeamDialog(false);
+					}}
+				>
+					<DialogHeader>
+						<DialogTitle>Novo time</DialogTitle>
+						<DialogDescription>
+							Adicione um novo time para gerenciar produtos e clientes.
+						</DialogDescription>
+					</DialogHeader>
+					<div>
+						<div className="space-y-4 py-2 pb-4">
+							<div className="space-y-2">
+								<Label htmlFor="name">Nome do time</Label>
+								<Input id="name" name="name" placeholder="Acme Inc." />
+							</div>
 						</div>
-						{/* <div className="space-y-2">
-							<Label htmlFor="plan">Subscription plan</Label>
-							<Select>
-								<SelectTrigger>
-									<SelectValue placeholder="Select a plan" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="free">
-										<span className="font-medium">Free</span> -{" "}
-										<span className="text-muted-foreground">
-											Trial for two weeks
-										</span>
-									</SelectItem>
-									<SelectItem value="pro">
-										<span className="font-medium">Pro</span> -{" "}
-										<span className="text-muted-foreground">
-											$9/month per user
-										</span>
-									</SelectItem>
-								</SelectContent>
-							</Select>
-						</div> */}
 					</div>
-				</div>
-				<DialogFooter>
-					<Button variant="outline" onClick={() => setShowNewTeamDialog(false)}>
-						Cancelar
-					</Button>
-					<Button type="submit">Continuar</Button>
-				</DialogFooter>
+					<DialogFooter>
+						<Button
+							type="button"
+							variant="outline"
+							onClick={() => setShowNewTeamDialog(false)}
+						>
+							Cancelar
+						</Button>
+						<Button type="submit">Criar</Button>
+					</DialogFooter>
+				</form>
 			</DialogContent>
 		</Dialog>
 	);

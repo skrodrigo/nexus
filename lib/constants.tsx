@@ -52,14 +52,6 @@ export const apps: App[] = [
 		actions: [{ label: "Acessar", href: "/dashboard/apps/chat" }],
 	},
 	{
-		icon: <RiImageFill className="size-5" />,
-		title: "Gerador de Criativos",
-		description:
-			"Produza criativos de alto impacto com inteligência estratégica, formatos otimizados para conversão e elementos prontos para anúncios de performance.",
-		status: "new",
-		actions: [{ label: "Acessar", href: "/dashboard/apps/creative-generator" }],
-	},
-	{
 		icon: <RiFileCopyFill className="size-5" />,
 		title: "Clonador de Página",
 		description:

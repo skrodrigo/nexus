@@ -5,17 +5,13 @@ import { redirect } from "next/navigation";
 import type { z } from "zod";
 
 import { auth } from "@/lib/auth";
-
 import prisma from "@/lib/prisma";
-
 import type { userSchema } from "@/server/schemas/user-schema";
 
 export const getUserById = async (id: string) => {
 	try {
 		const currentUser = await prisma.user.findFirst({
-			where: {
-				id,
-			},
+			where: { id },
 		});
 		if (!currentUser) {
 			return { success: false, error: "Usuário não encontrado." };
@@ -58,9 +54,7 @@ export const getCurrentUser = async () => {
 export const getUserByEmail = async (email: string) => {
 	try {
 		const currentUser = await prisma.user.findFirst({
-			where: {
-				email,
-			},
+			where: { email },
 		});
 		if (!currentUser) {
 			return { success: false, error: "Usuário não encontrado." };
@@ -82,7 +76,7 @@ export const getUserSession = async () => {
 		});
 
 		if (!session?.user?.id) {
-			return { success: false, error: "User not authenticated." };
+			return { success: false, error: "Usuário não autenticado." };
 		}
 
 		const currentUser = await prisma.user.findFirst({
@@ -92,7 +86,7 @@ export const getUserSession = async () => {
 		});
 
 		if (!currentUser) {
-			return { success: false, error: "User not found." };
+			return { success: false, error: "Usuário não encontrado." };
 		}
 
 		return {
@@ -101,12 +95,12 @@ export const getUserSession = async () => {
 				...session,
 				user: currentUser,
 			},
-			message: "User session retrieved successfully.",
+			message: "Sessão do usuário obtida com sucesso.",
 		};
 	} catch (_error) {
 		return {
 			success: false,
-			error: "An error occurred while retrieving the user session.",
+			error: "Ocorreu um erro ao obter a sessão do usuário.",
 		};
 	}
 };
@@ -125,7 +119,7 @@ export const signIn = async (
 	};
 
 	try {
-		const _signInResult = await auth.api.signInEmail({
+		await auth.api.signInEmail({
 			body: {
 				email: formValues.email,
 				password: formValues.password,
@@ -135,14 +129,14 @@ export const signIn = async (
 		return {
 			errors: {},
 			values: {
-				text: "Successfully signed in.",
+				text: "Login realizado com sucesso.",
 			},
 			redirect: "/dashboard/apps",
 		};
 	} catch (e: unknown) {
 		const error = e as Error;
 		return {
-			errors: { message: [error.message || "An unknown error occurred"] },
+			errors: { message: [error.message || "Ocorreu um erro desconhecido."] },
 			values: {},
 		};
 	}
@@ -163,7 +157,7 @@ export const signUp = async (
 	};
 
 	try {
-		await auth.api.signUpEmail({
+		const { user } = await auth.api.signUpEmail({
 			body: {
 				email: formValues.email,
 				password: formValues.password,
@@ -171,17 +165,32 @@ export const signUp = async (
 			},
 		});
 
+		if (!user) {
+			return {
+				errors: { message: ["Não foi possível criar o usuário."] },
+				values: {},
+			};
+		}
+
+		await auth.api.createOrganization({
+			body: {
+				name: `Projeto de ${formValues.name}`,
+				slug: `${formValues.name.toLowerCase().replace(/\s+/g, "-")}`,
+				userId: user.id,
+			},
+		});
+
 		return {
 			errors: {},
 			values: {
-				text: "Successfully signed up.",
+				text: "Usuário criado com sucesso.",
 			},
 			redirect: "/dashboard/apps",
 		};
 	} catch (e) {
 		const error = e as Error;
 		return {
-			errors: { message: [error.message || "An unknown error occurred"] },
+			errors: { message: [error.message || "Ocorreu um erro desconhecido."] },
 			values: {},
 		};
 	}
@@ -254,11 +263,10 @@ export const updateProfile = async (data: z.infer<typeof userSchema>) => {
 			message: "Perfil atualizado com sucesso.",
 			redirect: "/dashboard/apps",
 		};
-	} catch (e) {
-		const error = e as Error;
+	} catch (_error) {
 		return {
 			success: false,
-			error: error.message || "Ocorreu um erro ao atualizar o perfil.",
+			error: "Ocorreu um erro ao atualizar o perfil.",
 		};
 	}
 };
