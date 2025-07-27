@@ -2,15 +2,14 @@ import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { organization } from "better-auth/plugins";
-import Stripe from "stripe";
+import { organization, username } from "better-auth/plugins";
+import ResetPasswordEmail from "@/components/emails/reset-password";
+import VerifyEmail from "@/components/emails/verify-email";
 import { ac, admin, member, owner } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
+import { resend } from "@/lib/resend";
+import { stripeClient } from "@/lib/stripe";
 import { getActiveOrganization } from "@/server/organizations";
-
-const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-	apiVersion: "2025-06-30.basil",
-});
 
 export const auth = betterAuth({
 	plugins: [
@@ -23,6 +22,9 @@ export const auth = betterAuth({
 				member,
 			},
 		}),
+
+		username(),
+
 		stripe({
 			stripeClient,
 			stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET as string,
@@ -58,6 +60,32 @@ export const auth = betterAuth({
 
 	emailAndPassword: {
 		enabled: true,
+		sendResetPassword: async ({ user, url }) => {
+			await resend.emails.send({
+				from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
+				to: user.email,
+				subject: "Redefinir sua Senha",
+				react: ResetPasswordEmail({
+					username: user.name,
+					resetUrl: url,
+					userEmail: user.email,
+				}),
+			});
+		},
+		requireEmailVerification: true,
+	},
+
+	emailVerification: {
+		sendVerificationEmail: async ({ user, url }) => {
+			await resend.emails.send({
+				from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
+				to: user.email,
+				subject: "Verifique seu email",
+				react: VerifyEmail({ username: user.name, verifyUrl: url }),
+			});
+		},
+		sendOnSignUp: true,
+		autoSignInAfterVerification: true,
 	},
 
 	socialProviders: {
@@ -75,7 +103,7 @@ export const auth = betterAuth({
 					return {
 						data: {
 							...session,
-							activeOrganizationId: organization?.data?.id
+							activeOrganizationId: organization?.data?.id,
 						},
 					};
 				},

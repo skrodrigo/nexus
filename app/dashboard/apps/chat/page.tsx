@@ -161,12 +161,9 @@ export default function ChatPage() {
 				<div className="flex-1 w-full max-w-2xl mx-auto overflow-y-auto">
 					{messages.length === 0 && !isLoading ? (
 						<div className="h-full flex flex-col items-center justify-center text-center">
-							<h1 className="text-3xl font-medium">
+							<h1 className="text-3xl font-medium text-foreground">
 								O que vamos Construir Hoje ?
 							</h1>
-							<p className="text-muted-foreground">
-								Comece uma conversa ou gere uma imagem.
-							</p>
 						</div>
 					) : (
 						<div className="space-y-6">

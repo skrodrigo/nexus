@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ const formSchema = z.object({
 	password: z.string().min(1, "A senha é obrigatória."),
 });
 
-export default function LoginForm() {
+export function LoginForm() {
 	const router = useRouter();
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -55,6 +56,7 @@ export default function LoginForm() {
 				message: result.errors.message.join(", "),
 			});
 		} else if (result.redirect) {
+			toast.success("Login realizado com sucesso!");
 			router.push(result.redirect);
 		}
 	};
@@ -113,6 +115,12 @@ export default function LoginForm() {
 												className="border-border bg-background placeholder:text-muted-foreground/60 focus:border-primary"
 											/>
 										</FormControl>
+										<Link
+											href="/forgot-password"
+											className="text-primary underline text-sm ml-2 flex  justify-end"
+										>
+											esqueceu sua senha?
+										</Link>
 										<FormMessage />
 									</FormItem>
 								)}

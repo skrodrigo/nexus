@@ -20,25 +20,28 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  members           Member[]
-  invitations       Invitation[]
-  enrollments       Enrollment[]
-  lessonProgress    LessonProgress[]
-  chats             Chat[]
-  certificates      Certificate[]
-  courseComments    CourseComment[]
-  orders            Order[]
+  members        Member[]
+  invitations    Invitation[]
+  enrollments    Enrollment[]
+  lessonProgress LessonProgress[]
+  chats          Chat[]
+  certificates   Certificate[]
+  courseComments CourseComment[]
+  orders         Order[]
 
   stripeCustomerId String?
-  
+  username         String?
+  displayUsername  String?
+
   @@unique([email])
   @@map("user")
+  @@unique([username])
 }
 
 model Session {
   id                   String   @id
   expiresAt            DateTime
-  token                String  
+  token                String
   createdAt            DateTime
   updatedAt            DateTime
   ipAddress            String?
@@ -82,7 +85,7 @@ model Verification {
 }
 
 model Organization {
-  id           String       @id
+  id           String   @id
   name         String
   slug         String?
   logo         String?
@@ -90,20 +93,19 @@ model Organization {
   createdAt    DateTime
   metadata     String?
 
+  members       Member[]
+  invitations   Invitation[]
+  courses       Course[]
+  vsls          Vsl[]
+  vslFolders    VslFolder[]
+  chats         Chat[]
+  courseBanners CourseBanner[]
+  products      Product[]
+  checkouts     Checkout[]
+  gateways      Gateway[]
+  images        Image[]
+
   @@unique([slug])
-
-  members         Member[]
-  invitations     Invitation[]
-  courses         Course[]
-  vsls            Vsl[]
-  vslFolders      VslFolder[]
-  chats           Chat[]
-  courseBanners   CourseBanner[]
-  products        Product[]
-  checkouts       Checkout[]
-  gateways        Gateway[]
-  images          Image[]
-
   @@map("organization")
 }
 
@@ -149,23 +151,23 @@ model Subscription {
 }
 
 model Vsl {
-  id              String             @id
-  title           String
-  videoUrl        String
-  thumbnailUrl    String?
-  slug            String             @unique
-  organizationId  String
-  organization    Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  folderId        String?
-  folder          VslFolder?         @relation(fields: [folderId], references: [id], onDelete: NoAction)
-  playerConfig    Json?
-  ctaConfig       Json?
-  testsA          VslTest[]          @relation("VslATests")
-  testsB          VslTest[]          @relation("VslBTests")
-  events          VslEvent[]
-  allowedDomains  VslAllowedDomain[]
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
+  id             String             @id
+  title          String
+  videoUrl       String
+  thumbnailUrl   String?
+  slug           String             @unique
+  organizationId String
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  folderId       String?
+  folder         VslFolder?         @relation(fields: [folderId], references: [id], onDelete: NoAction)
+  playerConfig   Json?
+  ctaConfig      Json?
+  testsA         VslTest[]          @relation("VslATests")
+  testsB         VslTest[]          @relation("VslBTests")
+  events         VslEvent[]
+  allowedDomains VslAllowedDomain[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 
   @@map("vsl")
 }
@@ -242,11 +244,11 @@ model Course {
 }
 
 model Module {
-  id          String   @id
+  id          String    @id
   title       String
   imageUrl    String?
   courseId    String
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lessons     Lesson[]
   order       Int
   releaseDate DateTime?
@@ -377,8 +379,6 @@ model ChatAttachment {
   @@map("chat_attachment")
 }
 
-
-
 model Artifact {
   id        String       @id
   title     String
@@ -406,22 +406,22 @@ model Image {
 }
 
 model Product {
-  id              String       @id
-  name            String
-  imageUrl        String?
-  price           Float
-  currency        Currency
-  redirectUrl     String?
-  organizationId  String
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  checkouts       Checkout[]
-  orderItems      OrderItem[]
-  orderBumpsAs    OrderBump[]  @relation("OrderBumpProduct")
-  orderBumpsFor   OrderBump[]  @relation("MainProductForBump")
-  upsellsAs       Upsell[]     @relation("UpsellProduct")
-  upsellsFor      Upsell[]     @relation("MainProductForUpsell")
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id             String       @id
+  name           String
+  imageUrl       String?
+  price          Float
+  currency       Currency
+  redirectUrl    String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  checkouts      Checkout[]
+  orderItems     OrderItem[]
+  orderBumpsAs   OrderBump[]  @relation("OrderBumpProduct")
+  orderBumpsFor  OrderBump[]  @relation("MainProductForBump")
+  upsellsAs      Upsell[]     @relation("UpsellProduct")
+  upsellsFor     Upsell[]     @relation("MainProductForUpsell")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@map("product")
 }
@@ -445,22 +445,22 @@ model Checkout {
 }
 
 model OrderBump {
-  id             String  @id
-  mainProductId  String
-  bumpProductId  String
-  mainProduct    Product @relation("MainProductForBump", fields: [mainProductId], references: [id])
-  bumpProduct    Product @relation("OrderBumpProduct", fields: [bumpProductId], references: [id])
-  orderItems     OrderItem[]
+  id            String      @id
+  mainProductId String
+  bumpProductId String
+  mainProduct   Product     @relation("MainProductForBump", fields: [mainProductId], references: [id])
+  bumpProduct   Product     @relation("OrderBumpProduct", fields: [bumpProductId], references: [id])
+  orderItems    OrderItem[]
 
   @@map("order_bump")
 }
 
 model Upsell {
-  id              String  @id
+  id              String      @id
   mainProductId   String
   upsellProductId String
-  mainProduct     Product @relation("MainProductForUpsell", fields: [mainProductId], references: [id])
-  upsellProduct   Product @relation("UpsellProduct", fields: [upsellProductId], references: [id])
+  mainProduct     Product     @relation("MainProductForUpsell", fields: [mainProductId], references: [id])
+  upsellProduct   Product     @relation("UpsellProduct", fields: [upsellProductId], references: [id])
   orderItems      OrderItem[]
 
   @@map("upsell")
@@ -499,27 +499,27 @@ model OrderItem {
 }
 
 model Gateway {
-  id             String        @id
+  id             String          @id
   provider       GatewayProvider
   apiKey         String
   publicKey      String?
   organizationId String
-  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   transactions   Transaction[]
 
   @@map("gateway")
 }
 
 model Transaction {
-  id                 String   @id
-  orderId            String
-  order              Order    @relation(fields: [orderId], references: [id])
-  gatewayId          String
-  gateway            Gateway  @relation(fields: [gatewayId], references: [id])
+  id                   String   @id
+  orderId              String
+  order                Order    @relation(fields: [orderId], references: [id])
+  gatewayId            String
+  gateway              Gateway  @relation(fields: [gatewayId], references: [id])
   gatewayTransactionId String
-  amount             Float
-  status             String
-  createdAt          DateTime @default(now())
+  amount               Float
+  status               String
+  createdAt            DateTime @default(now())
 
   @@map("transaction")
 }

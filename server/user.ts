@@ -154,6 +154,7 @@ export const signUp = async (
 		email: formData.get("email") as string,
 		password: formData.get("password") as string,
 		name: formData.get("name") as string,
+		username: formData.get("username") as string,
 	};
 
 	try {
@@ -162,6 +163,7 @@ export const signUp = async (
 				email: formValues.email,
 				password: formValues.password,
 				name: formValues.name,
+				username: formValues.username,
 			},
 		});
 
@@ -174,8 +176,8 @@ export const signUp = async (
 
 		await auth.api.createOrganization({
 			body: {
-				name: `Projeto de ${formValues.name}`,
-				slug: `${formValues.name.toLowerCase().replace(/\s+/g, "-")}`,
+				name: `${formValues.name}'s Workspace`,
+				slug: `${formValues.username.toLowerCase().replace(/\s+/g, "-")}`,
 				userId: user.id,
 			},
 		});

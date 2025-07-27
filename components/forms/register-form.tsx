@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -29,17 +30,19 @@ import { signUp } from "@/server/user";
 
 const formSchema = z.object({
 	name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres."),
+	username: z.string().min(3, "O nome de usuário deve ter pelo menos 3 caracteres."),
 	email: z.string().email("Email inválido."),
 	password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
 });
 
-export default function RegisterForm() {
+export function RegisterForm() {
 	const router = useRouter();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
+			username: "",
 			email: "",
 			password: "",
 		},
@@ -48,6 +51,7 @@ export default function RegisterForm() {
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		const formData = new FormData();
 		formData.append("name", values.name);
+		formData.append("username", values.username);
 		formData.append("email", values.email);
 		formData.append("password", values.password);
 
@@ -58,6 +62,7 @@ export default function RegisterForm() {
 				message: result.errors.message.join(", "),
 			});
 		} else if (result.redirect) {
+			toast.success("Conta criada! Um e-mail de verificação foi enviado.");
 			router.push(result.redirect);
 		}
 	};
@@ -93,6 +98,23 @@ export default function RegisterForm() {
 										<FormControl>
 											<Input
 												placeholder="Seu nome completo"
+												{...field}
+												className="border-border bg-background placeholder:text-muted-foreground/60 focus:border-primary"
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="username"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Usuário</FormLabel>
+										<FormControl>
+											<Input
+												placeholder="Seu nome de usuário"
 												{...field}
 												className="border-border bg-background placeholder:text-muted-foreground/60 focus:border-primary"
 											/>
