@@ -1,8 +1,7 @@
 import {
-	RiChatAiFill,
+	RiBookmark3Fill,
 	RiFileCopyFill,
 	RiFilterFill,
-	RiImageFill,
 	RiMailFill,
 	RiPlayFill,
 	RiShoppingCartFill,
@@ -41,6 +40,14 @@ export const apps: App[] = [
 		description:
 			"Tenha um checkout de alta conversão, personalizável e seguro, integrado diretamente às suas ofertas e funis de venda.",
 		status: "new",
+		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
+	},
+	{
+		icon: <RiBookmark3Fill className="size-5" />,
+		title: "Minerador de Ofertas",
+		description:
+			"Encontre e capture ofertas de forma inteligente e eficiente, com ferramentas de automação e análise de dados para maximizar a conversão.",
+		status: "soon",
 		actions: [{ label: "Acessar", href: "/dashboard/apps/" }],
 	},
 	{
