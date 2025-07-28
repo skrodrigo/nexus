@@ -119,11 +119,11 @@ export default function Header() {
 								</a>
 							</li>
 						</ul>
-						<DrawerFooter className="flex-row gap-2">
+						<DrawerFooter className="flex flex-col w-full gap-2">
 							{session?.success ? (
 								<>
 									<Link href="/suport" className="group">
-										<Button variant="outline">
+										<Button variant="outline" className="w-full">
 											<span className="group-hover:mr-1 transition-all">
 												Falar com Suporte
 											</span>
@@ -131,7 +131,7 @@ export default function Header() {
 										</Button>
 									</Link>
 									<Link href="/dashboard/apps" className="group">
-										<Button>
+										<Button className="w-full">
 											<span className="group-hover:mr-1 transition-all">
 												Dashboard
 											</span>
@@ -142,10 +142,12 @@ export default function Header() {
 							) : (
 								<>
 									<Link href="/register">
-										<Button variant="outline">Registrar</Button>
+										<Button variant="outline" className="w-full">
+											Registrar
+										</Button>
 									</Link>
 									<Link href="/login">
-										<Button>Login</Button>
+										<Button className="w-full">Login</Button>
 									</Link>
 								</>
 							)}
