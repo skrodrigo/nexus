@@ -2,10 +2,10 @@ import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import ResetPasswordEmail from "@/components/emails/reset-password";
-import VerifyEmail from "@/components/emails/verify-email";
+// import ResetPasswordEmail from "@/components/emails/reset-password";
+// import VerifyEmail from "@/components/emails/verify-email";
 import { prisma } from "@/lib/prisma";
-import { resend } from "@/lib/resend";
+// import { resend } from "@/lib/resend";
 import { stripeClient } from "@/lib/stripe";
 
 export const auth = betterAuth({
@@ -19,17 +19,10 @@ export const auth = betterAuth({
 				enabled: true,
 				plans: [
 					{
-						id: "launch",
-						name: "Launch",
-						price: 49,
-						priceId: "",
-						interval: "month",
-					},
-					{
-						id: "scale",
-						name: "Scale",
-						price: 149,
-						priceId: "",
+						id: "pro",
+						name: "Pro",
+						price: 39.90,
+						priceId: "price_1Ryyph4bKEHHUeu8PhJ5qW8L",
 						interval: "month",
 					},
 				],

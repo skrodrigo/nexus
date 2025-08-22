@@ -24,11 +24,12 @@ export type PromptInputProps = HTMLAttributes<HTMLFormElement>;
 export const PromptInput = ({ className, ...props }: PromptInputProps) => (
   <form
     className={cn(
-      'w-full divide-y overflow-hidden rounded-xl border bg-muted shadow-sm',
+      'w-full divide-y overflow-hidden rounded-xl border bg-muted/20 backdrop-blur-xl ',
       className
     )}
     {...props}
   />
+
 );
 
 export type PromptInputTextareaProps = ComponentProps<typeof Textarea> & {
@@ -39,7 +40,7 @@ export type PromptInputTextareaProps = ComponentProps<typeof Textarea> & {
 export const PromptInputTextarea = ({
   onChange,
   className,
-  placeholder = 'What would you like to know?',
+  placeholder = 'Digite sua mensagem aqui...',
   minHeight = 48,
   maxHeight = 164,
   ...props
@@ -121,7 +122,7 @@ export const PromptInputButton = ({
   return (
     <Button
       className={cn(
-        'shrink-0 gap-1.5 rounded-lg',
+        'shrink-0 gap-1.5 rounded-lg border-none',
         variant === 'ghost' && 'text-muted-foreground',
         newSize === 'default' && 'px-3',
         className
@@ -149,16 +150,16 @@ export const PromptInputSubmit = ({
   let Icon = <ArrowUpIcon className="size-5" />;
 
   if (status === 'submitted') {
-    Icon = <Loader2Icon className="size-5 animate-spin" />;
+    Icon = <Loader2Icon className="size-4 animate-spin" />;
   } else if (status === 'streaming') {
-    Icon = <SquareIcon className="size-5" />;
+    Icon = <SquareIcon className="size-4" />;
   } else if (status === 'error') {
-    Icon = <XIcon className="size-5" />;
+    Icon = <XIcon className="size-4" />;
   }
 
   return (
     <Button
-      className={cn('gap-1.5 rounded-lg', className)}
+      className={cn('gap-1.5 rounded-lg border-none', className)}
       size={size}
       type="submit"
       variant={variant}
@@ -199,9 +200,28 @@ export type PromptInputModelSelectContentProps = ComponentProps<
 
 export const PromptInputModelSelectContent = ({
   className,
+  children,
   ...props
 }: PromptInputModelSelectContentProps) => (
-  <SelectContent className={cn(className)} {...props} />
+  <SelectContent className={cn('w-[420px] h-auto bg-muted', className)} {...props}>
+
+    <div className="p-2">
+      <div className="rounded-lg border bg-gradient-to-br from-primary/0 to-primary/20  p-4 border-r-primary/20 border-t-primary/20 text-card-foreground">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold">Desbloqueie o uso e todos os modelos</h3>
+            <p className="text-muted-foreground">
+              <span className="text-2xl font-bold text-primary">R$39,90</span> /mês
+            </p>
+          </div>
+          <Button>Assine agora</Button>
+        </div>
+      </div>
+    </div>
+    <div className="h-auto overflow-y-auto">
+      {children}
+    </div>
+  </SelectContent>
 );
 
 export type PromptInputModelSelectItemProps = ComponentProps<typeof SelectItem>;
@@ -210,7 +230,10 @@ export const PromptInputModelSelectItem = ({
   className,
   ...props
 }: PromptInputModelSelectItemProps) => (
-  <SelectItem className={cn(className)} {...props} />
+  <SelectItem
+    className={cn('flex items-center justify-between', className)}
+    {...props}
+  />
 );
 
 export type PromptInputModelSelectValueProps = ComponentProps<
