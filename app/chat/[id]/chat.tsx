@@ -1,10 +1,8 @@
-"use client";
+'use client';
 
-import {
-  Conversation,
-  ConversationContent,
-  ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
+import { UIMessage, useChat } from '@ai-sdk/react';
+import { startOrContinueChat } from '@/server/chat';
+import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ai-elements/conversation';
 import { Loader } from '@/components/ai-elements/loader';
 import { Message, MessageContent } from '@/components/ai-elements/message';
 import {
@@ -30,13 +28,10 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useChat } from '@ai-sdk/react';
-import { startOrContinueChat } from '@/server/chat';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { GlobeIcon, RefreshCcwIcon, CopyIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from 'react';
-
 
 const models = [
   {
@@ -73,14 +68,14 @@ const models = [
   },
 ];
 
-export default function Page() {
+export function Chat({ chatId: initialChatId, initialMessages }: { chatId: string; initialMessages: UIMessage[] }) {
   const [input, setInput] = useState('');
   const [model, setModel] = useState<string>(models[0].value);
   const [webSearch, setWebSearch] = useState(false);
-  const [chatId, setChatId] = useState<string | null>(null);
+  const [chatId, setChatId] = useState<string | null>(initialChatId);
 
   const selectedModel = models.find((m) => m.value === model);
-  const { messages, sendMessage, status, regenerate } = useChat();
+  const { messages, sendMessage, status, regenerate } = useChat({ messages: initialMessages });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,6 +86,7 @@ export default function Page() {
 
     const definitiveChatId = await startOrContinueChat(chatId, trimmedInput);
     setChatId(definitiveChatId);
+
     sendMessage(
       { text: trimmedInput },
       {
@@ -228,5 +224,5 @@ export default function Page() {
         </PromptInput>
       </div>
     </div>
-  )
+  );
 }

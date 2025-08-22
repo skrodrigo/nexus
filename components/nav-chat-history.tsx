@@ -24,7 +24,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-import { MessageSquare } from "lucide-react";
 
 export function NavChatHistory({
   chats,
@@ -44,7 +43,6 @@ export function NavChatHistory({
           <SidebarMenuItem key={chat.id}>
             <SidebarMenuButton asChild>
               <a href={`/chat/${chat.id}`}>
-                <MessageSquare />
                 <span>{chat.title}</span>
               </a>
             </SidebarMenuButton>
@@ -61,17 +59,13 @@ export function NavChatHistory({
                 align={isMobile ? "end" : "start"}
               >
                 <DropdownMenuItem>
-                  <Folder className="text-muted-foreground" />
-                  <span>View Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
                   <Forward className="text-muted-foreground" />
-                  <span>Share Project</span>
+                  <span>Compartilhar</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <Trash2 className="text-muted-foreground" />
-                  <span>Delete Project</span>
+                  <span>Deletar</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
