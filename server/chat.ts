@@ -84,3 +84,73 @@ export async function getChat(id: string, userId: string) {
 
   return chat;
 }
+
+export async function shareChat(id: string) {
+  const session = await getUserSession();
+  if (!session.success || !session.data?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  const chat = await prisma.chat.findUnique({
+    where: {
+      id,
+      userId: session.data.user.id,
+    },
+  });
+
+  if (!chat) {
+    throw new Error('Chat not found');
+  }
+
+  const sharePath = chat.sharePath ?? nanoid(8);
+
+  const updatedChat = await prisma.chat.update({
+    where: { id },
+    data: {
+      isPublic: true,
+      sharePath: sharePath,
+    },
+  });
+
+  revalidatePath(`/chat/${id}`);
+  return updatedChat;
+}
+
+export async function getPublicChat(sharePath: string) {
+  const chat = await prisma.chat.findUnique({
+    where: {
+      sharePath,
+      isPublic: true,
+    },
+    include: {
+      messages: {
+        orderBy: { createdAt: 'asc' },
+      },
+    },
+  });
+
+  return chat;
+}
+
+export async function deleteChat(id: string) {
+  const session = await getUserSession();
+  if (!session.success || !session.data?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  const chat = await prisma.chat.findUnique({
+    where: {
+      id,
+      userId: session.data.user.id,
+    },
+  });
+
+  if (!chat) {
+    throw new Error('Chat not found');
+  }
+
+  await prisma.chat.delete({ where: { id } });
+
+  revalidatePath('/');
+  revalidatePath(`/chat/${id}`);
+}

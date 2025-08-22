@@ -20,7 +20,8 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export default async function AppSidebar({ chats, ...props }: AppSidebarProps) {
 
-  const session = await getUserSession()
+  const session = await getUserSession();
+  const userId = session.data?.user?.id;
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -34,7 +35,7 @@ export default async function AppSidebar({ chats, ...props }: AppSidebarProps) {
         </Link>
       </SidebarHeader>
       <SidebarContent>
-        <NavChatHistory chats={chats} />
+        <NavChatHistory chats={chats} userId={userId as string} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={{
