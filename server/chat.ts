@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getUserSession } from './user';
-import { checkSubscriptionAndUsage, incrementUserUsage } from './usage';
+import { incrementUserUsage } from './usage';
 
 export async function startOrContinueChat(
   chatId: string | null,
@@ -17,10 +17,10 @@ export async function startOrContinueChat(
   const userId = session.data.user.id;
 
   let finalChatId = chatId;
-  let isNewChat = false;
 
   if (finalChatId) {
-    const chat = await prisma.chat.findUnique({
+    // Use findFirst because (id, userId) is not a unique composite in the schema
+    const chat = await prisma.chat.findFirst({
       where: { id: finalChatId, userId },
     });
     if (!chat) {
@@ -37,7 +37,6 @@ export async function startOrContinueChat(
       },
     });
     finalChatId = newChat.id;
-    isNewChat = true;
     revalidatePath('/');
   }
 
@@ -49,9 +48,11 @@ export async function startOrContinueChat(
     },
   });
 
+  await incrementUserUsage(userId);
+
   revalidatePath(`/chat/${finalChatId}`);
 
-  return { chatId: finalChatId, isNewChat };
+  return { chatId: finalChatId };
 }
 
 export async function createChat() {
@@ -94,7 +95,8 @@ export async function getUserChats(userId: string) {
 }
 
 export async function getChat(id: string, userId: string) {
-  const chat = await prisma.chat.findUnique({
+  // Use findFirst to constrain by both id and userId
+  const chat = await prisma.chat.findFirst({
     where: {
       id,
       userId,
@@ -119,7 +121,7 @@ export async function shareChat(id: string) {
     throw new Error('Unauthorized');
   }
 
-  const chat = await prisma.chat.findUnique({
+  const chat = await prisma.chat.findFirst({
     where: {
       id,
       userId: session.data.user.id,
@@ -166,7 +168,7 @@ export async function deleteChat(id: string) {
     throw new Error('Unauthorized');
   }
 
-  const chat = await prisma.chat.findUnique({
+  const chat = await prisma.chat.findFirst({
     where: {
       id,
       userId: session.data.user.id,
