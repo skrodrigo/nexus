@@ -71,18 +71,12 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
   const [input, setInput] = useState('');
   const [model, setModel] = useState<string>(models[0].value);
   const [webSearch, setWebSearch] = useState(false);
-  const [chatId, setChatId] = useState<string | null>(initialChatId);
 
   const selectedModel = models.find((m) => m.value === model);
   const { messages, sendMessage, status, regenerate } = useChat({
     messages: initialMessages,
   });
 
-  useEffect(() => {
-    if (messages.length > 0 && messages[messages.length - 1].role === 'user') {
-      regenerate();
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,7 +91,7 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
         body: {
           model: model,
           webSearch: webSearch,
-          chatId: chatId,
+          chatId: initialChatId,
         },
       },
     );
@@ -127,7 +121,15 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
                                     isLastMessage && (
                                       <Actions className="mt-2">
                                         <Action
-                                          onClick={() => regenerate()}
+                                          onClick={() =>
+                                            regenerate({
+                                              body: {
+                                                model: model,
+                                                webSearch: webSearch,
+                                                chatId: initialChatId,
+                                              },
+                                            })
+                                          }
                                           label="Retry"
                                         >
                                           <RefreshCcwIcon className="size-3" />
