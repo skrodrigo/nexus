@@ -10,6 +10,7 @@ import Image from "next/image";
 import { NavChatHistory } from "./nav-chat-history";
 import { Button } from "./ui/button";
 import { getUserSession } from "@/server/user";
+import { SidebarSearch } from "./sidebar-search";
 
 import { Chat } from "@/app/generated/prisma";
 import Link from "next/link";
@@ -34,6 +35,7 @@ export default async function AppSidebar({ chats, ...props }: AppSidebarProps) {
         </Link>
       </SidebarHeader>
       <SidebarContent>
+        <SidebarSearch chats={chats} />
         <NavChatHistory chats={chats} userId={userId as string} />
       </SidebarContent>
       <SidebarFooter>

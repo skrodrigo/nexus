@@ -53,6 +53,8 @@ export function NavChatHistory({
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [, setSelectedChatId] = useState<string | null>(null);
   const [shareLink, setShareLink] = useState<string>("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [chatIdToDelete, setChatIdToDelete] = useState<string | null>(null);
 
   const handleShareClick = (chatId: string) => {
     setSelectedChatId(chatId);
@@ -106,7 +108,14 @@ export function NavChatHistory({
                     <span>Compartilhar</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleDelete(chat.id)} disabled={isPending}>
+                  <DropdownMenuItem
+                    className='focus:bg-destructive/20'
+                    onClick={() => {
+                      setChatIdToDelete(chat.id)
+                      setDeleteDialogOpen(true)
+                    }}
+                    disabled={isPending}
+                  >
                     <Trash2 className="text-muted-foreground" />
                     <span>Deletar</span>
                   </DropdownMenuItem>
@@ -137,6 +146,39 @@ export function NavChatHistory({
                 <span>Copiar</span>
               </Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar exclusão</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir este chat? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+              disabled={isPending}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (chatIdToDelete) {
+                  handleDelete(chatIdToDelete)
+                }
+                setDeleteDialogOpen(false)
+                setChatIdToDelete(null)
+              }}
+              disabled={isPending}
+            >
+              Excluir
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
