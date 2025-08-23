@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -50,6 +51,8 @@ export function NavChatHistory({
 }) {
   const { isMobile } = useSidebar();
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const pathname = usePathname();
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [, setSelectedChatId] = useState<string | null>(null);
   const [shareLink, setShareLink] = useState<string>("");
@@ -76,6 +79,9 @@ export function NavChatHistory({
   const handleDelete = (chatId: string) => {
     startTransition(async () => {
       await deleteChat(chatId);
+      if (pathname === `/chat/${chatId}`) {
+        router.push('/chat');
+      }
     });
   };
 

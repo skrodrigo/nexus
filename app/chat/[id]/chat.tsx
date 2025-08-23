@@ -1,7 +1,7 @@
 'use client';
 
 import { UIMessage, useChat } from '@ai-sdk/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UpgradeModal } from '@/components/upgrade-modal';
 import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ai-elements/conversation';
 import { Loader } from '@/components/ai-elements/loader';
@@ -45,11 +45,16 @@ const models = [
     value: 'gemini/gemini-2.5-pro',
     icon: <Image src="/gemini.svg" alt="Gemini" width={24} height={24} priority quality={100} />,
     capabilities: ['vision', 'reasoning', 'code'],
-    pro: true,
   },
   {
     name: 'GPT-5',
-    value: 'openai/gpt-5',
+    value: 'openai/gpt-5-mini',
+    icon: <Image src="/chatgpt.svg" alt="openai" width={24} height={24} priority quality={100} />,
+    capabilities: ['vision'],
+  },
+  {
+    name: 'GPT-4.1',
+    value: 'openai/gpt-4.1',
     icon: <Image src="/chatgpt.svg" alt="openai" width={24} height={24} priority quality={100} />,
     capabilities: ['vision'],
   },
@@ -58,11 +63,17 @@ const models = [
     value: 'anthropic/claude-4-sonnet',
     icon: <Image src="/claude.svg" alt="claude" width={24} height={24} priority quality={100} />,
     capabilities: ['vision', 'code'],
-    pro: true,
+    off: true,
   },
   {
     name: 'DeepSeek R1',
     value: 'deepseek/deepseek-r1',
+    icon: <Image src="/deepseek.svg" alt="deepseek" width={24} height={24} priority quality={100} />,
+    capabilities: ['reasoning'],
+  },
+  {
+    name: 'DeepSeek V3',
+    value: 'deepseek/deepseek-v3',
     icon: <Image src="/deepseek.svg" alt="deepseek" width={24} height={24} priority quality={100} />,
     capabilities: ['reasoning'],
   },
@@ -77,7 +88,7 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', description: '' });
 
-  const { messages, sendMessage, status, regenerate } = useChat({
+  const { messages, sendMessage, status, regenerate, setMessages } = useChat({
     onError: (error) => {
       try {
         const errorBody = JSON.parse(error.message);
@@ -91,8 +102,13 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
       } catch (e) {
       }
     },
-    messages: initialMessages,
   });
+
+  useEffect(() => {
+    if (initialMessages.length > 0) {
+      setMessages(initialMessages);
+    }
+  }, [initialMessages, setMessages]);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -198,7 +214,7 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
             </ScrollArea>
           </div>
         </SidebarInset>
-        <div className="absolute bottom-0 left-0 right-0 p-1 border border-border bg-muted/80 backdrop-blur-xl rounded-xl w-full max-w-3xl mx-auto">
+        <div className="absolute bottom-0 left-0 right-0 p-1 border border-border bg-muted/20 backdrop-blur-xl rounded-xl w-full max-w-3xl mx-auto">
           <PromptInput onSubmit={handleSubmit}>
             <PromptInputTextarea
               onChange={(e) => setInput(e.target.value)}
@@ -227,12 +243,13 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
                         <PromptInputModelSelectItem
                           key={model.value}
                           value={model.value}
+                          disabled={model.off}
                         >
                           <div className="flex items-center gap-2">
                             {Icon}
                             <span className="font-medium">{model.name}</span>
-                            {model.pro && (
-                              <span className="text-xs text-primary">PRO</span>
+                            {model.off && (
+                              <span className="text-xs text-amber-500">Em breve</span>
                             )}
                           </div>
                         </PromptInputModelSelectItem>

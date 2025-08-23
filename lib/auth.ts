@@ -1,12 +1,8 @@
 import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
-import { revalidateChatPath } from '@/server/stripe';
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-// import ResetPasswordEmail from "@/components/emails/reset-password";
-// import VerifyEmail from "@/components/emails/verify-email";
 import { prisma } from "@/lib/prisma";
-// import { resend } from "@/lib/resend";
 import { stripeClient } from "@/lib/stripe";
 
 export const subscriptionPlans = [
@@ -47,33 +43,8 @@ export const auth = betterAuth({
 
 	emailAndPassword: {
 		enabled: true,
-		// sendResetPassword: async ({ user, url }) => {
-		// 	await resend.emails.send({
-		// 		from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
-		// 		to: user.email,
-		// 		subject: "Redefinir sua Senha",
-		// 		react: ResetPasswordEmail({
-		// 			username: user.name,
-		// 			resetUrl: url,
-		// 			userEmail: user.email,
-		// 		}),
-		// 	});
-		// },
 		requireEmailVerification: true,
 	},
-
-	// emailVerification: {
-	// 	sendVerificationEmail: async ({ user, url }) => {
-	// 		await resend.emails.send({
-	// 			from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
-	// 			to: user.email,
-	// 			subject: "Verifique seu email",
-	// 			react: VerifyEmail({ username: user.name, verifyUrl: url }),
-	// 		});
-	// 	},
-	// 	sendOnSignUp: true,
-	// 	autoSignInAfterVerification: true,
-	// },
 
 	socialProviders: {
 		google: {

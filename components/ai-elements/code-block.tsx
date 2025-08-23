@@ -43,7 +43,6 @@ export const CodeBlock = ({
       {...props}
     >
       <div className="relative">
-        {/* @ts-expect-error - SyntaxHighlighter is not a valid JSX component */}
         <SyntaxHighlighter
           className="overflow-hidden dark:hidden"
           codeTagProps={{
@@ -59,15 +58,14 @@ export const CodeBlock = ({
           language={language}
           lineNumberStyle={{
             color: 'hsl(var(--muted-foreground))',
-            paddingRight: '1rem',
-            minWidth: '2.5rem',
+            paddingRight: '1.5rem',
+            minWidth: '3rem',
           }}
           showLineNumbers={showLineNumbers}
           style={oneLight}
         >
           {code}
         </SyntaxHighlighter>
-        {/* @ts-expect-error - SyntaxHighlighter is not a valid JSX component */}
         <SyntaxHighlighter
           className="hidden overflow-hidden dark:block"
           codeTagProps={{

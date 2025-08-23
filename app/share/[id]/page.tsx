@@ -5,8 +5,9 @@ import { Message, MessageContent } from '@/components/ai-elements/message';
 import { Response } from '@/components/ai-elements/response';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export default async function SharedChatPage({ params }: { params: { id: string } }) {
-  const chat = await getPublicChat(params.id);
+export default async function SharedChatPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const chat = await getPublicChat(id);
 
   if (!chat) {
     notFound();
