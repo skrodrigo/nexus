@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getUserSession } from './user';
+import { checkSubscriptionAndUsage, incrementUserUsage } from './usage';
 
 export async function startOrContinueChat(
   chatId: string | null,
@@ -11,7 +12,7 @@ export async function startOrContinueChat(
 ) {
   const session = await getUserSession();
   if (!session.success || !session.data?.user?.id) {
-    throw new Error('Unauthorized');
+    return { error: 'Unauthorized' };
   }
   const userId = session.data.user.id;
 
@@ -24,7 +25,7 @@ export async function startOrContinueChat(
       },
     });
     revalidatePath(`/chat/${chatId}`);
-    return chatId;
+    return { chatId };
   } else {
     const newChat = await prisma.chat.create({
       data: {
@@ -40,8 +41,17 @@ export async function startOrContinueChat(
       },
     });
     revalidatePath('/');
-    return newChat.id;
+    chatId = newChat.id;
   }
+
+  const { limitReached } = await checkSubscriptionAndUsage(userId);
+  if (limitReached) {
+    return { error: 'Message limit reached' };
+  }
+
+  await incrementUserUsage(userId);
+
+  return { chatId };
 }
 
 export async function saveAssistantMessage(

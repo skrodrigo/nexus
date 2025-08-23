@@ -20,6 +20,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   chats         Chat[]
+  usage         UserUsage?
 
   stripeCustomerId String?
 
@@ -111,4 +112,17 @@ model Subscription {
   seats                Int?
 
   @@map("subscription")
+}
+
+model UserUsage {
+  userId           String  @id
+  dayCount         Int     @default(0)
+  dayWindowStart   DateTime
+  weekCount        Int     @default(0)
+  weekWindowStart  DateTime
+  monthCount       Int     @default(0)
+  monthWindowStart DateTime
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_usage")
 }

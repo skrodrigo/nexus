@@ -13,8 +13,7 @@ import {
   LogOut,
   Settings,
 } from "lucide-react"
-import { useState } from "react"
-
+import { useState, useEffect } from "react"
 import {
   Avatar,
   AvatarFallback,
@@ -35,6 +34,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
+import { getUserUsageData } from "@/server/usage"
 
 export function NavUser({
   user,
@@ -47,13 +47,22 @@ export function NavUser({
   }
   planName?: string | null
 }) {
-
+  const [usageData, setUsageData] = useState<{
+    dayCount: number
+    weekCount: number
+    monthCount: number
+    limits: {
+      promptsDay: number
+      promptsWeek: number
+      promptsMonth: number
+    }
+  } | null>(null)
 
 
   async function createPortalBilling() {
     const session = await authClient.getSession()
 
-    const { data, error } = await authClient.subscription.billingPortal({
+    const { error } = await authClient.subscription.billingPortal({
       referenceId: session.data?.user.id,
       returnUrl: process.env.BETTER_AUTH_URL,
     });
@@ -63,10 +72,25 @@ export function NavUser({
     }
   }
 
-
   const { isMobile } = useSidebar()
   const [settingsOpen, setSettingsOpen] = useState(false)
 
+  useEffect(() => {
+    async function loadUsageData() {
+      try {
+        const data = await getUserUsageData()
+        if (data) {
+          setUsageData(data)
+        }
+      } catch (error) {
+        console.error('Error loading usage data:', error)
+      }
+    }
+
+    if (settingsOpen) {
+      loadUsageData()
+    }
+  }, [settingsOpen])
 
   return (
     <>
@@ -144,10 +168,9 @@ export function NavUser({
             </div>
 
             <div className="border-t pt-4">
-              <h3 className="text-sm font-medium text-foreground/70">Plano</h3>
+              <h3 className="text-sm font-medium text-foreground/90">Plano</h3>
               <div className="mt-2 flex items-center justify-between text-sm">
                 <div>
-                  <div className="font-medium">Plano atual</div>
                   <div className="text-foreground/60">
                     {planName ? planName.charAt(0).toUpperCase() + planName.slice(1) : "Sem plano"}
                   </div>
@@ -157,6 +180,32 @@ export function NavUser({
                 </Button>
               </div>
             </div>
+
+            {usageData && (
+              <div className="border-t pt-4">
+                <h3 className="text-sm font-medium text-foreground/90">Uso do Plano</h3>
+                <div className="mt-2 space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-foreground/60">Hoje</span>
+                    <span className="font-medium">
+                      {usageData.dayCount}/<span className="text-foreground/60">{usageData.limits.promptsDay}</span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-foreground/60">Esta semana</span>
+                    <span className="font-medium">
+                      {usageData.weekCount}/<span className="text-foreground/60">{usageData.limits.promptsWeek}</span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-foreground/60">Este mês</span>
+                    <span className="font-medium">
+                      {usageData.monthCount}/<span className="text-foreground/60">{usageData.limits.promptsMonth}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="border-t pt-4">
               <h3 className="text-sm font-medium text-foreground/70">Suporte</h3>

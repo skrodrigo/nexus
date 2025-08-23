@@ -9,6 +9,18 @@ import { prisma } from "@/lib/prisma";
 // import { resend } from "@/lib/resend";
 import { stripeClient } from "@/lib/stripe";
 
+export const subscriptionPlans = [
+	{
+		name: "Pro",
+		priceId: "price_1Ryyph4bKEHHUeu8PhJ5qW8L",
+		limits: {
+			promptsDay: 50,
+			promptsWeek: 250,
+			promptsMonth: 1000,
+		}
+	},
+];
+
 export const auth = betterAuth({
 	plugins: [
 		nextCookies(),
@@ -18,17 +30,7 @@ export const auth = betterAuth({
 			createCustomerOnSignUp: true,
 			subscription: {
 				enabled: true,
-				plans: [
-					{
-						name: "Pro",
-						priceId: "price_1Ryyph4bKEHHUeu8PhJ5qW8L",
-						limits: {
-							promptsDay: 50,
-							promptsWeek: 250,
-							promptsMonth: 1000,
-						}
-					},
-				],
+				plans: subscriptionPlans,
 				authorizeReference: async ({ user, referenceId }) => {
 					return user.id === referenceId;
 				},

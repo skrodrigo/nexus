@@ -1,6 +1,8 @@
 import { streamText, UIMessage, convertToModelMessages } from 'ai';
 import { NextResponse } from 'next/server';
-import { saveAssistantMessage } from '@/server/chat';
+import { saveAssistantMessage, startOrContinueChat } from '@/server/chat';
+import { getUserSession } from '@/server/user';
+import { checkSubscriptionAndUsage, incrementUserUsage } from '@/server/usage';
 
 function normalize(messages: UIMessage[]): UIMessage[] {
   const result: UIMessage[] = [];
@@ -21,10 +23,34 @@ function normalize(messages: UIMessage[]): UIMessage[] {
 
 export async function POST(req: Request) {
   try {
-    const { messages, model, chatId }: { messages: UIMessage[]; model?: string; chatId?: string } = await req.json();
+    const session = await getUserSession();
+    if (!session.success || !session.data?.user?.id) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+    const userId = session.data.user.id;
 
-    if (!chatId) {
-      return new Response('Bad Request: chatId is required', { status: 400 });
+    let { messages, model, chatId }: { messages: UIMessage[]; model?: string; chatId?: string } = await req.json();
+
+    const { limitReached } = await checkSubscriptionAndUsage(userId);
+
+    if (limitReached) {
+      return new Response('Message limit reached', { status: 403 });
+    }
+
+    if (chatId) {
+      await incrementUserUsage(userId);
+    } else {
+      const lastMessage = messages[messages.length - 1];
+      const messageContent = lastMessage.parts.find(p => p.type === 'text')?.text || '';
+      const result = await startOrContinueChat(null, messageContent);
+      if (result?.error) {
+        return new Response(result.error, { status: 403 });
+      }
+      if (result?.chatId) {
+        chatId = result.chatId;
+      } else {
+        return new Response('Failed to create chat', { status: 500 });
+      }
     }
 
     const safeMessages = normalize((messages || []).filter(m => m.role === 'user' || m.role === 'assistant'));
@@ -33,7 +59,6 @@ export async function POST(req: Request) {
     }
 
     const result = streamText({
-      // model: model || 'perplexity/sonar',
       model: 'perplexity/sonar',
       messages: convertToModelMessages(safeMessages),
       system: 'You are a helpful assistant that can answer questions and help with tasks',

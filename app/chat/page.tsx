@@ -22,6 +22,7 @@ import { GlobeIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { UpgradeModal } from '@/components/upgrade-modal';
 
 
 const models = [
@@ -65,6 +66,8 @@ export default function Page() {
   const [webSearch, setWebSearch] = useState(false);
   const selectedModel = models.find((m) => m.value === model);
   const router = useRouter();
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: '', description: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,74 +76,94 @@ export default function Page() {
 
     setInput('');
 
-    const newChatId = await startOrContinueChat(null, trimmedInput);
+    const result = await startOrContinueChat(null, trimmedInput);
 
-    router.push(`/chat/${newChatId}`);
+    if (result?.error) {
+      setModalContent({
+        title: 'Upgrade Necessário',
+        description: 'Para continuar enviando mesagens atualize seu plano!',
+      });
+      setIsUpgradeModalOpen(true);
+      return;
+    }
+
+    if (result?.chatId) {
+      router.push(`/chat/${result.chatId}`);
+    }
+
   };
 
   return (
-    <div className="relative flex flex-col h-screen w-full mx-2">
-      <SidebarTrigger className="my-2 sticky top-2" />
-      <SidebarInset className="overflow-hidden flex-1 mb-24">
-        <div className="flex flex-col w-full mx-auto h-full">
-          <div className="flex-grow h-full" />
-        </div>
-      </SidebarInset>
-      <div className="absolute bottom-0 left-0 right-0 p-1 border border-border bg-muted/80 backdrop-blur-xl rounded-xl w-full max-w-3xl mx-auto">
-        <PromptInput onSubmit={handleSubmit}>
-          <PromptInputTextarea
-            onChange={(e) => setInput(e.target.value)}
-            value={input}
-          />
-          <PromptInputToolbar>
-            <PromptInputTools>
-              <PromptInputModelSelect
-                onValueChange={(value) => {
-                  setModel(value);
-                }}
-                value={model}
-              >
-                <PromptInputModelSelectTrigger>
-                  {selectedModel && (
-                    <div className="flex items-center gap-2">
-                      {selectedModel.icon}
-                      <span className="font-medium">{selectedModel.name}</span>
-                    </div>
-                  )}
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent>
-                  {models.map((model) => {
-                    const Icon = model.icon;
-                    return (
-                      <PromptInputModelSelectItem
-                        key={model.value}
-                        value={model.value}
-                      >
-                        <div className="flex items-center gap-2">
-                          {Icon}
-                          <span className="font-medium">{model.name}</span>
-                          {model.pro && (
-                            <span className="text-xs text-primary">PRO</span>
-                          )}
-                        </div>
-                      </PromptInputModelSelectItem>
-                    );
-                  })}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
-              <PromptInputButton
-                variant={webSearch ? 'default' : 'ghost'}
-                onClick={() => setWebSearch(!webSearch)}
-              >
-                <GlobeIcon size={16} />
-                <span>Search</span>
-              </PromptInputButton>
+    <>
+      <UpgradeModal
+        isOpen={isUpgradeModalOpen}
+        onClose={() => setIsUpgradeModalOpen(false)}
+        title={modalContent.title}
+        description={modalContent.description}
+      />
+      <div className="relative flex flex-col h-screen w-full mx-2">
+        <SidebarTrigger className="my-2 sticky top-2" />
+        <SidebarInset className="overflow-hidden flex-1 mb-24">
+          <div className="flex flex-col w-full mx-auto h-full">
+            <div className="flex-grow h-full" />
+          </div>
+        </SidebarInset>
+        <div className="absolute bottom-0 left-0 right-0 p-1 border border-border bg-muted/80 backdrop-blur-xl rounded-xl w-full max-w-3xl mx-auto">
+          <PromptInput onSubmit={handleSubmit}>
+            <PromptInputTextarea
+              onChange={(e) => setInput(e.target.value)}
+              value={input}
+            />
+            <PromptInputToolbar>
+              <PromptInputTools>
+                <PromptInputModelSelect
+                  onValueChange={(value) => {
+                    setModel(value);
+                  }}
+                  value={model}
+                >
+                  <PromptInputModelSelectTrigger>
+                    {selectedModel && (
+                      <div className="flex items-center gap-2">
+                        {selectedModel.icon}
+                        <span className="font-medium">{selectedModel.name}</span>
+                      </div>
+                    )}
+                  </PromptInputModelSelectTrigger>
+                  <PromptInputModelSelectContent>
+                    {models.map((model) => {
+                      const Icon = model.icon;
+                      return (
+                        <PromptInputModelSelectItem
+                          key={model.value}
+                          value={model.value}
+                        >
+                          <div className="flex items-center gap-2">
+                            {Icon}
+                            <span className="font-medium">{model.name}</span>
+                            {model.pro && (
+                              <span className="text-xs text-primary">PRO</span>
+                            )}
+                          </div>
+                        </PromptInputModelSelectItem>
+                      );
+                    })}
+                  </PromptInputModelSelectContent>
+                </PromptInputModelSelect>
+                <PromptInputButton
+                  variant={webSearch ? 'default' : 'ghost'}
+                  onClick={() => setWebSearch(!webSearch)}
+                >
+                  <GlobeIcon size={16} />
+                  <span>Pesquisar</span>
+                </PromptInputButton>
 
-            </PromptInputTools>
-            <PromptInputSubmit disabled={!input} />
-          </PromptInputToolbar>
-        </PromptInput>
+              </PromptInputTools>
+              <PromptInputSubmit disabled={!input} />
+            </PromptInputToolbar>
+          </PromptInput>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
