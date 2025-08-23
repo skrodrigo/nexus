@@ -27,8 +27,7 @@ export default async function AppSidebar({ chats, ...props }: AppSidebarProps) {
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <Image src="/nexus.png" alt="Logo" width={48} height={48} priority quality={100} />
-          <span className="">Nexus</span>
+          <Image src="/nexus.png" alt="Logo" width={36} height={36} priority quality={100} />
         </div>
         <Link href="/chat">
           <Button variant="default" size="icon" className="w-full font-medium">Novo Chat</Button>

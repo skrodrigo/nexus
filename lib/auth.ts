@@ -1,5 +1,6 @@
 import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
+import { revalidateChatPath } from '@/server/stripe';
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 // import ResetPasswordEmail from "@/components/emails/reset-password";
@@ -13,19 +14,31 @@ export const auth = betterAuth({
 		nextCookies(),
 		stripe({
 			stripeClient,
-			stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET as string,
+			stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
 			createCustomerOnSignUp: true,
 			subscription: {
 				enabled: true,
 				plans: [
 					{
-						id: "pro",
 						name: "Pro",
-						price: 39.90,
 						priceId: "price_1Ryyph4bKEHHUeu8PhJ5qW8L",
-						interval: "month",
+						limits: {
+							promptsWeek: 40,
+							promptsMonth: 160,
+						}
 					},
+					{
+						name: "Advanced",
+						priceId: "price_1Rz39v4bKEHHUeu8VK5OuHlB",
+						limits: {
+							promptsWeek: 160,
+							promptsMonth: 640,
+						},
+					}
 				],
+				authorizeReference: async ({ user, referenceId }) => {
+					return user.id === referenceId;
+				},
 				getCheckoutSessionParams: () => {
 					return {
 						params: {
@@ -34,6 +47,19 @@ export const auth = betterAuth({
 					};
 				},
 			},
+			onEvent: async (event) => {
+				switch (event.type) {
+					case "checkout.session.completed":
+            revalidateChatPath();
+						break;
+					case "customer.subscription.updated":
+            revalidateChatPath();
+						break;
+					case "customer.subscription.deleted":
+            revalidateChatPath();
+						break;
+				}
+			}
 		}),
 	],
 

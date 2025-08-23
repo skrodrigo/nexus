@@ -17,7 +17,28 @@ import type {
   HTMLAttributes,
   KeyboardEventHandler,
 } from 'react';
-import { Children } from 'react';
+import { Children, useState, useEffect } from 'react';
+import { Separator } from '../ui/separator';
+import { authClient } from '@/lib/auth-client';
+import { getSubscription } from '@/server/stripe';
+
+const createSubscription = async () => {
+  const session = await authClient.getSession();
+
+  const userId = session.data?.user.id;
+
+  const subscription = await getSubscription();
+
+  await authClient.subscription.upgrade({
+    plan: "pro",
+    annual: false,
+    referenceId: userId,
+    subscriptionId: subscription?.id,
+    successUrl: process.env.BETTER_AUTH_URL,
+    cancelUrl: process.env.BETTER_AUTH_URL,
+    disableRedirect: false,
+  })
+}
 
 export type PromptInputProps = HTMLAttributes<HTMLFormElement>;
 
@@ -48,11 +69,9 @@ export const PromptInputTextarea = ({
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
     if (e.key === 'Enter') {
       if (e.shiftKey) {
-        // Allow newline
         return;
       }
 
-      // Submit on Enter (without Shift)
       e.preventDefault();
       const form = e.currentTarget.form;
       if (form) {
@@ -202,27 +221,52 @@ export const PromptInputModelSelectContent = ({
   className,
   children,
   ...props
-}: PromptInputModelSelectContentProps) => (
-  <SelectContent className={cn('w-[420px] h-auto bg-muted', className)} {...props}>
+}: PromptInputModelSelectContentProps) => {
+  const [subscription, setSubscription] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    <div className="p-2">
-      <div className="rounded-lg border bg-gradient-to-br from-primary/0 to-primary/20  p-4 border-r-primary/20 border-t-primary/20 text-card-foreground">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold">Desbloqueie o uso e todos os modelos</h3>
-            <p className="text-muted-foreground">
-              <span className="text-2xl font-bold text-primary">R$39,90</span> /mês
-            </p>
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        const sub = await getSubscription();
+        setSubscription(sub);
+      } catch (error) {
+        console.error("Failed to fetch subscription:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSubscription();
+  }, []);
+
+  return (
+    <SelectContent className={cn('w-[420px] h-auto bg-muted', className)} {...props}>
+      {!isLoading && (!subscription || subscription.status !== 'active') && (
+        <>
+          <div className="p-2">
+            <div className="rounded-lg border bg-gradient-to-br from-primary/0 to-primary/20  p-4 border-r-primary/20 border-t-primary/20 text-card-foreground">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold">Desbloqueie o uso e todos os modelos</h3>
+                  <p className="text-muted-foreground">
+                    <span className="text-2xl font-bold text-primary">R$39,90</span> /mês
+                  </p>
+                </div>
+                <Button onClick={createSubscription}>Assine agora</Button>
+              </div>
+            </div>
           </div>
-          <Button>Assine agora</Button>
-        </div>
+          <Separator className="my-2" />
+        </>
+      )}
+      <div className="h-auto overflow-y-auto">
+        {children}
       </div>
-    </div>
-    <div className="h-auto overflow-y-auto">
-      {children}
-    </div>
-  </SelectContent>
-);
+    </SelectContent>
+  );
+};
+
 
 export type PromptInputModelSelectItemProps = ComponentProps<typeof SelectItem>;
 
