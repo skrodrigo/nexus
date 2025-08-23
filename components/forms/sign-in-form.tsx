@@ -15,7 +15,7 @@ export function SignInForm() {
 
 	return (
 		<div className="flex flex-col min-h-screen items-center justify-center bg-background p-4">
-			<Image src="/nexus.png" alt="Logo" width={60} height={60} className="mb-4" priority quality={100} />
+			<Image src="/nexus_logo.svg" alt="Logo" width={32} height={32} className="mb-4" priority quality={100} />
 			<Button
 				className="w-[380px]"
 				onClick={signInWithGoogle}

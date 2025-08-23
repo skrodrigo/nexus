@@ -16,44 +16,19 @@ export async function getSubscription() {
   }
 
   const subscription = await prisma.subscription.findFirst({
+    select: {
+      id: true,
+      status: true,
+      plan: true,
+      referenceId: true,
+      stripeSubscriptionId: true,
+    },
     where: {
       referenceId: session.data.user.id,
     },
   });
 
   return subscription;
-}
-
-export async function createSubscription() {
-
-  const subscription = await getSubscription();
-  const session = await getUserSession();
-
-  if (!session.success || !session.data?.user?.id) {
-    throw new Error('Unauthorized');
-  }
-
-  const userId = session.data.user.id;
-
-  const { url } = await auth.api.upgradeSubscription({
-    body: {
-      plan: "Pro",
-      annual: false,
-      referenceId: userId,
-      subscriptionId: subscription?.id,
-      returnUrl: process.env.BETTER_AUTH_URL!,
-      successUrl: process.env.BETTER_AUTH_URL!,
-      cancelUrl: process.env.BETTER_AUTH_URL!,
-      disableRedirect: false,
-    },
-    headers: await headers(),
-  });
-
-  if (!url) {
-    throw new Error('Could not create subscription checkout session.');
-  }
-
-  return redirect(url);
 }
 
 export async function createBillingPortalSession() {
@@ -74,32 +49,6 @@ export async function createBillingPortalSession() {
   });
 
   return redirect(data.url);
-}
-
-export async function cancelSubscription() {
-  const subscription = await getSubscription();
-  const session = await getUserSession();
-
-  if (!session.success || !session.data?.user?.id) {
-    throw new Error('Unauthorized');
-  }
-
-  const userId = session.data.user.id;
-
-  const { url } = await auth.api.cancelSubscription({
-    body: {
-      referenceId: userId,
-      subscriptionId: subscription?.id,
-      returnUrl: process.env.BETTER_AUTH_URL!,
-    },
-    headers: await headers(),
-  });
-
-  if (!url) {
-    throw new Error('Could not cancel subscription.');
-  }
-
-  return redirect(url);
 }
 
 export async function revalidateChatPath() {

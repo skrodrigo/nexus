@@ -36,6 +36,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { GlobeIcon, RefreshCcwIcon, CopyIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 
 const models = [
@@ -81,6 +82,7 @@ export default function Page() {
 
   const selectedModel = models.find((m) => m.value === model);
   const { messages, sendMessage, status, regenerate } = useChat();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,6 +92,9 @@ export default function Page() {
     setInput('');
 
     const definitiveChatId = await startOrContinueChat(chatId, trimmedInput);
+    if (!chatId) {
+      router.push(`/chat/${definitiveChatId}`);
+    }
     setChatId(definitiveChatId);
     sendMessage(
       { text: trimmedInput },

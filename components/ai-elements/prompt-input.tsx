@@ -30,10 +30,10 @@ const createSubscription = async () => {
   const subscription = await getSubscription();
 
   await authClient.subscription.upgrade({
-    plan: "pro",
+    plan: "Pro",
     annual: false,
     referenceId: userId,
-    subscriptionId: subscription?.id,
+    subscriptionId: subscription?.stripeSubscriptionId ?? undefined,
     successUrl: process.env.BETTER_AUTH_URL,
     cancelUrl: process.env.BETTER_AUTH_URL,
     disableRedirect: false,

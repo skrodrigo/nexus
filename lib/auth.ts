@@ -47,19 +47,6 @@ export const auth = betterAuth({
 					};
 				},
 			},
-			onEvent: async (event) => {
-				switch (event.type) {
-					case "checkout.session.completed":
-            revalidateChatPath();
-						break;
-					case "customer.subscription.updated":
-            revalidateChatPath();
-						break;
-					case "customer.subscription.deleted":
-            revalidateChatPath();
-						break;
-				}
-			}
 		}),
 	],
 

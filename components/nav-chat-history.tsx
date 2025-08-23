@@ -92,7 +92,7 @@ export function NavChatHistory({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuAction showOnHover>
-                    <MoreHorizontal />
+                    <MoreHorizontal className='cursor-pointer' />
                     <span className="sr-only">More</span>
                   </SidebarMenuAction>
                 </DropdownMenuTrigger>
