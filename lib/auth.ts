@@ -23,18 +23,11 @@ export const auth = betterAuth({
 						name: "Pro",
 						priceId: "price_1Ryyph4bKEHHUeu8PhJ5qW8L",
 						limits: {
-							promptsWeek: 40,
-							promptsMonth: 160,
+							promptsDay: 50,
+							promptsWeek: 250,
+							promptsMonth: 1000,
 						}
 					},
-					{
-						name: "Advanced",
-						priceId: "price_1Rz39v4bKEHHUeu8VK5OuHlB",
-						limits: {
-							promptsWeek: 160,
-							promptsMonth: 640,
-						},
-					}
 				],
 				authorizeReference: async ({ user, referenceId }) => {
 					return user.id === referenceId;
