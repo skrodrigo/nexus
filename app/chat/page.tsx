@@ -1,13 +1,6 @@
 "use client";
 
 import {
-  Conversation,
-  ConversationContent,
-  ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
-import { Loader } from '@/components/ai-elements/loader';
-import { Message, MessageContent } from '@/components/ai-elements/message';
-import {
   PromptInput,
   PromptInputButton,
   PromptInputModelSelect,
@@ -20,20 +13,12 @@ import {
   PromptInputTools
 } from '@/components/ai-elements/prompt-input';
 import {
-  Reasoning,
-  ReasoningContent,
-  ReasoningTrigger,
-} from '@/components/ai-elements/reasoning';
-import { Response } from '@/components/ai-elements/response';
-import { Actions, Action } from '@/components/ai-elements/actions';
-import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useChat } from '@ai-sdk/react';
 import { startOrContinueChat } from '@/server/chat';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { GlobeIcon, RefreshCcwIcon, CopyIcon } from "lucide-react";
+import { GlobeIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -78,10 +63,7 @@ export default function Page() {
   const [input, setInput] = useState('');
   const [model, setModel] = useState<string>(models[0].value);
   const [webSearch, setWebSearch] = useState(false);
-  const [chatId, setChatId] = useState<string | null>(null);
-
   const selectedModel = models.find((m) => m.value === model);
-  const { messages, sendMessage, status, regenerate } = useChat();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,90 +73,17 @@ export default function Page() {
 
     setInput('');
 
-    const definitiveChatId = await startOrContinueChat(chatId, trimmedInput);
-    if (!chatId) {
-      router.push(`/chat/${definitiveChatId}`);
-    }
-    setChatId(definitiveChatId);
-    sendMessage(
-      { text: trimmedInput },
-      {
-        body: {
-          model: model,
-          webSearch: webSearch,
-          chatId: definitiveChatId,
-        },
-      },
-    );
+    const newChatId = await startOrContinueChat(null, trimmedInput);
+
+    router.push(`/chat/${newChatId}`);
   };
 
   return (
-    <div className="relative flex flex-col h-screen w-full">
-      <SidebarTrigger className="m-2 sticky top-2" />
+    <div className="relative flex flex-col h-screen w-full mx-2">
+      <SidebarTrigger className="my-2 sticky top-2" />
       <SidebarInset className="overflow-hidden flex-1 mb-24">
         <div className="flex flex-col w-full mx-auto h-full">
-          <ScrollArea className="flex-grow overflow-y-auto h-full">
-            <Conversation className="flex-grow overflow-y-auto w-full max-w-3xl mx-auto h-full">
-              <ConversationContent>
-                {messages.map((message, messageIndex) => (
-                  <div key={message.id}>
-                    <Message from={message.role} key={message.id}>
-                      <MessageContent>
-                        {message.parts.map((part, i) => {
-                          switch (part.type) {
-                            case 'text':
-                              const isLastMessage =
-                                messageIndex === messages.length - 1;
-                              return (
-                                <div key={`${message.id}-${i}`}>
-                                  <Response>{part.text}</Response>
-                                  {message.role === 'assistant' &&
-                                    isLastMessage && (
-                                      <Actions className="mt-2">
-                                        <Action
-                                          onClick={() => regenerate()}
-                                          label="Retry"
-                                        >
-                                          <RefreshCcwIcon className="size-3" />
-                                        </Action>
-                                        <Action
-                                          onClick={() =>
-                                            navigator.clipboard.writeText(
-                                              part.text,
-                                            )
-                                          }
-                                          label="Copy"
-                                        >
-                                          <CopyIcon className="size-3" />
-                                        </Action>
-                                      </Actions>
-                                    )}
-                                </div>
-                              );
-                            case 'reasoning':
-                              return (
-                                <Reasoning
-                                  key={`${message.id}-${i}`}
-                                  className="w-full"
-                                  isStreaming={status === 'streaming'}
-                                >
-                                  <ReasoningTrigger />
-                                  <ReasoningContent>{part.text}</ReasoningContent>
-                                </Reasoning>
-                              );
-                            default:
-                              return null;
-                          }
-                        })}
-                      </MessageContent>
-                    </Message>
-                  </div>
-                ))}
-                {status === 'submitted' && <Loader />}
-              </ConversationContent>
-              <ConversationScrollButton />
-            </Conversation>
-          </ScrollArea>
+          <div className="flex-grow h-full" />
         </div>
       </SidebarInset>
       <div className="absolute bottom-0 left-0 right-0 p-1 border border-border bg-muted/80 backdrop-blur-xl rounded-xl w-full max-w-3xl mx-auto">
@@ -228,7 +137,7 @@ export default function Page() {
               </PromptInputButton>
 
             </PromptInputTools>
-            <PromptInputSubmit disabled={!input} status={status} />
+            <PromptInputSubmit disabled={!input} />
           </PromptInputToolbar>
         </PromptInput>
       </div>

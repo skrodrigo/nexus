@@ -1,7 +1,7 @@
 'use client';
 
 import { UIMessage, useChat } from '@ai-sdk/react';
-import { startOrContinueChat } from '@/server/chat';
+import { useState, useEffect } from 'react';
 import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ai-elements/conversation';
 import { Loader } from '@/components/ai-elements/loader';
 import { Message, MessageContent } from '@/components/ai-elements/message';
@@ -31,7 +31,6 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { GlobeIcon, RefreshCcwIcon, CopyIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from 'react';
 
 const models = [
   {
@@ -75,7 +74,15 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
   const [chatId, setChatId] = useState<string | null>(initialChatId);
 
   const selectedModel = models.find((m) => m.value === model);
-  const { messages, sendMessage, status, regenerate } = useChat({ messages: initialMessages });
+  const { messages, sendMessage, status, regenerate } = useChat({
+    messages: initialMessages,
+  });
+
+  useEffect(() => {
+    if (messages.length > 0 && messages[messages.length - 1].role === 'user') {
+      regenerate();
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,24 +91,21 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
 
     setInput('');
 
-    const definitiveChatId = await startOrContinueChat(chatId, trimmedInput);
-    setChatId(definitiveChatId);
-
     sendMessage(
       { text: trimmedInput },
       {
         body: {
           model: model,
           webSearch: webSearch,
-          chatId: definitiveChatId,
+          chatId: chatId,
         },
       },
     );
   };
 
   return (
-    <div className="relative flex flex-col h-screen w-full">
-      <SidebarTrigger className="m-2 sticky top-2" />
+    <div className="relative flex flex-col h-screen w-full mx-2">
+      <SidebarTrigger className="my-2 sticky top-2" />
       <SidebarInset className="overflow-hidden flex-1 mb-24">
         <div className="flex flex-col w-full mx-auto h-full">
           <ScrollArea className="flex-grow overflow-y-auto h-full">

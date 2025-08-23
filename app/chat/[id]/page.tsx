@@ -4,14 +4,15 @@ import { notFound, redirect } from 'next/navigation';
 import { UIMessage } from '@ai-sdk/react';
 import { Chat } from './chat';
 
-export default async function Page({ params: { id } }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await getUserSession();
 
   if (!session.success || !session.data?.user?.id) {
     redirect('/sign-in');
   }
 
-    const chat = await getChat(id, session.data.user.id);
+  const chat = await getChat(id, session.data.user.id);
 
   if (!chat) {
     notFound();
@@ -25,5 +26,5 @@ export default async function Page({ params: { id } }: { params: { id: string } 
       parts: [{ type: 'text', text: m.content as string }],
     }));
 
-    return <Chat chatId={id} initialMessages={initialMessages} />;
+  return <Chat chatId={id} initialMessages={initialMessages} />;
 }
