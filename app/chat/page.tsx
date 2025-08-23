@@ -1,5 +1,13 @@
-import { ChatInterface } from '@/components/chat-interface';
+import { getUserSession } from '@/server/user';
+import { redirect } from 'next/navigation';
+import { Chat } from './[id]/chat';
 
-export default function Page() {
-  return <ChatInterface />;
+export default async function Page() {
+  const session = await getUserSession();
+
+  if (!session.success || !session.data?.user?.id) {
+    redirect('/sign-in');
+  }
+
+  return <Chat initialMessages={[]} />;
 }

@@ -16,42 +16,60 @@ export async function startOrContinueChat(
   }
   const userId = session.data.user.id;
 
-  if (chatId) {
-    await prisma.message.create({
-      data: {
-        chatId: chatId,
-        role: 'user',
-        content: userMessage,
-      },
+  let finalChatId = chatId;
+  let isNewChat = false;
+
+  if (finalChatId) {
+    const chat = await prisma.chat.findUnique({
+      where: { id: finalChatId, userId },
     });
-    revalidatePath(`/chat/${chatId}`);
-    return { chatId };
-  } else {
+    if (!chat) {
+      finalChatId = null;
+    }
+  }
+
+  if (!finalChatId) {
     const newChat = await prisma.chat.create({
       data: {
         id: nanoid(),
         userId: userId,
         title: userMessage.substring(0, 50),
-        messages: {
-          create: {
-            role: 'user',
-            content: userMessage,
-          },
-        },
       },
     });
+    finalChatId = newChat.id;
+    isNewChat = true;
     revalidatePath('/');
-    chatId = newChat.id;
   }
 
-  const { limitReached } = await checkSubscriptionAndUsage(userId);
-  if (limitReached) {
-    return { error: 'Message limit reached' };
+  await prisma.message.create({
+    data: {
+      chatId: finalChatId,
+      role: 'user',
+      content: userMessage,
+    },
+  });
+
+  revalidatePath(`/chat/${finalChatId}`);
+
+  return { chatId: finalChatId, isNewChat };
+}
+
+export async function createChat() {
+  const session = await getUserSession();
+  if (!session.success || !session.data?.user?.id) {
+    return { error: 'Unauthorized' };
   }
+  const userId = session.data.user.id;
 
-  await incrementUserUsage(userId);
+  const newChat = await prisma.chat.create({
+    data: {
+      id: nanoid(),
+      userId: userId,
+      title: 'Novo Chat',
+    },
+  });
 
-  return { chatId };
+  return { chatId: newChat.id };
 }
 
 export async function saveAssistantMessage(

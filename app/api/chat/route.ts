@@ -1,6 +1,6 @@
 'use server'
 
-import { saveAssistantMessage, startOrContinueChat } from '@/server/chat';
+import { getChat, saveAssistantMessage, startOrContinueChat } from '@/server/chat';
 import { checkSubscriptionAndUsage, incrementUserUsage } from '@/server/usage';
 import { getUserSession } from '@/server/user';
 
@@ -15,22 +15,6 @@ const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
 });
 
-function normalize(messages: UIMessage[]): UIMessage[] {
-  const result: UIMessage[] = [];
-  for (const msg of messages) {
-    if (result.length === 0) {
-      result.push(msg);
-      continue;
-    }
-    const last = result[result.length - 1];
-    if (last.role === msg.role) {
-      if (last.parts && msg.parts) last.parts.push(...msg.parts);
-    } else {
-      result.push(msg);
-    }
-  }
-  return result;
-}
 
 export async function POST(req: Request) {
   try {
@@ -40,7 +24,8 @@ export async function POST(req: Request) {
     }
     const userId = session.data.user.id;
 
-    let { messages, model, chatId }: { messages: UIMessage[]; model?: string; chatId?: string } = await req.json();
+    const { messages, data } = await req.json();
+    const { model, webSearch, chatId: chatIdFromClient } = data;
 
     function getModelProvider(modelValue: string) {
       switch (modelValue) {
@@ -71,38 +56,51 @@ export async function POST(req: Request) {
       return new Response('Message limit reached', { status: 403 });
     }
 
-    if (chatId) {
-      await incrementUserUsage(userId);
-    } else {
-      const lastMessage = messages[messages.length - 1];
-      const messageContent = lastMessage.parts.find(p => p.type === 'text')?.text || '';
-      const result = await startOrContinueChat(null, messageContent);
-      if (result?.error) {
-        return new Response(result.error, { status: 403 });
-      }
-      if (result?.chatId) {
-        chatId = result.chatId;
-      } else {
-        return new Response('Failed to create chat', { status: 500 });
-      }
+    const lastMessage = messages[messages.length - 1];
+    // The last message can come in two formats: with a `parts` array (from our manual fetch)
+    // or with a `content` string (from the useChat hook). We need to handle both.
+    const messageContent = Array.isArray(lastMessage.parts)
+      ? lastMessage.parts.find((p: any) => p.type === 'text')?.text || ''
+      : lastMessage.content || '';
+
+    const chatResult = await startOrContinueChat(chatIdFromClient || null, messageContent);
+    if (chatResult?.error) {
+      return new Response(chatResult.error, { status: 403 });
     }
 
-    const safeMessages = normalize((messages || []).filter(m => m.role === 'user' || m.role === 'assistant'));
-    if (safeMessages.length === 0 || safeMessages[safeMessages.length - 1].role !== 'user') {
-      return new Response('Bad Request: last message must be from user after normalization', { status: 400 });
+    if (!chatResult?.chatId) {
+      return new Response('Failed to create or continue chat', { status: 500 });
     }
+
+    const chatId = chatResult.chatId;
+
+    if (chatResult.isNewChat) {
+      await incrementUserUsage(userId);
+    }
+
+    const fullChat = await getChat(chatId, userId);
+    if (!fullChat) {
+      return new Response('Chat not found after creation', { status: 500 });
+    }
+
+    const history = fullChat.messages
+      .filter(m => typeof m.content === 'string')
+      .map(m => ({
+        id: m.id,
+        role: m.role as 'user' | 'assistant',
+        parts: [{ type: 'text' as const, text: m.content as string }],
+      }));
 
     const selectedModel = getModelProvider(model || 'gemini/gemini-2.5-flash');
 
     console.log('Selected model:', model, 'Provider:', selectedModel);
-    console.log('Messages:', safeMessages);
+    console.log('Messages:', history);
 
     const result = streamText({
       model: selectedModel,
-      messages: convertToModelMessages(safeMessages),
+      messages: convertToModelMessages(history),
       system: 'You are a helpful assistant that can answer questions and help with tasks',
       onFinish: async ({ text }) => {
-        console.log('Response finished:', text);
         await saveAssistantMessage(chatId!, text);
       },
     });

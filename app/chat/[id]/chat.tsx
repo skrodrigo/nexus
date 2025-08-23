@@ -1,6 +1,7 @@
 'use client';
 
 import { UIMessage, useChat } from '@ai-sdk/react';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { UpgradeModal } from '@/components/upgrade-modal';
 import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ai-elements/conversation';
@@ -79,7 +80,8 @@ const models = [
   },
 ];
 
-export function Chat({ chatId: initialChatId, initialMessages }: { chatId: string; initialMessages: UIMessage[] }) {
+export function Chat({ chatId, initialMessages }: { chatId?: string; initialMessages: UIMessage[] }) {
+  const router = useRouter();
   const [input, setInput] = useState('');
   const [model, setModel] = useState<string>(models[0].value);
   const [webSearch, setWebSearch] = useState(false);
@@ -105,29 +107,71 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
   });
 
   useEffect(() => {
-    if (initialMessages.length > 0) {
-      setMessages(initialMessages);
-    }
+    setMessages(initialMessages);
   }, [initialMessages, setMessages]);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const trimmedInput = input.trim();
     if (!trimmedInput) return;
 
     setInput('');
 
-    sendMessage(
-      { text: trimmedInput },
-      {
-        body: {
-          model: model,
-          webSearch: webSearch,
-          chatId: initialChatId,
+    // If we have a chatId, we are in an existing chat, so we can use the hook's sendMessage function
+    if (chatId) {
+      return sendMessage(
+        { text: trimmedInput },
+        {
+          body: {
+            model: model,
+            webSearch: webSearch,
+            chatId: chatId,
+          },
         },
-      },
-    );
+      );
+    }
+
+    // If we don't have a chatId, we are in a new chat. We need to make a manual fetch request
+    // to create the chat and get the new chatId, then redirect.
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'user',
+              // The API expects the message content to be in a `parts` array.
+              parts: [{ type: 'text', text: trimmedInput }],
+            },
+          ],
+          // The useChat hook sends custom data in a `data` object.
+          // We need to replicate that structure for our manual fetch.
+          data: {
+            model: model,
+            webSearch: webSearch,
+            chatId: chatId,
+          },
+        }),
+      });
+
+      if (response.ok) {
+        const newChatId = response.headers.get('X-Chat-Id');
+        if (newChatId) {
+          router.push(`/chat/${newChatId}`);
+        } else {
+          console.error('Did not receive new chat ID from server.');
+        }
+      } else {
+        console.error('Failed to create new chat:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error creating new chat:', error);
+    }
   };
 
   return (
@@ -166,7 +210,7 @@ export function Chat({ chatId: initialChatId, initialMessages }: { chatId: strin
                                                 body: {
                                                   model: model,
                                                   webSearch: webSearch,
-                                                  chatId: initialChatId,
+                                                  chatId: chatId,
                                                 },
                                               })
                                             }
