@@ -104,6 +104,8 @@ export async function handleChatRequest(req: Request) {
   return result.toTextStreamResponse({
     headers: {
       'X-Chat-Id': chatId!,
+      // Expose chatId via cookie so client can read it after streaming finishes
+      'Set-Cookie': `chatId=${chatId!}; Path=/; Max-Age=600; SameSite=Lax`,
     },
   });
 }

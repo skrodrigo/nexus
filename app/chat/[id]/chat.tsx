@@ -89,6 +89,12 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
   const selectedModel = models.find((m) => m.value === model);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', description: '' });
+  // Helper to read cookie value by name
+  const getCookie = (name: string): string | null => {
+    if (typeof document === 'undefined') return null;
+    const match = document.cookie.match(new RegExp('(^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  };
 
   const { messages, sendMessage, status, regenerate, setMessages } = useChat({
     onError: (error) => {
@@ -133,42 +139,20 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
       );
     }
 
-    // If we don't have a chatId, we are in a new chat. We need to make a manual fetch request
-    // to create the chat and get the new chatId, then redirect.
+    // If we don't have a chatId, we are in a new chat.
+    // Use useChat to stream the response immediately.
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: 'user',
-              // The API expects the message content to be in a `parts` array.
-              parts: [{ type: 'text', text: trimmedInput }],
-            },
-          ],
-          // The useChat hook sends custom data in a `data` object.
-          // We need to replicate that structure for our manual fetch.
-          data: {
+      await sendMessage(
+        { text: trimmedInput },
+        {
+          body: {
             model: model,
             webSearch: webSearch,
-            chatId: chatId,
           },
-        }),
-      });
-
-      if (response.ok) {
-        const newChatId = response.headers.get('X-Chat-Id');
-        if (newChatId) {
-          router.push(`/chat/${newChatId}`);
-        } else {
-          console.error('Did not receive new chat ID from server.');
-        }
-      } else {
-        console.error('Failed to create new chat:', await response.text());
-      }
+        },
+      );
+      const newId = getCookie('chatId');
+      if (newId) router.push(`/chat/${newId}`);
     } catch (error) {
       console.error('Error creating new chat:', error);
     }
