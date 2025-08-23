@@ -13,7 +13,7 @@ import {
   LogOut,
   Settings
 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import {
   Avatar,
@@ -34,17 +34,36 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { createBillingPortalSession, getSubscription } from "@/server/stripe"
+import { authClient } from "@/lib/auth-client"
 
 export function NavUser({
   user,
+  planName,
 }: {
   user: {
     name: string
     email: string
     avatar: string
   }
+  planName?: string | null
 }) {
+
+
+
+  async function createPortalBilling() {
+    const session = await authClient.getSession()
+
+    const { data, error } = await authClient.subscription.billingPortal({
+      referenceId: session.data?.user.id,
+      returnUrl: process.env.BETTER_AUTH_URL,
+    });
+
+    if (error) {
+      console.error(error)
+    }
+  }
+
+
   const { isMobile } = useSidebar()
   const [settingsOpen, setSettingsOpen] = useState(false)
 
@@ -129,9 +148,13 @@ export function NavUser({
               <div className="mt-2 flex items-center justify-between text-sm">
                 <div>
                   <div className="font-medium">Plano atual</div>
-                  <div className="text-foreground/60">Free</div>
+                  <div className="text-foreground/60">
+                    {planName ? planName.charAt(0).toUpperCase() + planName.slice(1) : "Sem plano"}
+                  </div>
                 </div>
-                <Button size="sm" variant="outline">Gerenciar</Button>
+                <Button size="sm" variant="outline" onClick={createPortalBilling}>
+                  Gerenciar
+                </Button>
               </div>
             </div>
 
@@ -142,10 +165,10 @@ export function NavUser({
               </div>
               <div className="mt-3 flex gap-2">
                 <Button asChild size="sm" variant="secondary">
-                  <a href="mailto:support@example.com">Email</a>
+                  <a href="#">Email</a>
                 </Button>
                 <Button asChild size="sm" variant="outline">
-                  <a href="/support">Centro de ajuda</a>
+                  <a href="#">Centro de ajuda</a>
                 </Button>
               </div>
             </div>

@@ -14,6 +14,7 @@ import { SidebarSearch } from "./sidebar-search";
 
 import { Chat } from "@/app/generated/prisma";
 import Link from "next/link";
+import { getSubscription } from "@/server/stripe";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   chats: Pick<Chat, 'id' | 'title'>[];
@@ -23,6 +24,8 @@ export default async function AppSidebar({ chats, ...props }: AppSidebarProps) {
 
   const session = await getUserSession();
   const userId = session.data?.user?.id;
+  const subscription = await getSubscription();
+  const planName = subscription?.plan ?? null;
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -43,7 +46,7 @@ export default async function AppSidebar({ chats, ...props }: AppSidebarProps) {
           name: session?.data?.user?.name as string,
           email: session?.data?.user?.email as string,
           avatar: session?.data?.user?.image as string,
-        }} />
+        }} planName={planName} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
