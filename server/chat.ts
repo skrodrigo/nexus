@@ -12,21 +12,17 @@ import { checkSubscriptionAndUsage, incrementUserUsage } from './usage';
 import { getUserSession } from './user';
 
 import { openrouter } from '@/lib/openrouter';
-import { google } from '@ai-sdk/google';
 import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 
 function getModelProvider(modelValue: string) {
   switch (modelValue) {
     case 'gemini/gemini-2.5-flash':
       return google('gemini-2.5-flash');
-    case 'gemini/gemini-2.5-pro':
-      return google('gemini-2.5-pro');
-    case 'openai/gpt-5-mini':
-      return openai('gpt-5-mini');
-    case 'openai/gpt-4.1':
-      return openai('gpt-4.1');
-    case 'deepseek/deepseek-r1':
-      return openrouter('deepseek/deepseek-r1-0528:free');
+    case 'openai/gpt-5-nano':
+      return openai('gpt-5-nano');
+    case 'openai/gpt-4.1-nano':
+      return openai('gpt-4.1-nano');
     case 'deepseek/deepseek-v3':
       return openrouter('deepseek/deepseek-chat-v3-0324:free');
     default:
@@ -47,7 +43,6 @@ export async function startOrContinueChat(
   let finalChatId = chatId;
 
   if (finalChatId) {
-    // Use findFirst because (id, userId) is not a unique composite in the schema
     const chat = await prisma.chat.findFirst({
       where: { id: finalChatId, userId },
     });
@@ -123,7 +118,6 @@ export async function getUserChats(userId: string) {
 }
 
 export async function getChat(id: string, userId: string) {
-  // Use findFirst to constrain by both id and userId
   const chat = await prisma.chat.findFirst({
     where: {
       id,
@@ -271,22 +265,61 @@ export async function handleChatRequest(req: Request) {
       parts: [{ type: 'text' as const, text: m.content as string }],
     }));
 
-  const selectedModel = getModelProvider(model || 'gemini-1.5-pro');
+  const selectedModel = getModelProvider(model || 'gemini/gemini-2.5-flash');
 
-  const result = streamText({
-    model: selectedModel,
-    messages: convertToModelMessages(history),
-    system:
-      'You are a helpful assistant that can answer questions and help with tasks',
-    onFinish: async ({ text }) => {
-      await saveAssistantMessage(chatId!, text);
-    },
-  });
+  try {
+    const result = streamText({
+      model: selectedModel,
+      messages: convertToModelMessages(history),
+      system:
+        'You are a helpful assistant that can answer questions and help with tasks',
+      onFinish: async ({ text }) => {
+        await saveAssistantMessage(chatId!, text);
+      },
+    });
 
-  return result.toTextStreamResponse({
-    headers: {
-      'X-Chat-Id': chatId!,
-      'Set-Cookie': `chatId=${chatId!}; Path=/; Max-Age=600; SameSite=Lax`,
-    },
-  });
+    return result.toTextStreamResponse({
+      headers: {
+        'X-Chat-Id': chatId!,
+        'Set-Cookie': `chatId=${chatId!}; Path=/; Max-Age=600; SameSite=Lax`,
+      },
+    });
+  } catch (error: any) {
+    console.error('AI API Error:', error);
+
+    if (model && model !== 'gemini/gemini-2.5-flash') {
+      try {
+        const fallbackModel = google('gemini-2.5-flash');
+        const result = streamText({
+          model: fallbackModel,
+          messages: convertToModelMessages(history),
+          system:
+            'You are a helpful assistant that can answer questions and help with tasks',
+          onFinish: async ({ text }) => {
+            await saveAssistantMessage(chatId!, text);
+          },
+        });
+
+        return result.toTextStreamResponse({
+          headers: {
+            'X-Chat-Id': chatId!,
+            'Set-Cookie': `chatId=${chatId!}; Path=/; Max-Age=600; SameSite=Lax`,
+          },
+        });
+      } catch (fallbackError) {
+        console.error('Fallback model also failed:', fallbackError);
+      }
+    }
+
+    return new Response(
+      JSON.stringify({
+        error: 'AI service temporarily unavailable. Please try again in a few minutes.',
+        details: error.message
+      }),
+      {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+  }
 }

@@ -36,47 +36,30 @@ import Image from "next/image";
 
 const models = [
   {
-    name: 'Gemini 2.5 Flash',
+    name: 'Gemini 2.5',
     value: 'gemini/gemini-2.5-flash',
     icon: <Image src="/gemini.svg" alt="Gemini" width={24} height={24} priority quality={100} />,
-    capabilities: ['vision', 'code'],
   },
   {
-    name: 'Gemini 2.5 Pro',
-    value: 'gemini/gemini-2.5-pro',
-    icon: <Image src="/gemini.svg" alt="Gemini" width={24} height={24} priority quality={100} />,
-    capabilities: ['vision', 'reasoning', 'code'],
-  },
-  {
-    name: 'GPT-5',
-    value: 'openai/gpt-5-mini',
+    name: 'Chat GPT 5',
+    value: 'openai/gpt-5-nano',
     icon: <Image src="/chatgpt.svg" alt="openai" width={24} height={24} priority quality={100} />,
-    capabilities: ['vision'],
   },
   {
-    name: 'GPT-4.1',
-    value: 'openai/gpt-4.1',
+    name: 'Chat GPT 4.1',
+    value: 'openai/gpt-4.1-nano',
     icon: <Image src="/chatgpt.svg" alt="openai" width={24} height={24} priority quality={100} />,
-    capabilities: ['vision'],
   },
   {
     name: 'Claude 4 Sonnet',
     value: 'anthropic/claude-4-sonnet',
     icon: <Image src="/claude.svg" alt="claude" width={24} height={24} priority quality={100} />,
-    capabilities: ['vision', 'code'],
     off: true,
-  },
-  {
-    name: 'DeepSeek R1',
-    value: 'deepseek/deepseek-r1',
-    icon: <Image src="/deepseek.svg" alt="deepseek" width={24} height={24} priority quality={100} />,
-    capabilities: ['reasoning'],
   },
   {
     name: 'DeepSeek V3',
     value: 'deepseek/deepseek-v3',
     icon: <Image src="/deepseek.svg" alt="deepseek" width={24} height={24} priority quality={100} />,
-    capabilities: ['reasoning'],
   },
 ];
 
@@ -141,7 +124,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
       role: 'user' as const,
       parts: [{ type: 'text' as const, text: trimmedInput }],
     };
-    
+
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
@@ -173,7 +156,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
       if (!reader) throw new Error('No reader available');
 
       let accumulatedText = '';
-      
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -182,9 +165,9 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
         accumulatedText += chunk;
 
         // Update assistant message with accumulated text
-        setMessages(prev => 
-          prev.map(msg => 
-            msg.id === assistantMessage.id 
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === assistantMessage.id
               ? { ...msg, parts: [{ type: 'text' as const, text: accumulatedText }] }
               : msg
           )
@@ -222,9 +205,9 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
               <Conversation className="flex-grow overflow-y-auto w-full max-w-3xl mx-auto h-full">
                 <ConversationContent>
                   {messages.map((message, messageIndex) => {
-                    const isEmptyAssistantMessage = message.role === 'assistant' && 
+                    const isEmptyAssistantMessage = message.role === 'assistant' &&
                       (!message.parts || !(message.parts[0] as any)?.text) && isStreaming;
-                    
+
                     if (isEmptyAssistantMessage) {
                       return <Loader key={message.id ?? `m-${messageIndex}`} />;
                     }
