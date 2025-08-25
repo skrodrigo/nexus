@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useChat } from '@ai-sdk/react';
 import { useRouter } from 'next/navigation';
 import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ai-elements/conversation';
 import { Message, MessageContent } from '@/components/ai-elements/message';
@@ -34,6 +33,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { ScrollArea } from '@/components/ui/scroll-area';
+// @ts-ignore
+import { useChat } from '@ai-sdk/react';
 
 type UIMessage = {
   id: string;
@@ -89,8 +90,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
   };
 
   const { messages, sendMessage, status, regenerate, setMessages } = useChat({
-    onError: (error) => {
-      console.error('useChat error:', error);
+    onError: (error: any) => {
       try {
         const errorBody = JSON.parse(error.message);
         if (errorBody.error === 'Message limit reached') {
@@ -104,12 +104,10 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     },
   });
 
-  // Debug: Log messages state changes
   useEffect(() => {
     console.log('Messages updated:', messages.length, messages);
   }, [messages]);
 
-  // Debug: Log status changes
   useEffect(() => {
     console.log('Status changed:', status);
   }, [status]);
@@ -118,7 +116,6 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     setMessages(initialMessages);
   }, [initialMessages, setMessages]);
 
-  // Check subscription status on component mount
   useEffect(() => {
     const checkSubscription = async () => {
       try {
@@ -196,9 +193,8 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
         const chunk = new TextDecoder().decode(value);
         accumulatedText += chunk;
 
-        // Update assistant message with accumulated text
-        setMessages(prev =>
-          prev.map(msg =>
+        setMessages((prev: any[]) =>
+          prev.map((msg: { id: string; }) =>
             msg.id === assistantMessage.id
               ? { ...msg, parts: [{ type: 'text' as const, text: accumulatedText }] }
               : msg
@@ -208,7 +204,6 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
 
       setIsStreaming(false);
 
-      // Get new chat ID from cookie if this was a new chat
       if (!chatId) {
         const newId = getCookie('chatId');
         if (newId) router.push(`/chat/${newId}`);
@@ -216,8 +211,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     } catch (error) {
       console.error('Error in chat:', error);
       setIsStreaming(false);
-      // Remove the assistant message on error
-      setMessages(prev => prev.slice(0, -1));
+      setMessages((prev: string | any[]) => prev.slice(0, -1));
     }
   };
 
@@ -236,7 +230,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
             <ScrollArea className="flex-grow overflow-y-auto h-full">
               <Conversation className="flex-grow overflow-y-auto w-full max-w-3xl mx-auto h-full">
                 <ConversationContent>
-                  {messages.map((message, messageIndex) => {
+                  {messages.map((message: { role: string; parts: any[]; id: any; }, messageIndex: number) => {
                     const isEmptyAssistantMessage = message.role === 'assistant' &&
                       (!message.parts || !(message.parts[0] as any)?.text) && isStreaming;
 
@@ -246,7 +240,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
 
                     return (
                       <div key={message.id ?? `m-${messageIndex}`}>
-                        <Message from={message.role} key={message.id ?? `mi-${messageIndex}`}>
+                        <Message from={message.role as "assistant" | "user" | "system"} key={message.id ?? `mi-${messageIndex}`}>
                           <MessageContent>
                             {(
                               (message as any).parts && (message as any).parts.length
