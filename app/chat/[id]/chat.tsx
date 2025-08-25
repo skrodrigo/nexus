@@ -85,11 +85,12 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
   const [input, setInput] = useState('');
   const [model, setModel] = useState<string>(models[0].value);
   const [webSearch, setWebSearch] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const selectedModel = models.find((m) => m.value === model);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', description: '' });
-  // Helper to read cookie value by name
+
   const getCookie = (name: string): string | null => {
     if (typeof document === 'undefined') return null;
     const match = document.cookie.match(new RegExp('(^|; )' + name + '=([^;]*)'));
@@ -98,6 +99,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
 
   const { messages, sendMessage, status, regenerate, setMessages } = useChat({
     onError: (error) => {
+      console.error('useChat error:', error);
       try {
         const errorBody = JSON.parse(error.message);
         if (errorBody.error === 'Message limit reached') {
@@ -107,15 +109,23 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
           });
           setIsUpgradeModalOpen(true);
         }
-      } catch (e) {
-      }
+      } catch (e) { }
     },
   });
+
+  // Debug: Log messages state changes
+  useEffect(() => {
+    console.log('Messages updated:', messages.length, messages);
+  }, [messages]);
+
+  // Debug: Log status changes
+  useEffect(() => {
+    console.log('Status changed:', status);
+  }, [status]);
 
   useEffect(() => {
     setMessages(initialMessages);
   }, [initialMessages, setMessages]);
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,36 +135,74 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
 
     setInput('');
 
-    // If we have a chatId, we are in an existing chat, so we can use the hook's sendMessage function
-    if (chatId) {
-      return sendMessage(
-        { text: trimmedInput },
-        {
-          body: {
-            model: model,
-            webSearch: webSearch,
-            chatId: chatId,
-          },
-        },
-      );
-    }
+    // Add user message immediately
+    const userMessage = {
+      id: Date.now().toString(),
+      role: 'user' as const,
+      parts: [{ type: 'text' as const, text: trimmedInput }],
+    };
+    
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
 
-    // If we don't have a chatId, we are in a new chat.
-    // Use useChat to stream the response immediately.
+    // Create assistant message for streaming
+    const assistantMessage = {
+      id: (Date.now() + 1).toString(),
+      role: 'assistant' as const,
+      parts: [{ type: 'text' as const, text: '' }],
+    };
+
+    setMessages([...updatedMessages, assistantMessage]);
+    setIsStreaming(true);
+
     try {
-      await sendMessage(
-        { text: trimmedInput },
-        {
-          body: {
-            model: model,
-            webSearch: webSearch,
-          },
-        },
-      );
-      const newId = getCookie('chatId');
-      if (newId) router.push(`/chat/${newId}`);
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: updatedMessages,
+          model,
+          webSearch,
+          chatId,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch');
+
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error('No reader available');
+
+      let accumulatedText = '';
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = new TextDecoder().decode(value);
+        accumulatedText += chunk;
+
+        // Update assistant message with accumulated text
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.id === assistantMessage.id 
+              ? { ...msg, parts: [{ type: 'text' as const, text: accumulatedText }] }
+              : msg
+          )
+        );
+      }
+
+      setIsStreaming(false);
+
+      // Get new chat ID from cookie if this was a new chat
+      if (!chatId) {
+        const newId = getCookie('chatId');
+        if (newId) router.push(`/chat/${newId}`);
+      }
     } catch (error) {
-      console.error('Error creating new chat:', error);
+      console.error('Error in chat:', error);
+      setIsStreaming(false);
+      // Remove the assistant message on error
+      setMessages(prev => prev.slice(0, -1));
     }
   };
 
@@ -173,20 +221,32 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
             <ScrollArea className="flex-grow overflow-y-auto h-full">
               <Conversation className="flex-grow overflow-y-auto w-full max-w-3xl mx-auto h-full">
                 <ConversationContent>
-                  {messages.map((message, messageIndex) => (
-                    <div key={message.id}>
-                      <Message from={message.role} key={message.id}>
-                        <MessageContent>
-                          {message.parts.map((part, i) => {
-                            switch (part.type) {
-                              case 'text':
-                                const isLastMessage =
-                                  messageIndex === messages.length - 1;
-                                return (
-                                  <div key={`${message.id}-${i}`}>
-                                    <Response>{part.text}</Response>
-                                    {message.role === 'assistant' &&
-                                      isLastMessage && (
+                  {messages.map((message, messageIndex) => {
+                    const isEmptyAssistantMessage = message.role === 'assistant' && 
+                      (!message.parts || !(message.parts[0] as any)?.text) && isStreaming;
+                    
+                    if (isEmptyAssistantMessage) {
+                      return <Loader key={message.id ?? `m-${messageIndex}`} />;
+                    }
+
+                    return (
+                      <div key={message.id ?? `m-${messageIndex}`}>
+                        <Message from={message.role} key={message.id ?? `mi-${messageIndex}`}>
+                          <MessageContent>
+                            {(
+                              (message as any).parts && (message as any).parts.length
+                                ? (message as any).parts
+                                : (message as any).content
+                                  ? [{ type: 'text', text: (message as any).content }]
+                                  : []
+                            ).map((part: any, i: number) => {
+                              switch (part.type) {
+                                case 'text':
+                                  const isLastMessage = messageIndex === messages.length - 1;
+                                  return (
+                                    <div key={`${message.id}-${i}`}>
+                                      <Response>{part.text}</Response>
+                                      {message.role === 'assistant' && isLastMessage && part.text && (
                                         <Actions className="mt-2">
                                           <Action
                                             onClick={() =>
@@ -204,9 +264,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
                                           </Action>
                                           <Action
                                             onClick={() =>
-                                              navigator.clipboard.writeText(
-                                                part.text,
-                                              )
+                                              navigator.clipboard.writeText(part.text)
                                             }
                                             label="Copy"
                                           >
@@ -214,27 +272,28 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
                                           </Action>
                                         </Actions>
                                       )}
-                                  </div>
-                                );
-                              case 'reasoning':
-                                return (
-                                  <Reasoning
-                                    key={`${message.id}-${i}`}
-                                    className="w-full"
-                                    isStreaming={status === 'streaming'}
-                                  >
-                                    <ReasoningTrigger />
-                                    <ReasoningContent>{part.text}</ReasoningContent>
-                                  </Reasoning>
-                                );
-                              default:
-                                return null;
-                            }
-                          })}
-                        </MessageContent>
-                      </Message>
-                    </div>
-                  ))}
+                                    </div>
+                                  );
+                                case 'reasoning':
+                                  return (
+                                    <Reasoning
+                                      key={`${message.id}-${i}`}
+                                      className="w-full"
+                                      isStreaming={status === 'streaming'}
+                                    >
+                                      <ReasoningTrigger />
+                                      <ReasoningContent>{part.text}</ReasoningContent>
+                                    </Reasoning>
+                                  );
+                                default:
+                                  return null;
+                              }
+                            })}
+                          </MessageContent>
+                        </Message>
+                      </div>
+                    );
+                  })}
                   {status === 'submitted' && <Loader />}
                 </ConversationContent>
                 <ConversationScrollButton />
@@ -292,7 +351,6 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
                   <GlobeIcon size={16} />
                   <span>Pesquisar</span>
                 </PromptInputButton>
-
               </PromptInputTools>
               <PromptInputSubmit disabled={!input} status={status} />
             </PromptInputToolbar>

@@ -2,16 +2,12 @@
 
 import { convertToModelMessages, streamText } from 'ai';
 import { getChat, saveAssistantMessage, startOrContinueChat } from './chat';
-import { checkSubscriptionAndUsage, incrementUserUsage } from './usage';
+import { checkSubscriptionAndUsage } from './usage';
 import { getUserSession } from './user';
 
 import { google } from '@ai-sdk/google';
 import { openai } from '@ai-sdk/openai';
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-
-const openrouter = createOpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
+import { openrouter } from '@/lib/openrouter';
 
 function getModelProvider(modelValue: string) {
   switch (modelValue) {
@@ -41,7 +37,6 @@ export async function handleChatRequest(req: Request) {
 
   const body = await req.json();
   const messages = Array.isArray(body?.messages) ? body.messages : body?.messages ?? [];
-  // Support both nested `data` and root-level fields
   const data = body?.data ?? body ?? {};
   const model: string | undefined = data?.model;
   const chatIdFromClient: string | undefined = data?.chatId;
@@ -52,7 +47,10 @@ export async function handleChatRequest(req: Request) {
 
   const { limitReached } = await checkSubscriptionAndUsage(userId);
   if (limitReached) {
-    return new Response('Message limit reached', { status: 403 });
+    return new Response(JSON.stringify({ error: 'Message limit reached' }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   const lastMessage = messages[messages.length - 1];
@@ -74,7 +72,6 @@ export async function handleChatRequest(req: Request) {
   }
 
   const chatId = chatResult.chatId;
-
 
   const fullChat = await getChat(chatId, userId);
   if (!fullChat) {
@@ -104,7 +101,6 @@ export async function handleChatRequest(req: Request) {
   return result.toTextStreamResponse({
     headers: {
       'X-Chat-Id': chatId!,
-      // Expose chatId via cookie so client can read it after streaming finishes
       'Set-Cookie': `chatId=${chatId!}; Path=/; Max-Age=600; SameSite=Lax`,
     },
   });
