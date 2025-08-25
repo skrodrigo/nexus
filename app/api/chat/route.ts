@@ -1,4 +1,4 @@
-import { handleChatRequest } from '@/server/chat-handler';
+import { handleChatRequest } from '@/server/chat';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
