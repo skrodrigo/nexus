@@ -34,13 +34,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ScrollArea } from '@/components/ui/scroll-area';
 // @ts-ignore
-import { useChat } from '@ai-sdk/react';
-
-type UIMessage = {
-  id: string;
-  role: 'user' | 'assistant';
-  parts: Array<{ type: 'text'; text: string }>;
-};
+import { useChat, UIMessage } from '@ai-sdk/react';
 
 const models = [
   {
@@ -148,20 +142,20 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     setInput('');
 
     // Add user message immediately
-    const userMessage = {
+    const userMessage: UIMessage = {
       id: Date.now().toString(),
-      role: 'user' as const,
-      parts: [{ type: 'text' as const, text: trimmedInput }],
+      role: 'user',
+      parts: [{ type: 'text', text: trimmedInput }],
     };
 
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
     // Create assistant message for streaming
-    const assistantMessage = {
+    const assistantMessage: UIMessage = {
       id: (Date.now() + 1).toString(),
-      role: 'assistant' as const,
-      parts: [{ type: 'text' as const, text: '' }],
+      role: 'assistant',
+      parts: [{ type: 'text', text: '' }],
     };
 
     setMessages([...updatedMessages, assistantMessage]);
@@ -193,10 +187,10 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
         const chunk = new TextDecoder().decode(value);
         accumulatedText += chunk;
 
-        setMessages((prev: any[]) =>
-          prev.map((msg: { id: string; }) =>
+        setMessages((prev) =>
+          prev.map((msg) =>
             msg.id === assistantMessage.id
-              ? { ...msg, parts: [{ type: 'text' as const, text: accumulatedText }] }
+              ? { ...msg, parts: [{ type: 'text', text: accumulatedText }] }
               : msg
           )
         );
@@ -211,7 +205,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     } catch (error) {
       console.error('Error in chat:', error);
       setIsStreaming(false);
-      setMessages((prev: string | any[]) => prev.slice(0, -1));
+      setMessages((prev) => prev.slice(0, -1));
     }
   };
 
@@ -230,9 +224,10 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
             <ScrollArea className="flex-grow overflow-y-auto h-full">
               <Conversation className="flex-grow overflow-y-auto w-full max-w-3xl mx-auto h-full">
                 <ConversationContent>
-                  {messages.map((message: { role: string; parts: any[]; id: any; }, messageIndex: number) => {
+                  {messages.map((message: UIMessage, messageIndex: number) => {
+                    const textParts = message.parts?.filter((part: any) => part.type === 'text') || [];
                     const isEmptyAssistantMessage = message.role === 'assistant' &&
-                      (!message.parts || !(message.parts[0] as any)?.text) && isStreaming;
+                      textParts.length === 0 && isStreaming;
 
                     if (isEmptyAssistantMessage) {
                       return <Loader key={message.id ?? `m-${messageIndex}`} />;
@@ -240,15 +235,9 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
 
                     return (
                       <div key={message.id ?? `m-${messageIndex}`}>
-                        <Message from={message.role as "assistant" | "user" | "system"} key={message.id ?? `mi-${messageIndex}`}>
+                        <Message from={message.role} key={message.id ?? `mi-${messageIndex}`}>
                           <MessageContent>
-                            {(
-                              (message as any).parts && (message as any).parts.length
-                                ? (message as any).parts
-                                : (message as any).content
-                                  ? [{ type: 'text', text: (message as any).content }]
-                                  : []
-                            ).map((part: any, i: number) => {
+                            {message.parts?.map((part: any, i: number) => {
                               switch (part.type) {
                                 case 'text':
                                   const isLastMessage = messageIndex === messages.length - 1;
