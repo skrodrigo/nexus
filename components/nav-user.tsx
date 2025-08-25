@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
 import { getUserUsageData } from "@/server/usage"
+import { getSubscription } from "@/server/stripe"
 
 export function NavUser({
   user,
@@ -70,6 +71,24 @@ export function NavUser({
     if (error) {
       console.error(error)
     }
+  }
+
+  const createSubscription = async () => {
+    const session = await authClient.getSession();
+
+    const userId = session.data?.user.id;
+
+    const subscription = await getSubscription();
+
+    await authClient.subscription.upgrade({
+      plan: "Pro",
+      annual: false,
+      referenceId: userId,
+      subscriptionId: subscription?.stripeSubscriptionId ?? undefined,
+      successUrl: process.env.BETTER_AUTH_URL,
+      cancelUrl: process.env.BETTER_AUTH_URL,
+      disableRedirect: false,
+    })
   }
 
   const { isMobile } = useSidebar()
@@ -175,13 +194,19 @@ export function NavUser({
                     {planName ? planName.charAt(0).toUpperCase() + planName.slice(1) : "Sem plano"}
                   </div>
                 </div>
-                <Button size="sm" variant="outline" onClick={createPortalBilling}>
-                  Gerenciar
-                </Button>
+                {usageData && usageData.limits && usageData.limits.promptsDay > 0 ? (
+                  <Button size="sm" variant="outline" onClick={createPortalBilling}>
+                    Gerenciar
+                  </Button>
+                ) : (
+                  <Button size="sm" variant="default" onClick={createSubscription}>
+                    Assine agora
+                  </Button>
+                )}
               </div>
             </div>
 
-            {usageData && (
+            {usageData && usageData.limits && usageData.limits.promptsDay > 0 && (
               <div className="border-t pt-4">
                 <h3 className="text-sm font-medium text-foreground/90">Uso do Plano</h3>
                 <div className="mt-2 space-y-2 text-sm">

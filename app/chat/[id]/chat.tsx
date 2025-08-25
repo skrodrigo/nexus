@@ -1,23 +1,26 @@
 'use client';
 
-import { UIMessage, useChat } from '@ai-sdk/react';
-import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { UpgradeModal } from '@/components/upgrade-modal';
+import { useChat } from '@ai-sdk/react';
+import { useRouter } from 'next/navigation';
 import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ai-elements/conversation';
-import { Loader } from '@/components/ai-elements/loader';
 import { Message, MessageContent } from '@/components/ai-elements/message';
+import { Loader } from '@/components/ai-elements/loader';
+import { UpgradeModal } from '@/components/upgrade-modal';
+import { GlobeIcon, RefreshCcwIcon, CopyIcon } from 'lucide-react';
+import Image from 'next/image';
+import { checkUserSubscription } from '@/server/subscription';
 import {
   PromptInput,
-  PromptInputButton,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputSubmit,
   PromptInputTextarea,
   PromptInputToolbar,
-  PromptInputTools
+  PromptInputTools,
+  PromptInputModelSelect,
+  PromptInputModelSelectTrigger,
+  PromptInputModelSelectContent,
+  PromptInputModelSelectItem,
+  PromptInputButton,
+  PromptInputSubmit
 } from '@/components/ai-elements/prompt-input';
 import {
   Reasoning,
@@ -31,8 +34,12 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { GlobeIcon, RefreshCcwIcon, CopyIcon } from "lucide-react";
-import Image from "next/image";
+
+type UIMessage = {
+  id: string;
+  role: 'user' | 'assistant';
+  parts: Array<{ type: 'text'; text: string }>;
+};
 
 const models = [
   {
@@ -73,6 +80,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
   const selectedModel = models.find((m) => m.value === model);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', description: '' });
+  const [isPro, setIsPro] = useState<boolean | null>(null);
 
   const getCookie = (name: string): string | null => {
     if (typeof document === 'undefined') return null;
@@ -110,11 +118,35 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     setMessages(initialMessages);
   }, [initialMessages, setMessages]);
 
+  // Check subscription status on component mount
+  useEffect(() => {
+    const checkSubscription = async () => {
+      try {
+        const { isPro } = await checkUserSubscription();
+        setIsPro(isPro);
+      } catch (error) {
+        console.error('Error checking subscription:', error);
+        setIsPro(false);
+      }
+    };
+    checkSubscription();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const trimmedInput = input.trim();
     if (!trimmedInput) return;
+
+    // Check if user is Pro before allowing message send
+    if (isPro === false) {
+      setModalContent({
+        title: 'Upgrade necessário',
+        description: 'Você precisa ser um usuário Pro para enviar mensagens. Faça o upgrade agora para continuar usando o chat.',
+      });
+      setIsUpgradeModalOpen(true);
+      return;
+    }
 
     setInput('');
 
