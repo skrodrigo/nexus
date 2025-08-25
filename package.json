@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+		"build": "prisma generate && prisma migrate deploy && next build",
+		"start": "next start",
+		"lint": "next lint"
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.8",
