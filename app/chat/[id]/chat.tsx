@@ -8,7 +8,6 @@ import { Loader } from '@/components/ai-elements/loader';
 import { UpgradeModal } from '@/components/upgrade-modal';
 import { GlobeIcon, RefreshCcwIcon, CopyIcon } from 'lucide-react';
 import Image from 'next/image';
-import { checkUserSubscription } from '@/server/subscription';
 import {
   PromptInput,
   PromptInputTextarea,
@@ -35,6 +34,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 // @ts-ignore
 import { useChat, UIMessage } from '@ai-sdk/react';
+import { getSubscription } from '@/server/stripe/get-subscription';
 
 const models = [
   {
@@ -113,8 +113,8 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
   useEffect(() => {
     const checkSubscription = async () => {
       try {
-        const { isPro } = await checkUserSubscription();
-        setIsPro(isPro);
+        const subscription = await getSubscription();
+        setIsPro(subscription?.plan?.toLowerCase() === 'pro');
       } catch (error) {
         console.error('Error checking subscription:', error);
         setIsPro(false);
