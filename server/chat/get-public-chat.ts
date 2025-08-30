@@ -27,7 +27,6 @@ export async function getPublicChat(sharePath: Chat['sharePath']) {
 
     return { success: true, data: chat };
   } catch (error) {
-    console.error('Error fetching public chat:', error);
     return { success: false, error: 'Failed to fetch public chat.' };
   }
 }

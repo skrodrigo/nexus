@@ -54,7 +54,6 @@ export async function getUserUsage(id: User['id']) {
     };
 
   } catch (error) {
-    console.error('Error fetching usage:', error);
     return null;
   }
 }

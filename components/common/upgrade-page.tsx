@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from 'react';
 import { authClient } from "@/lib/auth-client";
 import { getSubscription } from '@/server/stripe/get-subscription';
-import { ArrowLeft, BotMessageSquare, FileUp, Zap, Search, BrainCircuit } from 'lucide-react';
+import { deleteIncompleteSubscription } from '@/server/stripe/delete-incomplete-subscription';
+import { ArrowLeft, BotMessageSquare, FileUp, Zap, Search, BrainCircuit, Loader2Icon } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface UpgradePageProps {
   onClose: () => void;
@@ -21,6 +23,7 @@ const proFeatures = [
 
 export function UpgradePage({ onClose }: UpgradePageProps) {
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     async function checkSubscription() {
@@ -32,19 +35,38 @@ export function UpgradePage({ onClose }: UpgradePageProps) {
   }, []);
 
   const createSubscription = async () => {
-    const session = await authClient.getSession();
-    const userId = session.data?.user.id;
-    const subscription = await getSubscription();
+    setIsCreating(true);
+    try {
+      const session = await authClient.getSession();
+      const userId = session.data?.user.id;
+      const subscription = await getSubscription();
 
-    await authClient.subscription.upgrade({
-      plan: "Pro",
-      annual: false,
-      referenceId: userId,
-      subscriptionId: subscription?.stripeSubscriptionId ?? undefined,
-      successUrl: process.env.BETTER_AUTH_URL,
-      cancelUrl: process.env.BETTER_AUTH_URL,
-      disableRedirect: false,
-    })
+      if (userId) {
+        const result = await deleteIncompleteSubscription(userId);
+
+        if (result) {
+          toast.error(result.error);
+          return;
+        }
+      }
+
+      await authClient.subscription.upgrade({
+        plan: "Pro",
+        annual: false,
+        referenceId: userId,
+        subscriptionId: subscription?.stripeSubscriptionId ?? undefined,
+        seats: 1,
+        successUrl: process.env.BETTER_AUTH_URL,
+        cancelUrl: process.env.BETTER_AUTH_URL,
+        returnUrl: process.env.BETTER_AUTH_URL,
+        disableRedirect: false,
+      });
+
+    } catch (error) {
+      toast.error('Falha ao criar assinatura. Por favor, tente novamente.');
+    } finally {
+      setIsCreating(false);
+    }
   }
 
   return (
@@ -73,8 +95,8 @@ export function UpgradePage({ onClose }: UpgradePageProps) {
               <span className="text-4xl font-bold">R$39,90</span>
               <span className="ml-2 text-muted-foreground">/ mês</span>
             </div>
-            <Button className="mt-8 w-full" onClick={createSubscription} disabled={isSubscribed}>
-              {isSubscribed ? 'Seu plano atual' : 'Assinar Pro'}
+            <Button className="mt-8 w-full" onClick={createSubscription} disabled={isSubscribed || isCreating}>
+              {isCreating ? <Loader2Icon className="animate-spin size-4" /> : isSubscribed ? 'Seu plano atual' : 'Assinar Pro'}
             </Button>
             <ul className="mt-8 space-y-4 text-sm">
               {proFeatures.map((feature, index) => (

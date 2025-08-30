@@ -43,7 +43,6 @@ export async function incrementUserUsage(userId: User['id']) {
     return { success: true };
 
   } catch (error) {
-    console.error('Error incrementing user usage:', error);
     return {
       success: false,
       error: 'Ocorreu um erro ao atualizar o uso.',
