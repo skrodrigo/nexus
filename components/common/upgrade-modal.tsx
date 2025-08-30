@@ -49,7 +49,7 @@ export function UpgradeModal({ title, description, Trigger }: UpgradeModalProps)
           <RadioGroup value={selectedPlan} onValueChange={setSelectedPlan}>
             <Label
               htmlFor="monthly"
-              className={`flex items-center justify-between rounded-lg border p-4 cursor-pointer transition-colors ${selectedPlan === 'monthly' ? 'border-primary bg-primary/5' : 'border-border'
+              className={`flex items-center justify-between rounded-2xl border p-4 cursor-pointer transition-colors ${selectedPlan === 'monthly' ? 'border-primary bg-primary/5' : 'border-border'
                 }`}>
               <div className="flex items-center gap-3">
                 <RadioGroupItem value="monthly" id="monthly" />

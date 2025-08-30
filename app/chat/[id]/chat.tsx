@@ -40,28 +40,28 @@ const models = [
   {
     name: 'Gemini 2.5',
     value: 'gemini/gemini-2.5-flash',
-    icon: <Image src="/gemini.svg" alt="Gemini" width={24} height={24} priority quality={100} />,
+    icon: <Image src="/models/gemini.svg" alt="Gemini" width={24} height={24} priority quality={100} />,
   },
   {
     name: 'Chat GPT 5',
     value: 'openai/gpt-5-nano',
-    icon: <Image src="/chatgpt.svg" alt="openai" width={24} height={24} priority quality={100} />,
+    icon: <Image src="/models/chatgpt.svg" alt="openai" width={24} height={24} priority quality={100} />,
   },
   {
     name: 'Chat GPT 4.1',
     value: 'openai/gpt-4.1-nano',
-    icon: <Image src="/chatgpt.svg" alt="openai" width={24} height={24} priority quality={100} />,
+    icon: <Image src="/models/chatgpt.svg" alt="openai" width={24} height={24} priority quality={100} />,
   },
   {
     name: 'Claude 4 Sonnet',
     value: 'anthropic/claude-4-sonnet',
-    icon: <Image src="/claude.svg" alt="claude" width={24} height={24} priority quality={100} />,
+    icon: <Image src="/models/claude.svg" alt="claude" width={24} height={24} priority quality={100} />,
     off: true,
   },
   {
     name: 'DeepSeek V3',
     value: 'deepseek/deepseek-v3',
-    icon: <Image src="/deepseek.svg" alt="deepseek" width={24} height={24} priority quality={100} />,
+    icon: <Image src="/models/deepseek.svg" alt="deepseek" width={24} height={24} priority quality={100} />,
   },
 ];
 
@@ -89,7 +89,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     return match ? decodeURIComponent(match[2]) : null;
   };
 
-  const { messages, sendMessage, status, regenerate, setMessages } = useChat({
+  const { messages, status, regenerate, setMessages } = useChat({
     onError: (error: any) => {
       try {
         const errorBody = JSON.parse(error.message);
@@ -125,7 +125,6 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     const trimmedInput = input.trim();
     if (!trimmedInput) return;
 
-    // Check if user is Pro before allowing message send
     if (isPro === false) {
       setModalContent({
         title: 'Upgrade necessário',
@@ -136,7 +135,6 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
 
     setInput('');
 
-    // Add user message immediately
     const userMessage: UIMessage = {
       id: Date.now().toString(),
       role: 'user',
@@ -146,7 +144,6 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
-    // Create assistant message for streaming
     const assistantMessage: UIMessage = {
       id: (Date.now() + 1).toString(),
       role: 'assistant',
@@ -296,7 +293,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
             </ScrollArea>
           </div>
         </SidebarInset>
-        <div className="absolute bottom-0 left-0 right-0 p-1 border border-border bg-muted/20 backdrop-blur-xl rounded-xl w-full max-w-3xl mx-auto">
+        <div className="absolute bottom-0 left-0 right-0 p-1 border border-border bg-muted/20 backdrop-blur-xl rounded-2xl w-full max-w-3xl mx-auto">
           <PromptInput onSubmit={handleSubmit}>
             <PromptInputTextarea
               onChange={(e) => setInput(e.target.value)}

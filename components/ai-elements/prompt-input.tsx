@@ -45,7 +45,7 @@ export type PromptInputProps = HTMLAttributes<HTMLFormElement>;
 export const PromptInput = ({ className, ...props }: PromptInputProps) => (
   <form
     className={cn(
-      'w-full divide-y overflow-hidden rounded-xl border bg-muted/20 backdrop-blur-xl ',
+      'w-full divide-y overflow-hidden rounded-2xl border bg-muted/20 backdrop-blur-xl ',
       className
     )}
     {...props}
@@ -141,7 +141,7 @@ export const PromptInputButton = ({
   return (
     <Button
       className={cn(
-        'shrink-0 gap-1.5 rounded-lg border-none',
+        'shrink-0 gap-1.5 rounded-2xl border-none',
         variant === 'ghost' && 'text-muted-foreground',
         newSize === 'default' && 'px-3',
         className
@@ -166,19 +166,19 @@ export const PromptInputSubmit = ({
   children,
   ...props
 }: PromptInputSubmitProps) => {
-  let Icon = <ArrowUpIcon className="size-5" />;
+  let Icon = <ArrowUpIcon className="size-5 rounded-full" />;
 
   if (status === 'submitted') {
-    Icon = <Loader2Icon className="size-4 animate-spin" />;
+    Icon = <Loader2Icon className="size-4 animate-spin rounded-full" />;
   } else if (status === 'streaming') {
-    Icon = <SquareIcon className="size-4" />;
+    Icon = <SquareIcon className="size-4 rounded-full" />;
   } else if (status === 'error') {
-    Icon = <XIcon className="size-4" />;
+    Icon = <XIcon className="size-4 rounded-full" />;
   }
 
   return (
     <Button
-      className={cn('gap-1.5 rounded-lg border-none', className)}
+      className={cn('gap-1.5 rounded-2xl border-none', className)}
       size={size}
       type="submit"
       variant={variant}
@@ -244,7 +244,7 @@ export const PromptInputModelSelectContent = ({
       {!isLoading && (!subscription || subscription.status !== 'active') && (
         <>
           <div className="p-2">
-            <div className="rounded-lg border bg-gradient-to-br from-primary/0 to-primary/20  p-4 border-r-primary/20 border-t-primary/20 text-card-foreground">
+            <div className="rounded-2xl border bg-gradient-to-br from-primary/0 to-primary/20  p-4 border-r-primary/20 border-t-primary/20 text-card-foreground">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold">Desbloqueie o uso e todos os modelos</h3>

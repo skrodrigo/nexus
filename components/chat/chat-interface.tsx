@@ -131,7 +131,7 @@ export function ChatInterface() {
             <div className="flex-grow h-full" />
           </div>
         </SidebarInset>
-        <div className="absolute bottom-0 left-0 right-0 p-1 border border-border bg-muted/80 backdrop-blur-xl rounded-xl w-full max-w-3xl mx-auto">
+        <div className="absolute bottom-0 left-0 right-0 p-1 border border-border bg-muted/80 backdrop-blur-xl rounded-2xl w-full max-w-3xl mx-auto">
           <PromptInput onSubmit={handleSubmit}>
             <PromptInputTextarea
               onChange={(e) => setInput(e.target.value)}
