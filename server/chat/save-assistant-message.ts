@@ -2,15 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { Chat } from "@/app/generated/prisma";
 
 export async function saveAssistantMessage(
-  chatId: string,
+  chatId: Chat['id'],
   assistantMessage: string,
 ) {
   try {
     await prisma.message.create({
       data: {
-        chatId: chatId,
+        chatId,
         role: 'assistant',
         content: assistantMessage,
       },

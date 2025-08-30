@@ -5,9 +5,10 @@ import { getUserSession } from "@/server/user/get-session";
 import { prisma } from "@/lib/prisma";
 import { nanoid } from 'nanoid';
 import { incrementUserUsage } from "../user/increment-usage";
+import { Chat } from "@/app/generated/prisma";
 
 export async function startOrContinueChat(
-  chatId: string | null,
+  chatId: Chat['id'] | null,
   userMessage: string,
 ) {
   try {
@@ -23,6 +24,7 @@ export async function startOrContinueChat(
       const chat = await prisma.chat.findFirst({
         where: { id: finalChatId, userId },
       });
+
       if (!chat) {
         finalChatId = null;
       }

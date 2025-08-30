@@ -2,12 +2,12 @@ import 'server-only';
 
 import { google } from "@ai-sdk/google";
 import { convertToModelMessages, streamText } from "ai";
-import { saveAssistantMessage } from "./save-assistant-message";
-import { getModelProvider } from "./get-model-provider";
-import { getChat } from "./get-chat";
-import { getUserSession } from "../user/get-session";
-import { getUserUsage } from "../user/get-usage";
-import { startOrContinueChat } from "./start-or-continue-chat";
+import { saveAssistantMessage } from "@/server/chat/save-assistant-message";
+import { getModelProvider } from "@/server/chat/get-model-provider";
+import { getChat } from "@/server/chat/get-chat";
+import { getUserSession } from "@/server/user/get-session";
+import { getUserUsage } from "@/server/user/get-usage";
+import { startOrContinueChat } from "@/server/chat/start-or-continue-chat";
 
 export async function handleChatRequest(req: Request) {
   const session = await getUserSession();

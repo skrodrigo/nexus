@@ -1,8 +1,9 @@
 'use server';
 
 import { prisma } from "@/lib/prisma";
+import { Chat } from "@/app/generated/prisma";
 
-export async function getUserChats(userId: string) {
+export async function getUserChats(userId: Chat['userId']) {
   try {
     const chats = await prisma.chat.findMany({
       where: { userId },
