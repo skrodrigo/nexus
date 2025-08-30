@@ -12,7 +12,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const session = await getUserSession();
 
   if (!session.success || !session.data?.user?.id) {
-    redirect('/sign-in');
+    redirect('/');
   }
 
   const chat = await getChat(id, session.data.user.id);

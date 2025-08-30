@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ai-elements/conversation';
 import { Message, MessageContent } from '@/components/ai-elements/message';
 import { Loader } from '@/components/ai-elements/loader';
-import { UpgradeModal } from '@/components/common/upgrade-modal';
+import { UpgradePage } from '@/components/common/upgrade-page';
 import { GlobeIcon, RefreshCcwIcon, CopyIcon } from 'lucide-react';
 import Image from 'next/image';
 import {
@@ -71,17 +71,10 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
   const [model, setModel] = useState<string>(models[0].value);
   const [webSearch, setWebSearch] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [showUpgradePage, setShowUpgradePage] = useState(false);
 
   const selectedModel = models.find((m) => m.value === model);
-  const [modalContent, setModalContent] = useState({ title: '', description: '' });
-  const triggerRef = useRef<HTMLButtonElement>(null);
   const [isPro, setIsPro] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    if (modalContent.title && triggerRef.current) {
-      triggerRef.current.click();
-    }
-  }, [modalContent]);
 
   const getCookie = (name: string): string | null => {
     if (typeof document === 'undefined') return null;
@@ -94,10 +87,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
       try {
         const errorBody = JSON.parse(error.message);
         if (errorBody.error === 'Message limit reached') {
-          setModalContent({
-            title: 'Limite de mensagens atingido',
-            description: 'Você atingiu seu limite de mensagens. Por favor, faça um upgrade para continuar usando o chat.',
-          });
+          setShowUpgradePage(true);
         }
       } catch (e) { }
     },
@@ -111,7 +101,8 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     const checkSubscription = async () => {
       try {
         const subscription = await getSubscription();
-        setIsPro(subscription?.plan?.toLowerCase() === 'pro');
+        const isActive = subscription?.status === 'active' || subscription?.status === 'trialing';
+        setIsPro(isActive && subscription?.plan?.toLowerCase() === 'pro');
       } catch (error) {
         setIsPro(false);
       }
@@ -126,10 +117,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
     if (!trimmedInput) return;
 
     if (isPro === false) {
-      setModalContent({
-        title: 'Upgrade necessário',
-        description: 'Você precisa ser um usuário Pro para enviar mensagens. Faça o upgrade agora para continuar usando o chat.',
-      });
+      setShowUpgradePage(true);
       return;
     }
 
@@ -192,7 +180,10 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
 
       if (!chatId) {
         const newId = getCookie('chatId');
-        if (newId) router.push(`/chat/${newId}`);
+        if (newId) {
+          router.push(`/chat/${newId}`);
+          router.refresh();
+        }
       }
     } catch (error) {
       setIsStreaming(false);
@@ -202,15 +193,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
 
   return (
     <>
-      <UpgradeModal
-        title={modalContent.title}
-        description={modalContent.description}
-        Trigger={
-          <button ref={triggerRef} className="hidden">
-            Open Modal
-          </button>
-        }
-      />
+      {showUpgradePage && <UpgradePage onClose={() => setShowUpgradePage(false)} />}
       <div className="relative flex flex-col h-screen w-full mx-2">
         <SidebarTrigger className="my-2 sticky top-2" />
         <SidebarInset className="overflow-hidden flex-1 mb-24">
@@ -219,9 +202,14 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
               <Conversation className="flex-grow overflow-y-auto w-full max-w-3xl mx-auto h-full">
                 <ConversationContent>
                   {messages.map((message: UIMessage, messageIndex: number) => {
-                    const textParts = message.parts?.filter((part: any) => part.type === 'text') || [];
-                    const isEmptyAssistantMessage = message.role === 'assistant' &&
-                      textParts.length === 0 && isStreaming;
+                    const assistantMessageText = message.parts
+                      ?.filter(part => part.type === 'text')
+                      .map(part => (part as { text: string }).text)
+                      .join('') || '';
+                    const isEmptyAssistantMessage =
+                      message.role === 'assistant' &&
+                      assistantMessageText.trim() === '' &&
+                      isStreaming;
 
                     if (isEmptyAssistantMessage) {
                       return <Loader key={message.id ?? `m-${messageIndex}`} />;
@@ -341,7 +329,7 @@ export function Chat({ chatId, initialMessages }: { chatId?: string; initialMess
                   onClick={() => setWebSearch(!webSearch)}
                 >
                   <GlobeIcon size={16} />
-                  <span>Pesquisar</span>
+                  <span className="hidden sm:flex">Pesquisar</span>
                 </PromptInputButton>
               </PromptInputTools>
               <PromptInputSubmit disabled={!input} status={status} />

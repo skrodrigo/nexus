@@ -42,7 +42,7 @@ export default async function AppSidebar({ chats, ...props }: AppSidebarProps) {
         </SidebarHeader >
         <SidebarContent>
           <SidebarSearch chats={chats} />
-          <NavChatHistory chats={chats} userId={userId as string} />
+          <NavChatHistory chats={chats} />
         </SidebarContent>
         <SidebarFooter>
           <NavUser

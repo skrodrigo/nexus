@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import {
 
   Forward,
+  Loader2Icon,
   MoreHorizontal,
   Trash2,
 } from "lucide-react"
@@ -41,9 +42,7 @@ import {
 
 export function NavChatHistory({
   chats,
-  userId,
 }: {
-  userId: string;
   chats: {
     id: string;
     title: string;
@@ -58,10 +57,12 @@ export function NavChatHistory({
   const [shareLink, setShareLink] = useState<string>("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [chatIdToDelete, setChatIdToDelete] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleShareClick = (chatId: string) => {
     setSelectedChatId(chatId);
     setShareDialogOpen(true);
+    setIsLoading(true);
     startTransition(async () => {
       const { success, data } = await shareChat(chatId);
       if (success && data?.sharePath) {
@@ -69,6 +70,7 @@ export function NavChatHistory({
         url.pathname = `/share/${data.sharePath}`;
         setShareLink(url.toString());
       }
+      setIsLoading(false);
     });
   };
 
@@ -77,11 +79,16 @@ export function NavChatHistory({
   };
 
   const handleDelete = (chatId: string) => {
+    setIsLoading(true);
     startTransition(async () => {
       const { success } = await deleteChat(chatId);
-      if (success && pathname === `/chat/${chatId}`) {
-        router.push('/chat');
+      if (success) {
+        if (pathname === `/chat/${chatId}`) {
+          router.push('/chat');
+        }
+        router.refresh();
       }
+      setIsLoading(false);
     });
   };
 
@@ -183,7 +190,7 @@ export function NavChatHistory({
               }}
               disabled={isPending}
             >
-              Excluir
+              {isLoading ? <Loader2Icon className="mr-2 h-4 w-4 animate-spin" /> : "Excluir"}
             </Button>
           </div>
         </DialogContent>

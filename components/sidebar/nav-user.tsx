@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
 import { getSubscription } from '@/server/stripe/get-subscription'
+import { Skeleton } from "@/components/ui/skeleton"
 import { getUserUsage } from "@/server/user/get-usage"
 import {
   ChevronsUpDown,
@@ -54,13 +55,14 @@ export function NavUser({
     dayCount: number
     weekCount: number
     monthCount: number
+
     limits: {
       promptsDay: number
       promptsWeek: number
       promptsMonth: number
     }
   } | null>(null)
-
+  const [isLoading, setIsLoading] = useState(false)
 
   async function createPortalBilling() {
     const session = await authClient.getSession()
@@ -95,13 +97,17 @@ export function NavUser({
 
   useEffect(() => {
     async function loadUsageData() {
-      if (!userId) return;
+      if (!userId) return
+      setIsLoading(true)
       try {
         const data = await getUserUsage(userId)
         if (data) {
           setUsageData(data)
         }
-      } catch (error) { }
+      } catch (error) {
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     if (settingsOpen) {
@@ -186,25 +192,66 @@ export function NavUser({
 
             <div className="border-t pt-4">
               <h3 className="text-sm font-medium text-foreground/90">Plano</h3>
-              <div className="mt-2 flex items-center justify-between text-sm">
-                <div>
-                  <div className="text-foreground/60">
-                    {planName ? planName.charAt(0).toUpperCase() + planName.slice(1) : "Sem plano"}
-                  </div>
+              {isLoading ? (
+                <div className="mt-2 flex items-center justify-between text-sm">
+                  <Skeleton className="h-5 w-12" />
+                  <Skeleton className="h-5 w-20" />
                 </div>
-                {usageData && usageData.limits && usageData.limits.promptsDay > 0 ? (
-                  <Button size="sm" variant="outline" onClick={createPortalBilling}>
-                    Gerenciar
-                  </Button>
-                ) : (
-                  <Button size="sm" variant="default" onClick={createSubscription}>
-                    Assine agora
-                  </Button>
-                )}
-              </div>
+              ) : (
+                <div className="mt-2 flex items-center justify-between text-sm">
+                  <div>
+                    <div className="text-foreground/60">
+                      {planName
+                        ? planName.charAt(0).toUpperCase() + planName.slice(1)
+                        : "Sem plano"}
+                    </div>
+                  </div>
+                  {usageData &&
+                    usageData.limits &&
+                    usageData.limits.promptsDay > 0 ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={createPortalBilling}
+                    >
+                      Gerenciar
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={createSubscription}
+                    >
+                      Assine agora
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
 
-            {usageData && usageData.limits && usageData.limits.promptsDay > 0 && (
+            {isLoading ? (
+              <div className="border-t pt-4">
+                <h3 className="text-sm font-medium text-foreground/90">Uso do Plano</h3>
+                <div className="mt-2 space-y-2">
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-4 w-1/12" />
+                  </div>
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-4 w-1/12" />
+                  </div>
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-4 w-1/12" />
+                  </div>
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-4 w-1/12" />
+                  </div>
+                </div>
+              </div>
+            ) : usageData && usageData.limits && usageData.limits.promptsDay > 0 && (
               <div className="border-t pt-4">
                 <h3 className="text-sm font-medium text-foreground/90">Uso do Plano</h3>
                 <div className="mt-2 space-y-2 text-sm">

@@ -11,13 +11,9 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import type { ChatStatus } from 'ai';
+import React, { ComponentProps, KeyboardEventHandler, useState, useEffect, Children, HTMLAttributes } from 'react';
+import * as SelectPrimitive from '@radix-ui/react-select';
 import { Loader2Icon, ArrowUpIcon, SquareIcon, XIcon } from 'lucide-react';
-import type {
-  ComponentProps,
-  HTMLAttributes,
-  KeyboardEventHandler,
-} from 'react';
-import { Children, useState, useEffect } from 'react';
 import { Separator } from '../ui/separator';
 import { authClient } from '@/lib/auth-client';
 import { getSubscription } from '@/server/stripe/get-subscription';
@@ -213,15 +209,15 @@ export const PromptInputModelSelectTrigger = ({
   />
 );
 
-export type PromptInputModelSelectContentProps = ComponentProps<
-  typeof SelectContent
->;
+export interface PromptInputModelSelectContentProps
+  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> {
+  showSubscription?: boolean;
+}
 
-export const PromptInputModelSelectContent = ({
-  className,
-  children,
-  ...props
-}: PromptInputModelSelectContentProps) => {
+export const PromptInputModelSelectContent = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Content>,
+  PromptInputModelSelectContentProps
+>(({ className, children, showSubscription = true, ...props }, ref) => {
   const [subscription, setSubscription] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -241,30 +237,12 @@ export const PromptInputModelSelectContent = ({
 
   return (
     <SelectContent className={cn('w-[420px] h-auto bg-muted', className)} {...props}>
-      {!isLoading && (!subscription || subscription.status !== 'active') && (
-        <>
-          <div className="p-2">
-            <div className="rounded-2xl border bg-gradient-to-br from-primary/0 to-primary/20  p-4 border-r-primary/20 border-t-primary/20 text-card-foreground">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">Desbloqueie o uso e todos os modelos</h3>
-                  <p className="text-muted-foreground">
-                    <span className="text-2xl font-bold text-primary">R$39,90</span> /mês
-                  </p>
-                </div>
-                <Button onClick={createSubscription}>Assine agora</Button>
-              </div>
-            </div>
-          </div>
-          <Separator className="my-2" />
-        </>
-      )}
       <div className="h-auto overflow-y-auto">
         {children}
       </div>
     </SelectContent>
   );
-};
+});
 
 
 export type PromptInputModelSelectItemProps = ComponentProps<typeof SelectItem>;
