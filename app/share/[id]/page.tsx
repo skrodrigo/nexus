@@ -1,4 +1,4 @@
-import { getPublicChat } from '@/server/chat';
+import { getPublicChat } from '@/server/chat/get-public-chat';
 import { notFound } from 'next/navigation';
 import { Conversation, ConversationContent } from '@/components/ai-elements/conversation';
 import { Message, MessageContent } from '@/components/ai-elements/message';
@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default async function SharedChatPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const chat = await getPublicChat(id);
+  const { data: chat } = await getPublicChat(id);
 
   if (!chat) {
     notFound();
@@ -18,7 +18,7 @@ export default async function SharedChatPage({ params }: { params: Promise<{ id:
       <ScrollArea className="flex-grow overflow-y-auto h-full border rounded-lg">
         <Conversation className="flex-grow overflow-y-auto w-full max-w-3xl mx-auto h-full">
           <ConversationContent>
-            {chat.messages.map((message) => (
+            {chat?.messages.map((message) => (
               <div key={message.id}>
                 <Message from={message.role as 'user' | 'assistant'}>
                   <MessageContent>

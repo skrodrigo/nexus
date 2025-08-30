@@ -11,15 +11,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import {
-  Folder,
+
   Forward,
   MoreHorizontal,
   Trash2,
 } from "lucide-react"
-import { shareChat, deleteChat } from '@/server/chat';
+import { deleteChat } from '@/server/chat/delete-chat';
+import { shareChat } from '@/server/chat/share-chat';
 
 import {
   DropdownMenu,
@@ -63,10 +63,10 @@ export function NavChatHistory({
     setSelectedChatId(chatId);
     setShareDialogOpen(true);
     startTransition(async () => {
-      const chat = await shareChat(chatId);
-      if (chat?.sharePath) {
+      const { success, data } = await shareChat(chatId);
+      if (success && data?.sharePath) {
         const url = new URL(window.location.href);
-        url.pathname = `/share/${chat.sharePath}`;
+        url.pathname = `/share/${data.sharePath}`;
         setShareLink(url.toString());
       }
     });
@@ -78,8 +78,8 @@ export function NavChatHistory({
 
   const handleDelete = (chatId: string) => {
     startTransition(async () => {
-      await deleteChat(chatId);
-      if (pathname === `/chat/${chatId}`) {
+      const { success } = await deleteChat(chatId);
+      if (success && pathname === `/chat/${chatId}`) {
         router.push('/chat');
       }
     });

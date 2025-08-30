@@ -12,16 +12,16 @@ import {
   PromptInputToolbar,
   PromptInputTools
 } from '@/components/ai-elements/prompt-input';
+import { UpgradeModal } from '@/components/common/upgrade-modal';
 import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { startOrContinueChat } from '@/server/chat';
+import { startOrContinueChat } from '@/server/chat/start-or-continue-chat';
 import { GlobeIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { UpgradeModal } from '@/components/upgrade-modal';
+import { useState, useRef, useEffect } from 'react';
 
 const models = [
   {
@@ -75,8 +75,14 @@ export function ChatInterface() {
   const [webSearch, setWebSearch] = useState(false);
   const selectedModel = models.find((m) => m.value === model);
   const router = useRouter();
-  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', description: '' });
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (modalContent.title && triggerRef.current) {
+      triggerRef.current.click();
+    }
+  }, [modalContent]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +99,6 @@ export function ChatInterface() {
           title: 'Upgrade Necessário',
           description: 'Para continuar enviando mesagens atualize seu plano!',
         });
-        setIsUpgradeModalOpen(true);
         return;
       }
 
@@ -101,22 +106,23 @@ export function ChatInterface() {
         router.push(`/chat/${result.chatId}`);
       }
     } catch (error) {
-      console.error('Error starting chat:', error);
       setModalContent({
         title: 'Erro',
         description: 'Ocorreu um erro ao iniciar o chat. Tente novamente.',
       });
-      setIsUpgradeModalOpen(true);
     }
   };
 
   return (
     <>
       <UpgradeModal
-        isOpen={isUpgradeModalOpen}
-        onClose={() => setIsUpgradeModalOpen(false)}
         title={modalContent.title}
         description={modalContent.description}
+        Trigger={
+          <button ref={triggerRef} className="hidden">
+            Open Modal
+          </button>
+        }
       />
       <div className="relative flex flex-col h-screen w-full mx-2">
         <SidebarTrigger className="my-2 sticky top-2" />

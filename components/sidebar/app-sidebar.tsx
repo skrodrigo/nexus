@@ -1,4 +1,4 @@
-import { NavUser } from "@/components/nav-user";
+import { NavUser } from "@/components/sidebar/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -6,15 +6,15 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { getUserSession } from "@/server/user/get-session";
 import Image from "next/image";
-import { NavChatHistory } from "./nav-chat-history";
-import { Button } from "./ui/button";
-import { getUserSession } from "@/server/user";
+import { NavChatHistory } from "../chat/nav-chat-history";
+import { Button } from "../ui/button";
 import { SidebarSearch } from "./sidebar-search";
 
 import { Chat } from "@/app/generated/prisma";
+import { getSubscription } from "@/server/stripe/get-subscription";
 import Link from "next/link";
-import { getSubscription } from "@/server/stripe";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   chats: Pick<Chat, 'id' | 'title'>[];
@@ -42,11 +42,15 @@ export default async function AppSidebar({ chats, ...props }: AppSidebarProps) {
         <NavChatHistory chats={chats} userId={userId as string} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={{
-          name: session?.data?.user?.name as string,
-          email: session?.data?.user?.email as string,
-          avatar: session?.data?.user?.image as string,
-        }} planName={planName} />
+        <NavUser
+          user={{
+            name: session?.data?.user?.name as string,
+            email: session?.data?.user?.email as string,
+            avatar: session?.data?.user?.image as string,
+          }}
+          planName={planName}
+          userId={userId}
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

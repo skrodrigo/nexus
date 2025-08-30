@@ -20,7 +20,7 @@ import type {
 import { Children, useState, useEffect } from 'react';
 import { Separator } from '../ui/separator';
 import { authClient } from '@/lib/auth-client';
-import { getSubscription } from '@/server/stripe';
+import { getSubscription } from '@/server/stripe/get-subscription';
 
 const createSubscription = async () => {
   const session = await authClient.getSession();
@@ -230,9 +230,8 @@ export const PromptInputModelSelectContent = ({
       try {
         const sub = await getSubscription();
         setSubscription(sub);
-      } catch (error) {
-        console.error("Failed to fetch subscription:", error);
-      } finally {
+      } catch (error) { }
+      finally {
         setIsLoading(false);
       }
     };

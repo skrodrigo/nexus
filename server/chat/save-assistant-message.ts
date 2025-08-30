@@ -7,12 +7,17 @@ export async function saveAssistantMessage(
   chatId: string,
   assistantMessage: string,
 ) {
-  await prisma.message.create({
-    data: {
-      chatId: chatId,
-      role: 'assistant',
-      content: assistantMessage,
-    },
-  });
-  revalidatePath(`/chat/${chatId}`);
+  try {
+    await prisma.message.create({
+      data: {
+        chatId: chatId,
+        role: 'assistant',
+        content: assistantMessage,
+      },
+    });
+    revalidatePath(`/chat/${chatId}`);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: 'Failed to save assistant message.' };
+  }
 }

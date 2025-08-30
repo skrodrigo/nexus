@@ -1,21 +1,22 @@
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useState } from 'react';
 import { authClient } from "@/lib/auth-client";
-import { getSubscription } from "@/server/stripe";
+import { getSubscription } from '@/server/stripe/get-subscription';
 
 interface UpgradeModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   title: string;
   description: string;
+  Trigger: React.ReactNode;
 }
 
-export function UpgradeModal({ isOpen, onClose, title, description }: UpgradeModalProps) {
+export function UpgradeModal({ title, description, Trigger }: UpgradeModalProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const [selectedPlan, setSelectedPlan] = useState('monthly');
 
   const createSubscription = async () => {
@@ -37,7 +38,8 @@ export function UpgradeModal({ isOpen, onClose, title, description }: UpgradeMod
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose} >
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>{Trigger}</DialogTrigger>
       <DialogContent className="w-[420px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

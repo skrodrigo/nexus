@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { AppSidebarLoader } from "@/components/app-sidebar-loader";
+import { AppSidebarLoader } from "@/components/sidebar/app-sidebar-loader";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 export const metadata: Metadata = {

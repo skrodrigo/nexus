@@ -1,6 +1,6 @@
-import { getUserSession } from '@/server/user';
+import { getUserSession } from '@/server/user/get-session';
 import { redirect } from 'next/navigation';
-import { Chat } from './[id]/chat';
+import { Chat } from '@/app/chat/[id]/chat';
 
 export default async function Page() {
   const session = await getUserSession();

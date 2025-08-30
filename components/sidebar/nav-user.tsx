@@ -1,5 +1,10 @@
 "use client"
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -8,17 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  ChevronsUpDown,
-  LogOut,
-  Settings,
-} from "lucide-react"
-import { useState, useEffect } from "react"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,12 +28,19 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
-import { getUserUsageData } from "@/server/usage"
-import { getSubscription } from "@/server/stripe"
+import { getSubscription } from '@/server/stripe/get-subscription'
+import { getUserUsage } from "@/server/user/get-usage"
+import {
+  ChevronsUpDown,
+  LogOut,
+  Settings,
+} from "lucide-react"
+import { useEffect, useState } from "react"
 
 export function NavUser({
   user,
   planName,
+  userId,
 }: {
   user: {
     name: string
@@ -47,6 +48,7 @@ export function NavUser({
     avatar: string
   }
   planName?: string | null
+  userId?: string
 }) {
   const [usageData, setUsageData] = useState<{
     dayCount: number
@@ -63,14 +65,11 @@ export function NavUser({
   async function createPortalBilling() {
     const session = await authClient.getSession()
 
-    const { error } = await authClient.subscription.billingPortal({
+    await authClient.subscription.billingPortal({
       referenceId: session.data?.user.id,
       returnUrl: process.env.BETTER_AUTH_URL,
     });
 
-    if (error) {
-      console.error(error)
-    }
   }
 
   const createSubscription = async () => {
@@ -96,20 +95,19 @@ export function NavUser({
 
   useEffect(() => {
     async function loadUsageData() {
+      if (!userId) return;
       try {
-        const data = await getUserUsageData()
+        const data = await getUserUsage(userId)
         if (data) {
           setUsageData(data)
         }
-      } catch (error) {
-        console.error('Error loading usage data:', error)
-      }
+      } catch (error) { }
     }
 
     if (settingsOpen) {
       loadUsageData()
     }
-  }, [settingsOpen])
+  }, [settingsOpen, userId])
 
   return (
     <>

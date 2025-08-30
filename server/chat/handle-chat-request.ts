@@ -1,4 +1,4 @@
-'use server';
+import 'server-only';
 
 import { google } from "@ai-sdk/google";
 import { convertToModelMessages, streamText } from "ai";
@@ -12,7 +12,10 @@ import { startOrContinueChat } from "./start-or-continue-chat";
 export async function handleChatRequest(req: Request) {
   const session = await getUserSession();
   if (!session.success || !session.data?.user?.id) {
-    return new Response('Unauthorized', { status: 401 });
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
   const userId = session.data.user.id;
 
@@ -23,7 +26,10 @@ export async function handleChatRequest(req: Request) {
   const chatIdFromClient: string | undefined = data?.chatId;
 
   if (!Array.isArray(messages) || messages.length === 0) {
-    return new Response('Invalid request: messages array is required', { status: 400 });
+    return new Response(JSON.stringify({ error: 'Invalid request: messages array is required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   const usageData = await getUserUsage(userId);
@@ -44,22 +50,25 @@ export async function handleChatRequest(req: Request) {
     chatIdFromClient || null,
     messageContent,
   );
-  if (chatResult?.error) {
-    return new Response(chatResult.error, { status: 403 });
-  }
 
-  if (!chatResult?.chatId) {
-    return new Response('Failed to create or continue chat', { status: 500 });
+  if (!chatResult.success || !chatResult.chatId) {
+    return new Response(JSON.stringify({ error: chatResult.error || 'Failed to create or continue chat' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   const chatId = chatResult.chatId;
 
-  const fullChat = await getChat(chatId, userId);
-  if (!fullChat) {
-    return new Response('Chat not found after creation', { status: 500 });
+  const fullChatResult = await getChat(chatId, userId);
+  if (!fullChatResult.success || !fullChatResult.data) {
+    return new Response(JSON.stringify({ error: fullChatResult.error || 'Chat not found after creation' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
-  const history = fullChat.messages
+  const history = fullChatResult.data.messages
     .filter(m => typeof m.content === 'string')
     .map(m => ({
       id: m.id,
@@ -86,8 +95,7 @@ export async function handleChatRequest(req: Request) {
         'Set-Cookie': `chatId=${chatId!}; Path=/; Max-Age=600; SameSite=Lax`,
       },
     });
-  } catch (error: any) {
-    console.error('AI API Error:', error);
+  } catch {
 
     if (model && model !== 'gemini/gemini-2.5-flash') {
       try {
@@ -108,15 +116,12 @@ export async function handleChatRequest(req: Request) {
             'Set-Cookie': `chatId=${chatId!}; Path=/; Max-Age=600; SameSite=Lax`,
           },
         });
-      } catch (fallbackError) {
-        console.error('Fallback model also failed:', fallbackError);
-      }
+      } catch { }
     }
 
     return new Response(
       JSON.stringify({
         error: 'AI service temporarily unavailable. Please try again in a few minutes.',
-        details: error.message
       }),
       {
         status: 503,
